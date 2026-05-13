@@ -3,2306 +3,2291 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="preconnect" href="https://d369cipp2c.execute-api.us-east-1.amazonaws.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700;1,800&family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="icon" type="image/png" sizes="16x16" href="award-16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="award-32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="award-64.png">
+  <link rel="icon" type="image/png" sizes="128x128" href="award-128.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="award-256.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="award-128.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#ffffff">
+  <title>WC2026 Predictor</title>
   <style>
+    :root {
+      --paper: #f5f0e8;
+      --paper2: #ede8df;
+      --paper3: #e4ddd1;
+      --ink: #0e0e0e;
+      --ink2: #3a3730;
+      --ink3: #45403a;
+      --ink4: #6e6760;
+      --green: #1a5c2a;
+      --green-light: #e8f0ea;
+      --green-mid: #c2d9c7;
+      --red: #c0392b;
+      --red-light: #fbecea;
+      --gold: #b8860b;
+      --gold-light: #fdf6e3;
+      --blue: #1a3a6b;
+      --blue-light: #e8eef8;
+      --purple: #6b3fa0;
+      --purple-light: #f0eaf7;
+      --rule: rgba(14, 14, 14, 0.12);
+      --rule-strong: rgba(14, 14, 14, 0.25);
+      --radius: 4px;
+    }
+
+    html {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      background-color: white;
-      /* Ensure the iframe has a white background */
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Barlow, sans-serif;
+      font-weight: 400;
+      min-height: 100vh;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+    }
+
+    header {
+      background: var(--ink);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      height: 60px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .logo {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .logo-main {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 1.45rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .logo-main span {
+      color: #5ddb7c;
+    }
+
+    .logo-sub {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 300;
+      font-size: 0.95rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      padding-bottom: 2px;
+    }
+
+    .sync-btn {
+      background: transparent;
+      color: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 7px 16px;
+      border-radius: var(--radius);
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s;
+    }
+
+    .sync-btn:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      color: #fff;
+    }
+
+    .sync-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .sync-icon {
+      font-size: 0.85rem;
+      display: inline-block;
+    }
+
+    .sync-btn.spinning .sync-icon {
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .tabs-wrapper {
+      background: var(--ink);
+      display: flex;
+      padding: 0 28px;
+      overflow-x: auto;
+    }
+
+    .tabs-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    .sticky-shell {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      will-change: transform;
+      isolation: isolate;
+    }
+
+    .tab {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.35);
+      padding: 13px 20px 11px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .tab:hover {
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .tab.active {
+      color: #5ddb7c;
+      border-bottom-color: #5ddb7c;
+    }
+
+    main {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 36px 24px 100px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .stage-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 40px 0 16px;
+    }
+
+    .stage-header:first-child {
+      margin-top: 0;
+    }
+
+    .stage-label {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 0.88rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink3);
+      white-space: nowrap;
+    }
+
+    .stage-rule {
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    .match-card {
+      background: #fff;
+      border: 1.5px solid var(--rule);
+      border-radius: var(--radius);
+      margin-bottom: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.18s, box-shadow 0.18s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    @media(hover:hover) {
+      .match-card:hover {
+        border-color: #5ddb7c;
+        box-shadow: 0 0 0 3px rgba(93, 219, 124, 0.13), 0 4px 20px rgba(0, 0, 0, 0.06);
+      }
+    }
+
+    .match-card.open {
+      border-color: #5ddb7c;
+      box-shadow: 0 0 0 3px rgba(93, 219, 124, 0.13), 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    .match-row {
+      display: grid;
+      grid-template-columns: 1fr 130px 1fr;
+      align-items: stretch;
+      min-height: 72px;
+    }
+
+    .team-cell {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .team-cell.home {
+      justify-content: center;
+      border-right: 1px solid var(--rule);
+    }
+
+    .team-cell.away {
+      justify-content: center;
+      border-left: 1px solid var(--rule);
+    }
+
+    .team-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      line-height: 1.1;
+      color: var(--ink);
+      text-align: center;
+    }
+
+    .centre-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 8px;
+      gap: 5px;
+      background: var(--paper);
+      transition: background 0.18s;
+    }
+
+    .match-card.open .centre-block {
+      background: var(--green-light);
+    }
+
+    .score-display {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 2rem;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .score-num {
+      color: var(--ink);
+      min-width: 26px;
+      text-align: center;
+    }
+
+    .score-num.final {
+      color: var(--green);
+    }
+
+    .score-num.pending {
+      color: var(--ink3);
+      font-size: 1.4rem;
+      font-weight: 400;
+    }
+
+    .score-dash {
+      color: var(--ink3);
+      font-weight: 400;
+      font-size: 1.6rem;
+      padding: 0 2px;
+    }
+
+    .match-status {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .badge {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+
+    .badge.upcoming {
+      background: var(--paper3);
+      color: var(--ink2);
+    }
+
+    .badge.finished {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .badge.live {
+      background: var(--red-light);
+      color: var(--red);
+      animation: blink 1.4s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .match-time {
+      font-family: Barlow, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--ink3);
+      letter-spacing: 0.03em;
+    }
+
+    .predictions-panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.22s ease;
+      background: var(--paper);
+      overflow: hidden;
+    }
+
+    .predictions-panel-inner {
+      overflow: hidden;
+      padding: 0 20px;
+      transition: padding 0.22s ease;
+    }
+
+    .match-card.open .predictions-panel {
+      grid-template-rows: 1fr;
+      border-top: 1px solid var(--rule);
+    }
+
+    .match-card.open .predictions-panel-inner {
+      padding: 14px 20px;
+    }
+
+    .pred-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      justify-items: stretch;
+    }
+
+    .pred-item {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color 0.15s;
+    }
+
+    .pred-item:hover {
+      border-color: var(--rule-strong);
+    }
+
+    .pred-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pred-score-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pred-input {
+      width: 42px;
+      height: 40px;
+      background: var(--paper);
+      border: 1px solid var(--rule-strong);
+      border-radius: var(--radius);
+      color: var(--ink);
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.15s, background 0.15s;
+      -moz-appearance: textfield;
+    }
+
+    .pred-input::-webkit-outer-spin-button,
+    .pred-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    .pred-input:focus {
+      border-color: var(--green);
+      background: var(--green-light);
+    }
+
+    .pred-input:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: transparent;
+      border-color: transparent;
+    }
+
+    .pred-sep {
+      color: var(--ink3);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .points-pill {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 2px;
+      align-self: flex-start;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .points-pill.p3 {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .points-pill.p1 {
+      background: var(--blue-light);
+      color: var(--blue);
+    }
+
+    .points-pill.p0 {
+      background: var(--red-light);
+      color: var(--red);
+    }
+
+    .points-pill.pnd {
+      background: var(--paper2);
+      color: var(--ink4);
+    }
+
+    .lb-wrap {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .lb-title-row {
+      padding: 20px 24px 16px;
+      border-bottom: 2px solid var(--ink);
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .lb-title {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink);
+      line-height: 1;
+    }
+
+    .lb-sub {
+      font-family: "Instrument Serif", serif;
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--ink4);
+    }
+
+    .lb-header-row {
+      display: grid;
+      grid-template-columns: 56px 1fr 80px 56px 60px;
+      padding: 8px 24px;
+      background: var(--paper2);
+      border-bottom: 1px solid var(--rule);
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink3);
+    }
+
+    .lb-header-row div:not(:first-child):not(:nth-child(2)) {
+      text-align: center;
+    }
+
+    .lb-row {
+      display: grid;
+      grid-template-columns: 56px 1fr 80px 56px 60px;
+      align-items: center;
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--rule);
+      transition: background 0.15s;
+    }
+
+    .lb-row:last-child {
+      border-bottom: none;
+    }
+
+    .lb-row:hover {
+      background: var(--paper);
+    }
+
+    .lb-row.top1 {
+      background: var(--gold-light);
+    }
+
+    .lb-row.top1:hover {
+      background: #fdf2d0;
+    }
+
+    .rank-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .rank-num {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    .rank-num.r1 {
+      color: var(--gold);
+      font-size: 1.6rem;
+    }
+
+    .rank-num.r2 {
+      color: var(--ink2);
+    }
+
+    .rank-num.r3 {
+      color: #a0522d;
+    }
+
+    .rank-num.rn {
+      color: var(--ink3);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .lb-name-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      min-width: 0;
+    }
+
+    .lb-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .lb-row.top1 .lb-name {
+      color: var(--gold);
+    }
+
+    .lb-pts {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: var(--green);
+      text-align: center;
+      line-height: 1;
+    }
+
+    .lb-num {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      color: var(--ink2);
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
+      }
+
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+
+    .skel {
+      background: linear-gradient(90deg, var(--paper2) 25%, var(--paper3) 50%, var(--paper2) 75%);
+      background-size: 1000px 100%;
+      animation: shimmer 1.8s infinite linear;
+      border-radius: 3px;
+    }
+
+    .skel-card {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      margin-bottom: 6px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 72px;
+    }
+
+    .sk-team {
+      height: 16px;
+      width: 100px;
+    }
+
+    .sk-score {
+      height: 40px;
+      width: 100px;
+      border-radius: 3px;
+    }
+
+    .sk-meta {
+      height: 10px;
+      width: 70px;
+      margin-top: 6px;
+    }
+
+    .sk-lb-row {
+      display: grid;
+      grid-template-columns: 56px 1fr 80px 56px 60px;
+      align-items: center;
+      padding: 14px 24px;
+      gap: 8px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .sk-rank {
+      height: 22px;
+      width: 28px;
+      margin: 0 auto;
+    }
+
+    .sk-name {
+      height: 16px;
+      width: 140px;
+    }
+
+    .sk-pts {
+      height: 22px;
+      width: 44px;
+      margin: 0 auto;
+    }
+
+    .sk-stat {
+      height: 14px;
+      width: 28px;
+      margin: 0 auto;
+    }
+
+    .state-msg {
+      text-align: center;
+      color: var(--ink3);
+      padding: 60px 20px;
+      font-family: "Instrument Serif", serif;
+      font-style: italic;
+      font-size: 1rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(70px);
+      background: var(--ink);
+      color: #fff;
+      border-left: 3px solid #5ddb7c;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 999;
+      white-space: nowrap;
+    }
+
+    .toast.error {
+      border-left-color: var(--red);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .rules-box {
+      margin-top: 12px;
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      padding: 20px 24px 22px;
+    }
+
+    .rules-title {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink3);
+      margin-bottom: 12px;
+    }
+
+    .rules-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 4px;
+    }
+
+    .rules-table thead th {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink4);
+      padding: 0 0 6px;
+      text-align: left;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .rules-table thead th.pts-col {
+      text-align: center;
+      width: 64px;
+    }
+
+    .rules-table tbody td {
+      font-family: Barlow, sans-serif;
+      font-size: 0.88rem;
+      font-weight: 400;
+      color: var(--ink2);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .rules-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .pts-col {
+      text-align: center;
+      width: 64px;
+    }
+
+    .green-pts {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      color: var(--green);
+      font-size: 1rem;
+    }
+
+    .blue-pts {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      color: var(--blue);
+      font-size: 1rem;
+    }
+
+    .grey-pts {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      color: var(--ink4);
+      font-size: 1rem;
+    }
+
+    .rules-divider {
+      height: 1px;
+      background: var(--rule);
+      margin: 14px 0;
+    }
+
+    .rules-sub {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink3);
+      margin-bottom: 8px;
+    }
+
+    .rules-list {
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .rules-list li {
+      font-family: Barlow, sans-serif;
+      font-size: 0.88rem;
+      color: var(--ink2);
+    }
+
+    .rules-list-item {
+      font-family: Barlow, sans-serif;
+      font-size: 0.88rem;
+      color: var(--ink2);
+      line-height: 1.5;
+    }
+
+    .rules-list-item strong {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .match-card.new-card {
+      animation: slideUp 0.38s ease both;
+      will-change: transform;
+    }
+
+    .lb-wrap {
+      animation: slideUp 0.35s ease both;
+    }
+
+    /* ── STATS TAB ── */
+    .stats-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--accent, var(--green));
+    }
+
+    .kpi-card.green {
+      --accent: var(--green);
+    }
+
+    .kpi-card.blue {
+      --accent: var(--blue);
+    }
+
+    .kpi-card.gold {
+      --accent: var(--gold);
+    }
+
+    .kpi-card.purple {
+      --accent: var(--purple);
+    }
+
+    .kpi-label {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink4);
+    }
+
+    .kpi-value {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    .kpi-sub {
+      font-family: Barlow, sans-serif;
+      font-size: 0.75rem;
+      color: var(--ink4);
+      font-weight: 500;
+    }
+
+    .stats-card {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      overflow: hidden;
+      animation: slideUp 0.4s ease both;
+    }
+
+    .stats-card-header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .stats-card-title {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      color: var(--ink);
+      line-height: 1.1;
+    }
+
+    .stats-card-sub {
+      font-family: "Instrument Serif", serif;
+      font-style: italic;
+      font-size: 0.8rem;
+      color: var(--ink4);
+      margin-top: 3px;
+    }
+
+    .stats-card-body {
+      padding: 16px 20px 20px;
+    }
+
+    /* Horizontal bar chart */
+    .hbar-row {
+      display: grid;
+      grid-template-columns: 90px 1fr 50px;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 0;
+    }
+
+    .hbar-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      color: var(--ink2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 0.03em;
+    }
+
+    .hbar-track {
+      height: 18px;
+      background: var(--paper2);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hbar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), #5ddb7c);
+      border-radius: 3px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+    }
+
+    .hbar-fill.blue {
+      background: linear-gradient(90deg, var(--blue), #4a7bc8);
+    }
+
+    .hbar-fill.gold {
+      background: linear-gradient(90deg, var(--gold), #e8c25a);
+    }
+
+    .hbar-fill.purple {
+      background: linear-gradient(90deg, var(--purple), #9b6dc7);
+    }
+
+    .hbar-val {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      text-align: right;
+      color: var(--ink);
+    }
+
+    /* Donut chart */
+    .donut-wrap {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .donut-svg {
+      width: 160px;
+      height: 160px;
+      flex-shrink: 0;
+    }
+
+    .donut-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 160px;
+    }
+
+    .donut-legend-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .donut-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .donut-legend-label {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--ink2);
+      flex: 1;
+    }
+
+    .donut-legend-val {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--ink);
+    }
+
+    .donut-legend-pct {
+      font-family: Barlow, sans-serif;
+      font-size: 0.75rem;
+      color: var(--ink4);
+      font-weight: 500;
+    }
+
+    /* Line chart */
+    .line-chart-svg {
+      width: 100%;
+      height: 240px;
+      display: block;
+    }
+
+    .line-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      padding-top: 12px;
+    }
+
+    .line-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--ink2);
+    }
+
+    .line-legend-dash {
+      width: 16px;
+      height: 3px;
+      border-radius: 2px;
+    }
+
+    /* Stacked bar */
+    .stacked-row {
+      display: grid;
+      grid-template-columns: 90px 1fr 60px;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 0;
+    }
+
+    .stacked-track {
+      height: 18px;
+      background: var(--paper2);
+      border-radius: 3px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .stacked-seg {
+      height: 100%;
+      transition: width 0.6s ease;
+    }
+
+    .stacked-legend {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 12px 0 4px;
+    }
+
+    /* Heatmap */
+    .heatmap-wrap {
+      overflow-x: auto;
+    }
+
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: 28px repeat(6, 1fr);
+      gap: 3px;
+      min-width: 320px;
+    }
+
+    .hm-cell {
+      aspect-ratio: 1.5/1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 2px;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: var(--ink);
+      transition: transform 0.15s;
+      cursor: default;
+    }
+
+    .hm-cell:hover {
+      transform: scale(1.08);
+    }
+
+    .hm-axis {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--ink4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.05em;
+    }
+
+    .hm-axis-label {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink4);
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    /* ── FILTER FAB ── */
+    .filter-fab {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 300;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .filter-fab.hidden {
+      opacity: 0;
+      pointer-events: none !important;
+      visibility: hidden;
+    }
+
+    .filter-fab-btn {
+      pointer-events: all;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--ink);
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      cursor: pointer;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+      overflow: hidden;
+      transition: padding 0.35s ease;
+    }
+
+    .filter-fab-icon {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .filter-fab-icon svg {
+      width: 16px;
+      height: 16px;
+      fill: #5ddb7c;
+    }
+
+    .filter-fab-label {
+      display: inline-block;
+      max-width: 200px;
+      overflow: hidden;
+      opacity: 1;
+      margin-left: 8px;
+      margin-right: 4px;
+      transition: max-width 0.35s ease, opacity 0.2s ease, margin 0.35s ease;
+    }
+
+    .filter-fab-btn.collapsed .filter-fab-label {
+      max-width: 0;
+      opacity: 0;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    .fab-accent {
+      color: #5ddb7c;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+      transition: max-width 0.35s ease, opacity 0.2s ease;
+      max-width: 20px;
+      overflow: hidden;
+    }
+
+    .filter-fab-btn.collapsed .fab-accent {
+      max-width: 0;
+      opacity: 0;
+    }
+
+    .match-card.hidden,
+    .pred-sentence.hidden,
+    .stage-header.hidden {
+      display: none !important;
+    }
+
+    .filter-sheet-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 400;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+      visibility: hidden;
+    }
+
+    .filter-sheet-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+      visibility: visible;
+    }
+
+    .filter-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-radius: 16px 16px 0 0;
+      z-index: 500;
+      transform: translateY(100%);
+      transition: transform 0.28s cubic-bezier(0.34, 1.1, 0.64, 1);
+      padding-bottom: env(safe-area-inset-bottom, 12px);
+    }
+
+    .filter-sheet.open {
+      transform: translateY(0);
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      background: rgba(0, 0, 0, 0.12);
+      border-radius: 2px;
+      margin: 12px auto 16px;
+    }
+
+    .sheet-title {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink4);
+      padding: 0 20px 10px;
+    }
+
+    .sheet-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 20px;
+      border-top: 1px solid var(--rule);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s;
+    }
+
+    .sheet-item:active {
+      background: var(--paper);
+    }
+
+    .sheet-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sheet-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--rule-strong);
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .sheet-dot.active {
+      background: #5ddb7c;
+    }
+
+    .sheet-item-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+    }
+
+    .sheet-item-name.active {
+      color: var(--green);
+    }
+
+    .sheet-check {
+      color: #5ddb7c;
+      font-size: 1rem;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .sheet-check.active {
+      opacity: 1;
+    }
+
+    @keyframes blink-dot {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.2;
+      }
+    }
+
+    @media(max-width: 560px) {
+      .header-top {
+        padding: 0 16px;
+        height: 54px;
+      }
+
+      .logo-main {
+        font-size: 1.2rem;
+      }
+
+      .logo-sub {
+        font-size: 0.85rem;
+      }
+
+      .tab {
+        padding: 11px 14px 9px;
+        font-size: 0.88rem;
+      }
+
+      main {
+        padding: 24px 14px 100px;
+      }
+
+      .team-name {
+        font-size: 0.9rem;
+        max-width: 100%;
+      }
+
+      .team-cell {
+        padding: 12px 12px;
+      }
+
+      .match-row {
+        grid-template-columns: 1fr 106px 1fr;
+      }
+
+      .centre-block {
+        min-width: 0;
+        padding: 10px 6px;
+      }
+
+      .score-display {
+        font-size: 1.6rem;
+      }
+
+      .lb-header-row,
+      .lb-row {
+        grid-template-columns: 44px 1fr 64px 44px 48px;
+        padding: 12px 14px;
+      }
+
+      .lb-pts {
+        font-size: 1.2rem;
+      }
+
+      .lb-name {
+        font-size: 0.9rem;
+      }
+
+      .sk-lb-row {
+        grid-template-columns: 44px 1fr 64px 44px 48px;
+        padding: 12px 14px;
+      }
+
+      .pred-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .pred-item {
+        padding: 10px 10px;
+      }
+
+      .pred-input {
+        width: 36px;
+        height: 36px;
+      }
+
+      .stats-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .kpi-value {
+        font-size: 1.6rem;
+      }
+
+      .hbar-row {
+        grid-template-columns: 70px 1fr 42px;
+        gap: 8px;
+      }
+
+      .hbar-name {
+        font-size: 0.78rem;
+      }
+
+      .stacked-row {
+        grid-template-columns: 70px 1fr 50px;
+        gap: 8px;
+      }
+
+      .donut-wrap {
+        gap: 16px;
+      }
+
+      .donut-svg {
+        width: 130px;
+        height: 130px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <!DOCTYPE html>
-  <html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <link rel="preconnect" href="https://d369cipp2c.execute-api.us-east-1.amazonaws.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700;1,800&family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&display=swap"
-      rel="stylesheet">
-    <link rel="icon" type="image/png" sizes="16x16" href="award-16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="award-32.png">
-    <link rel="icon" type="image/png" sizes="64x64" href="award-64.png">
-    <link rel="icon" type="image/png" sizes="128x128" href="award-128.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="award-256.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="award-128.png">
-    <link rel="manifest" href="site.webmanifest">
-    <meta name="theme-color" content="#ffffff">
-    <title>WC2026 Predictor</title>
-    <style>
-      :root {
-        --paper: #f5f0e8;
-        --paper2: #ede8df;
-        --paper3: #e4ddd1;
-        --ink: #0e0e0e;
-        --ink2: #3a3730;
-        --ink3: #45403a;
-        --ink4: #6e6760;
-        --green: #1a5c2a;
-        --green-light: #e8f0ea;
-        --green-mid: #c2d9c7;
-        --red: #c0392b;
-        --red-light: #fbecea;
-        --gold: #b8860b;
-        --gold-light: #fdf6e3;
-        --blue: #1a3a6b;
-        --blue-light: #e8eef8;
-        --purple: #6b3fa0;
-        --purple-light: #f0eaf7;
-        --rule: rgba(14, 14, 14, 0.12);
-        --rule-strong: rgba(14, 14, 14, 0.25);
-        --radius: 4px;
-      }
-
-      html {
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-rendering: optimizeLegibility;
-        -webkit-text-size-adjust: 100%;
-        text-size-adjust: 100%;
-      }
-
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      body {
-        background: var(--paper);
-        color: var(--ink);
-        font-family: Barlow, sans-serif;
-        font-weight: 400;
-        min-height: 100vh;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior-y: contain;
-      }
-
-      header {
-        background: var(--ink);
-      }
-
-      .header-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 28px;
-        height: 60px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      }
-
-      .logo {
-        display: flex;
-        align-items: baseline;
-        gap: 10px;
-      }
-
-      .logo-main {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 900;
-        font-size: 1.45rem;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: #fff;
-        line-height: 1;
-      }
-
-      .logo-main span {
-        color: #5ddb7c;
-      }
-
-      .logo-sub {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 300;
-        font-size: 0.95rem;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.5);
-        padding-bottom: 2px;
-      }
-
-      .sync-btn {
-        background: transparent;
-        color: rgba(255, 255, 255, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        padding: 7px 16px;
-        border-radius: var(--radius);
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 0.8rem;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        transition: all 0.2s;
-      }
-
-      .sync-btn:hover {
-        border-color: rgba(255, 255, 255, 0.4);
-        color: #fff;
-      }
-
-      .sync-btn:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-      }
-
-      .sync-icon {
-        font-size: 0.85rem;
-        display: inline-block;
-      }
-
-      .sync-btn.spinning .sync-icon {
-        animation: spin 0.7s linear infinite;
-      }
-
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      .tabs-wrapper {
-        background: var(--ink);
-        display: flex;
-        padding: 0 28px;
-        overflow-x: auto;
-      }
-
-      .tabs-wrapper::-webkit-scrollbar {
-        display: none;
-      }
-
-      .sticky-shell {
-        position: sticky;
-        top: 0;
-        z-index: 200;
-        will-change: transform;
-        isolation: isolate;
-      }
-
-      .tab {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 700;
-        font-size: 0.95rem;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.35);
-        padding: 13px 20px 11px;
-        cursor: pointer;
-        border-bottom: 2px solid transparent;
-        transition: all 0.2s;
-        user-select: none;
-        white-space: nowrap;
-      }
-
-      .tab:hover {
-        color: rgba(255, 255, 255, 0.65);
-      }
-
-      .tab.active {
-        color: #5ddb7c;
-        border-bottom-color: #5ddb7c;
-      }
-
-      main {
-        max-width: 780px;
-        margin: 0 auto;
-        padding: 36px 24px 100px;
-      }
-
-      .tab-content {
-        display: none;
-      }
-
-      .tab-content.active {
-        display: block;
-      }
-
-      .stage-header {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        margin: 40px 0 16px;
-      }
-
-      .stage-header:first-child {
-        margin-top: 0;
-      }
-
-      .stage-label {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 800;
-        font-size: 0.88rem;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: var(--ink3);
-        white-space: nowrap;
-      }
-
-      .stage-rule {
-        flex: 1;
-        height: 1px;
-        background: var(--rule);
-      }
-
-      .match-card {
-        background: #fff;
-        border: 1.5px solid var(--rule);
-        border-radius: var(--radius);
-        margin-bottom: 6px;
-        overflow: hidden;
-        cursor: pointer;
-        transition: border-color 0.18s, box-shadow 0.18s;
-        -webkit-tap-highlight-color: transparent;
-        user-select: none;
-      }
-
-      @media(hover:hover) {
-        .match-card:hover {
-          border-color: #5ddb7c;
-          box-shadow: 0 0 0 3px rgba(93, 219, 124, 0.13), 0 4px 20px rgba(0, 0, 0, 0.06);
-        }
-      }
-
-      .match-card.open {
-        border-color: #5ddb7c;
-        box-shadow: 0 0 0 3px rgba(93, 219, 124, 0.13), 0 4px 20px rgba(0, 0, 0, 0.06);
-      }
-
-      .match-row {
-        display: grid;
-        grid-template-columns: 1fr 130px 1fr;
-        align-items: stretch;
-        min-height: 72px;
-      }
-
-      .team-cell {
-        display: flex;
-        align-items: center;
-        padding: 16px 20px;
-        min-width: 0;
-        overflow: hidden;
-      }
-
-      .team-cell.home {
-        justify-content: center;
-        border-right: 1px solid var(--rule);
-      }
-
-      .team-cell.away {
-        justify-content: center;
-        border-left: 1px solid var(--rule);
-      }
-
-      .team-name {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 700;
-        font-size: 1.15rem;
-        letter-spacing: 0.03em;
-        text-transform: uppercase;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
-        line-height: 1.1;
-        color: var(--ink);
-        text-align: center;
-      }
-
-      .centre-block {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 12px 8px;
-        gap: 5px;
-        background: var(--paper);
-        transition: background 0.18s;
-      }
-
-      .match-card.open .centre-block {
-        background: var(--green-light);
-      }
-
-      .score-display {
-        display: flex;
-        align-items: center;
-        gap: 2px;
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 900;
-        font-size: 2rem;
-        letter-spacing: -0.02em;
-        line-height: 1;
-      }
-
-      .score-num {
-        color: var(--ink);
-        min-width: 26px;
-        text-align: center;
-      }
-
-      .score-num.final {
-        color: var(--green);
-      }
-
-      .score-num.pending {
-        color: var(--ink3);
-        font-size: 1.4rem;
-        font-weight: 400;
-      }
-
-      .score-dash {
-        color: var(--ink3);
-        font-weight: 400;
-        font-size: 1.6rem;
-        padding: 0 2px;
-      }
-
-      .match-status {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 2px;
-      }
-
-      .badge {
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 0.75rem;
-        font-weight: 700;
-        padding: 3px 8px;
-        border-radius: 2px;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        white-space: nowrap;
-      }
-
-      .badge.upcoming {
-        background: var(--paper3);
-        color: var(--ink2);
-      }
-
-      .badge.finished {
-        background: var(--green-light);
-        color: var(--green);
-      }
-
-      .badge.live {
-        background: var(--red-light);
-        color: var(--red);
-        animation: blink 1.4s infinite;
-      }
-
-      @keyframes blink {
-
-        0%,
-        100% {
-          opacity: 1;
-        }
-
-        50% {
-          opacity: 0.5;
-        }
-      }
-
-      .match-time {
-        font-family: Barlow, sans-serif;
-        font-size: 0.78rem;
-        font-weight: 500;
-        color: var(--ink3);
-        letter-spacing: 0.03em;
-      }
-
-      .predictions-panel {
-        display: grid;
-        grid-template-rows: 0fr;
-        transition: grid-template-rows 0.22s ease;
-        background: var(--paper);
-        overflow: hidden;
-      }
-
-      .predictions-panel-inner {
-        overflow: hidden;
-        padding: 0 20px;
-        transition: padding 0.22s ease;
-      }
-
-      .match-card.open .predictions-panel {
-        grid-template-rows: 1fr;
-        border-top: 1px solid var(--rule);
-      }
-
-      .match-card.open .predictions-panel-inner {
-        padding: 14px 20px;
-      }
-
-      .pred-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 8px;
-        justify-items: stretch;
-      }
-
-      .pred-item {
-        background: #fff;
-        border: 1px solid var(--rule);
-        border-radius: var(--radius);
-        padding: 12px 14px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        transition: border-color 0.15s;
-      }
-
-      .pred-item:hover {
-        border-color: var(--rule-strong);
-      }
-
-      .pred-name {
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 0.78rem;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: var(--ink2);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .pred-score-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .pred-input {
-        width: 42px;
-        height: 40px;
-        background: var(--paper);
-        border: 1px solid var(--rule-strong);
-        border-radius: var(--radius);
-        color: var(--ink);
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 1.2rem;
-        font-weight: 800;
-        text-align: center;
-        outline: none;
-        transition: border-color 0.15s, background 0.15s;
-        -moz-appearance: textfield;
-      }
-
-      .pred-input::-webkit-outer-spin-button,
-      .pred-input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-      }
-
-      .pred-input:focus {
-        border-color: var(--green);
-        background: var(--green-light);
-      }
-
-      .pred-input:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-        background: transparent;
-        border-color: transparent;
-      }
-
-      .pred-sep {
-        color: var(--ink3);
-        font-weight: 600;
-        font-size: 0.9rem;
-      }
-
-      .points-pill {
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 0.75rem;
-        font-weight: 700;
-        padding: 3px 8px;
-        border-radius: 2px;
-        align-self: flex-start;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .points-pill.p3 {
-        background: var(--green-light);
-        color: var(--green);
-      }
-
-      .points-pill.p1 {
-        background: var(--blue-light);
-        color: var(--blue);
-      }
-
-      .points-pill.p0 {
-        background: var(--red-light);
-        color: var(--red);
-      }
-
-      .points-pill.pnd {
-        background: var(--paper2);
-        color: var(--ink4);
-      }
-
-      .lb-wrap {
-        background: #fff;
-        border: 1px solid var(--rule);
-        border-radius: var(--radius);
-        overflow: hidden;
-      }
-
-      .lb-title-row {
-        padding: 20px 24px 16px;
-        border-bottom: 2px solid var(--ink);
-        display: flex;
-        align-items: baseline;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-
-      .lb-title {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 900;
-        font-size: 1.5rem;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: var(--ink);
-        line-height: 1;
-      }
-
-      .lb-sub {
-        font-family: "Instrument Serif", serif;
-        font-style: italic;
-        font-size: 0.85rem;
-        color: var(--ink4);
-      }
-
-      .lb-header-row {
-        display: grid;
-        grid-template-columns: 56px 1fr 80px 56px 60px;
-        padding: 8px 24px;
-        background: var(--paper2);
-        border-bottom: 1px solid var(--rule);
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--ink3);
-      }
-
-      .lb-header-row div:not(:first-child):not(:nth-child(2)) {
-        text-align: center;
-      }
-
-      .lb-row {
-        display: grid;
-        grid-template-columns: 56px 1fr 80px 56px 60px;
-        align-items: center;
-        padding: 14px 24px;
-        border-bottom: 1px solid var(--rule);
-        transition: background 0.15s;
-      }
-
-      .lb-row:last-child {
-        border-bottom: none;
-      }
-
-      .lb-row:hover {
-        background: var(--paper);
-      }
-
-      .lb-row.top1 {
-        background: var(--gold-light);
-      }
-
-      .lb-row.top1:hover {
-        background: #fdf2d0;
-      }
-
-      .rank-cell {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .rank-num {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 900;
-        font-size: 1.4rem;
-        line-height: 1;
-      }
-
-      .rank-num.r1 {
-        color: var(--gold);
-        font-size: 1.6rem;
-      }
-
-      .rank-num.r2 {
-        color: var(--ink2);
-      }
-
-      .rank-num.r3 {
-        color: #a0522d;
-      }
-
-      .rank-num.rn {
-        color: var(--ink3);
-        font-size: 0.9rem;
-        font-weight: 700;
-      }
-
-      .lb-name-cell {
-        display: flex;
-        flex-direction: column;
-        gap: 1px;
-        min-width: 0;
-      }
-
-      .lb-name {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 700;
-        font-size: 1.05rem;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-        color: var(--ink);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .lb-row.top1 .lb-name {
-        color: var(--gold);
-      }
-
-      .lb-pts {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 900;
-        font-size: 1.5rem;
-        color: var(--green);
-        text-align: center;
-        line-height: 1;
-      }
-
-      .lb-num {
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 1rem;
-        font-weight: 600;
-        text-align: center;
-        color: var(--ink2);
-      }
-
-      @keyframes shimmer {
-        0% {
-          background-position: -1000px 0;
-        }
-
-        100% {
-          background-position: 1000px 0;
-        }
-      }
-
-      .skel {
-        background: linear-gradient(90deg, var(--paper2) 25%, var(--paper3) 50%, var(--paper2) 75%);
-        background-size: 1000px 100%;
-        animation: shimmer 1.8s infinite linear;
-        border-radius: 3px;
-      }
-
-      .skel-card {
-        background: #fff;
-        border: 1px solid var(--rule);
-        border-radius: var(--radius);
-        margin-bottom: 6px;
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        min-height: 72px;
-      }
-
-      .sk-team {
-        height: 16px;
-        width: 100px;
-      }
-
-      .sk-score {
-        height: 40px;
-        width: 100px;
-        border-radius: 3px;
-      }
-
-      .sk-meta {
-        height: 10px;
-        width: 70px;
-        margin-top: 6px;
-      }
-
-      .sk-lb-row {
-        display: grid;
-        grid-template-columns: 56px 1fr 80px 56px 60px;
-        align-items: center;
-        padding: 14px 24px;
-        gap: 8px;
-        border-bottom: 1px solid var(--rule);
-      }
-
-      .sk-rank {
-        height: 22px;
-        width: 28px;
-        margin: 0 auto;
-      }
-
-      .sk-name {
-        height: 16px;
-        width: 140px;
-      }
-
-      .sk-pts {
-        height: 22px;
-        width: 44px;
-        margin: 0 auto;
-      }
-
-      .sk-stat {
-        height: 14px;
-        width: 28px;
-        margin: 0 auto;
-      }
-
-      .state-msg {
-        text-align: center;
-        color: var(--ink3);
-        padding: 60px 20px;
-        font-family: "Instrument Serif", serif;
-        font-style: italic;
-        font-size: 1rem;
-      }
-
-      .toast {
-        position: fixed;
-        bottom: 28px;
-        left: 50%;
-        transform: translateX(-50%) translateY(70px);
-        background: var(--ink);
-        color: #fff;
-        border-left: 3px solid #5ddb7c;
-        padding: 10px 20px;
-        border-radius: var(--radius);
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 0.85rem;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        opacity: 0;
-        transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
-        z-index: 999;
-        white-space: nowrap;
-      }
-
-      .toast.error {
-        border-left-color: var(--red);
-      }
-
-      .toast.show {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-      }
-
-      .rules-box {
-        margin-top: 12px;
-        background: #fff;
-        border: 1px solid var(--rule);
-        border-radius: var(--radius);
-        padding: 20px 24px 22px;
-      }
-
-      .rules-title {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 800;
-        font-size: 0.75rem;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: var(--ink3);
-        margin-bottom: 12px;
-      }
-
-      .rules-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 4px;
-      }
-
-      .rules-table thead th {
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--ink4);
-        padding: 0 0 6px;
-        text-align: left;
-        border-bottom: 1px solid var(--rule);
-      }
-
-      .rules-table thead th.pts-col {
-        text-align: center;
-        width: 64px;
-      }
-
-      .rules-table tbody td {
-        font-family: Barlow, sans-serif;
-        font-size: 0.88rem;
-        font-weight: 400;
-        color: var(--ink2);
-        padding: 8px 0;
-        border-bottom: 1px solid var(--rule);
-      }
-
-      .rules-table tbody tr:last-child td {
-        border-bottom: none;
-      }
-
-      .pts-col {
-        text-align: center;
-        width: 64px;
-      }
-
-      .green-pts {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 800;
-        color: var(--green);
-        font-size: 1rem;
-      }
-
-      .blue-pts {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 800;
-        color: var(--blue);
-        font-size: 1rem;
-      }
-
-      .grey-pts {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 800;
-        color: var(--ink4);
-        font-size: 1rem;
-      }
-
-      .rules-divider {
-        height: 1px;
-        background: var(--rule);
-        margin: 14px 0;
-      }
-
-      .rules-sub {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 700;
-        font-size: 0.75rem;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--ink3);
-        margin-bottom: 8px;
-      }
-
-      .rules-list {
-        padding-left: 18px;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-      }
-
-      .rules-list li {
-        font-family: Barlow, sans-serif;
-        font-size: 0.88rem;
-        color: var(--ink2);
-      }
-
-      .rules-list-item {
-        font-family: Barlow, sans-serif;
-        font-size: 0.88rem;
-        color: var(--ink2);
-        line-height: 1.5;
-      }
-
-      .rules-list-item strong {
-        font-weight: 600;
-        color: var(--ink);
-      }
-
-      @keyframes slideUp {
-        from {
-          opacity: 0;
-          transform: translateY(14px);
-        }
-
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .match-card.new-card {
-        animation: slideUp 0.38s ease both;
-        will-change: transform;
-      }
-
-      .lb-wrap {
-        animation: slideUp 0.35s ease both;
-      }
-
-      /* ── STATS TAB ── */
-      .stats-kpi-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 8px;
-        margin-bottom: 24px;
-      }
-
-      .kpi-card {
-        background: #fff;
-        border: 1px solid var(--rule);
-        border-radius: var(--radius);
-        padding: 16px 14px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .kpi-card::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        background: var(--accent, var(--green));
-      }
-
-      .kpi-card.green {
-        --accent: var(--green);
-      }
-
-      .kpi-card.blue {
-        --accent: var(--blue);
-      }
-
-      .kpi-card.gold {
-        --accent: var(--gold);
-      }
-
-      .kpi-card.purple {
-        --accent: var(--purple);
-      }
-
-      .kpi-label {
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 0.7rem;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--ink4);
-      }
-
-      .kpi-value {
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 2rem;
-        font-weight: 900;
-        line-height: 1;
-        color: var(--ink);
-      }
-
-      .kpi-sub {
-        font-family: Barlow, sans-serif;
-        font-size: 0.75rem;
-        color: var(--ink4);
-        font-weight: 500;
-      }
-
-      .stats-card {
-        background: #fff;
-        border: 1px solid var(--rule);
-        border-radius: var(--radius);
-        margin-bottom: 16px;
-        overflow: hidden;
-        animation: slideUp 0.4s ease both;
-      }
-
-      .stats-card-header {
-        padding: 16px 20px 12px;
-        border-bottom: 1px solid var(--rule);
-      }
-
-      .stats-card-title {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 900;
-        font-size: 1.15rem;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: var(--ink);
-        line-height: 1.1;
-      }
-
-      .stats-card-sub {
-        font-family: "Instrument Serif", serif;
-        font-style: italic;
-        font-size: 0.8rem;
-        color: var(--ink4);
-        margin-top: 3px;
-      }
-
-      .stats-card-body {
-        padding: 16px 20px 20px;
-      }
-
-      /* Horizontal bar chart */
-      .hbar-row {
-        display: grid;
-        grid-template-columns: 90px 1fr 50px;
-        align-items: center;
-        gap: 10px;
-        padding: 5px 0;
-      }
-
-      .hbar-name {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 700;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        color: var(--ink2);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        letter-spacing: 0.03em;
-      }
-
-      .hbar-track {
-        height: 18px;
-        background: var(--paper2);
-        border-radius: 3px;
-        overflow: hidden;
-        position: relative;
-      }
-
-      .hbar-fill {
-        height: 100%;
-        background: linear-gradient(90deg, var(--green), #5ddb7c);
-        border-radius: 3px;
-        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex;
-        align-items: center;
-      }
-
-      .hbar-fill.blue {
-        background: linear-gradient(90deg, var(--blue), #4a7bc8);
-      }
-
-      .hbar-fill.gold {
-        background: linear-gradient(90deg, var(--gold), #e8c25a);
-      }
-
-      .hbar-fill.purple {
-        background: linear-gradient(90deg, var(--purple), #9b6dc7);
-      }
-
-      .hbar-val {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 800;
-        font-size: 0.95rem;
-        text-align: right;
-        color: var(--ink);
-      }
-
-      /* Donut chart */
-      .donut-wrap {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .donut-svg {
-        width: 160px;
-        height: 160px;
-        flex-shrink: 0;
-      }
-
-      .donut-legend {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        min-width: 160px;
-      }
-
-      .donut-legend-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .donut-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 2px;
-        flex-shrink: 0;
-      }
-
-      .donut-legend-label {
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 0.85rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        color: var(--ink2);
-        flex: 1;
-      }
-
-      .donut-legend-val {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 800;
-        font-size: 1rem;
-        color: var(--ink);
-      }
-
-      .donut-legend-pct {
-        font-family: Barlow, sans-serif;
-        font-size: 0.75rem;
-        color: var(--ink4);
-        font-weight: 500;
-      }
-
-      /* Line chart */
-      .line-chart-svg {
-        width: 100%;
-        height: 240px;
-        display: block;
-      }
-
-      .line-legend {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px 14px;
-        padding-top: 12px;
-      }
-
-      .line-legend-item {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 0.78rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        color: var(--ink2);
-      }
-
-      .line-legend-dash {
-        width: 16px;
-        height: 3px;
-        border-radius: 2px;
-      }
-
-      /* Stacked bar */
-      .stacked-row {
-        display: grid;
-        grid-template-columns: 90px 1fr 60px;
-        align-items: center;
-        gap: 10px;
-        padding: 4px 0;
-      }
-
-      .stacked-track {
-        height: 18px;
-        background: var(--paper2);
-        border-radius: 3px;
-        overflow: hidden;
-        display: flex;
-      }
-
-      .stacked-seg {
-        height: 100%;
-        transition: width 0.6s ease;
-      }
-
-      .stacked-legend {
-        display: flex;
-        gap: 14px;
-        flex-wrap: wrap;
-        padding: 12px 0 4px;
-      }
-
-      /* Heatmap */
-      .heatmap-wrap {
-        overflow-x: auto;
-      }
-
-      .heatmap-grid {
-        display: grid;
-        grid-template-columns: 28px repeat(6, 1fr);
-        gap: 3px;
-        min-width: 320px;
-      }
-
-      .hm-cell {
-        aspect-ratio: 1.5/1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 2px;
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 800;
-        font-size: 0.8rem;
-        color: var(--ink);
-        transition: transform 0.15s;
-        cursor: default;
-      }
-
-      .hm-cell:hover {
-        transform: scale(1.08);
-      }
-
-      .hm-axis {
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 0.72rem;
-        font-weight: 700;
-        color: var(--ink4);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        letter-spacing: 0.05em;
-      }
-
-      .hm-axis-label {
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 0.7rem;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--ink4);
-        margin-bottom: 6px;
-        text-align: center;
-      }
-
-      /* ── FILTER FAB ── */
-      .filter-fab {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        z-index: 300;
-        pointer-events: none;
-        transition: opacity 0.2s;
-      }
-
-      .filter-fab.hidden {
-        opacity: 0;
-        pointer-events: none !important;
-        visibility: hidden;
-      }
-
-      .filter-fab-btn {
-        pointer-events: all;
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 700;
-        font-size: 0.85rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        background: var(--ink);
-        color: #fff;
-        border: none;
-        padding: 10px 14px;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        gap: 0;
-        cursor: pointer;
-        white-space: nowrap;
-        -webkit-tap-highlight-color: transparent;
-        overflow: hidden;
-        transition: padding 0.35s ease;
-      }
-
-      .filter-fab-icon {
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .filter-fab-icon svg {
-        width: 16px;
-        height: 16px;
-        fill: #5ddb7c;
-      }
-
-      .filter-fab-label {
-        display: inline-block;
-        max-width: 200px;
-        overflow: hidden;
-        opacity: 1;
-        margin-left: 8px;
-        margin-right: 4px;
-        transition: max-width 0.35s ease, opacity 0.2s ease, margin 0.35s ease;
-      }
-
-      .filter-fab-btn.collapsed .filter-fab-label {
-        max-width: 0;
-        opacity: 0;
-        margin-left: 0;
-        margin-right: 0;
-      }
-
-      .fab-accent {
-        color: #5ddb7c;
-        font-size: 0.75rem;
-        flex-shrink: 0;
-        transition: max-width 0.35s ease, opacity 0.2s ease;
-        max-width: 20px;
-        overflow: hidden;
-      }
-
-      .filter-fab-btn.collapsed .fab-accent {
-        max-width: 0;
-        opacity: 0;
-      }
-
-      .match-card.hidden,
-      .pred-sentence.hidden,
-      .stage-header.hidden {
-        display: none !important;
-      }
-
-      .filter-sheet-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.4);
-        z-index: 400;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.22s ease;
-        visibility: hidden;
-      }
-
-      .filter-sheet-overlay.open {
-        opacity: 1;
-        pointer-events: all;
-        visibility: visible;
-      }
-
-      .filter-sheet {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: #fff;
-        border-radius: 16px 16px 0 0;
-        z-index: 500;
-        transform: translateY(100%);
-        transition: transform 0.28s cubic-bezier(0.34, 1.1, 0.64, 1);
-        padding-bottom: env(safe-area-inset-bottom, 12px);
-      }
-
-      .filter-sheet.open {
-        transform: translateY(0);
-      }
-
-      .sheet-handle {
-        width: 36px;
-        height: 4px;
-        background: rgba(0, 0, 0, 0.12);
-        border-radius: 2px;
-        margin: 12px auto 16px;
-      }
-
-      .sheet-title {
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: var(--ink4);
-        padding: 0 20px 10px;
-      }
-
-      .sheet-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 13px 20px;
-        border-top: 1px solid var(--rule);
-        cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-        transition: background 0.15s;
-      }
-
-      .sheet-item:active {
-        background: var(--paper);
-      }
-
-      .sheet-item-left {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .sheet-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: var(--rule-strong);
-        flex-shrink: 0;
-        transition: background 0.15s;
-      }
-
-      .sheet-dot.active {
-        background: #5ddb7c;
-      }
-
-      .sheet-item-name {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 700;
-        font-size: 0.95rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--ink);
-      }
-
-      .sheet-item-name.active {
-        color: var(--green);
-      }
-
-      .sheet-check {
-        color: #5ddb7c;
-        font-size: 1rem;
-        font-weight: 700;
-        opacity: 0;
-        transition: opacity 0.15s;
-      }
-
-      .sheet-check.active {
-        opacity: 1;
-      }
-
-      @keyframes blink-dot {
-
-        0%,
-        100% {
-          opacity: 1;
-        }
-
-        50% {
-          opacity: 0.2;
-        }
-      }
-
-      @media(max-width: 560px) {
-        .header-top {
-          padding: 0 16px;
-          height: 54px;
-        }
-
-        .logo-main {
-          font-size: 1.2rem;
-        }
-
-        .logo-sub {
-          font-size: 0.85rem;
-        }
-
-        .tab {
-          padding: 11px 14px 9px;
-          font-size: 0.88rem;
-        }
-
-        main {
-          padding: 24px 14px 100px;
-        }
-
-        .team-name {
-          font-size: 0.9rem;
-          max-width: 100%;
-        }
-
-        .team-cell {
-          padding: 12px 12px;
-        }
-
-        .match-row {
-          grid-template-columns: 1fr 106px 1fr;
-        }
-
-        .centre-block {
-          min-width: 0;
-          padding: 10px 6px;
-        }
-
-        .score-display {
-          font-size: 1.6rem;
-        }
-
-        .lb-header-row,
-        .lb-row {
-          grid-template-columns: 44px 1fr 64px 44px 48px;
-          padding: 12px 14px;
-        }
-
-        .lb-pts {
-          font-size: 1.2rem;
-        }
-
-        .lb-name {
-          font-size: 0.9rem;
-        }
-
-        .sk-lb-row {
-          grid-template-columns: 44px 1fr 64px 44px 48px;
-          padding: 12px 14px;
-        }
-
-        .pred-grid {
-          grid-template-columns: 1fr 1fr;
-        }
-
-        .pred-item {
-          padding: 10px 10px;
-        }
-
-        .pred-input {
-          width: 36px;
-          height: 36px;
-        }
-
-        .stats-kpi-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        .kpi-value {
-          font-size: 1.6rem;
-        }
-
-        .hbar-row {
-          grid-template-columns: 70px 1fr 42px;
-          gap: 8px;
-        }
-
-        .hbar-name {
-          font-size: 0.78rem;
-        }
-
-        .stacked-row {
-          grid-template-columns: 70px 1fr 50px;
-          gap: 8px;
-        }
-
-        .donut-wrap {
-          gap: 16px;
-        }
-
-        .donut-svg {
-          width: 130px;
-          height: 130px;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="sticky-shell">
-      <header>
-        <div class="header-top">
-          <div class="logo">
-            <div class="logo-main">WC<span>2026</span></div>
-            <div class="logo-sub">Predictor</div>
-          </div>
-          <button class="sync-btn" id="syncBtn" onclick="syncAll()">
-            <span class="sync-icon">&#x21BB;</span>
-            <span class="btn-label">Refresh Results</span>
-          </button>
+  <div class="sticky-shell">
+    <header>
+      <div class="header-top">
+        <div class="logo">
+          <div class="logo-main">WC<span>2026</span></div>
+          <div class="logo-sub">Predictor</div>
         </div>
-      </header>
-      <div class="tabs-wrapper">
-        <div class="tab active" data-tab="predict" onclick="switchTab('predict',this)">Predict</div>
-        <div class="tab" data-tab="leaderboard" onclick="switchTab('leaderboard',this)">Leaderboard</div>
-        <div class="tab" data-tab="stats" onclick="switchTab('stats',this)">Stats</div>
+        <button class="sync-btn" id="syncBtn" onclick="syncAll()">
+          <span class="sync-icon">&#x21BB;</span>
+          <span class="btn-label">Refresh Results</span>
+        </button>
+      </div>
+    </header>
+    <div class="tabs-wrapper">
+      <div class="tab active" data-tab="predict" onclick="switchTab('predict',this)">Predict</div>
+      <div class="tab" data-tab="leaderboard" onclick="switchTab('leaderboard',this)">Leaderboard</div>
+      <div class="tab" data-tab="stats" onclick="switchTab('stats',this)">Stats</div>
+    </div>
+  </div>
+  <main>
+    <div id="predict" class="tab-content active">
+      <div id="matchList">
+        <div class="state-msg">Loading matches…</div>
       </div>
     </div>
-    <main>
-      <div id="predict" class="tab-content active">
-        <div id="matchList">
-          <div class="state-msg">Loading matches…</div>
-        </div>
+    <div id="leaderboard" class="tab-content">
+      <div id="lbList">
+        <div class="state-msg">Loading leaderboard…</div>
       </div>
-      <div id="leaderboard" class="tab-content">
-        <div id="lbList">
-          <div class="state-msg">Loading leaderboard…</div>
-        </div>
-      </div>
-      <div id="stats" class="tab-content">
-        <div id="statsContent">
-          <div class="state-msg">Loading stats…</div>
-        </div>
-      </div>
-    </main>
-    <div class="toast" id="toast"></div>
-    <div class="filter-fab" id="filterFab">
-      <button class="filter-fab-btn" id="filterFabBtn" onclick="onFabClick()">
-        <span class="filter-fab-icon">
-          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 3h14v1.5l-5 5V14l-4-2V9.5L1 4.5V3z" />
-          </svg>
-        </span>
-        <span class="filter-fab-label" id="fabLabel">All Matches</span>
-        <span class="fab-accent">▾</span>
-      </button>
     </div>
-    <div class="filter-sheet-overlay" id="sheetOverlay" onclick="closeFilterSheet()"></div>
-    <div class="filter-sheet" id="filterSheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-title">Show</div>
-      <div id="sheetItems"></div>
+    <div id="stats" class="tab-content">
+      <div id="statsContent">
+        <div class="state-msg">Loading stats…</div>
+      </div>
     </div>
-    <script>
-      function preloadFlags() {
-        Object.values(TEAM_FLAG).forEach(code => { const img = new Image(); img.src = 'flags/' + code + '.png'; });
-      }
-      const TEAM_FLAG = Object.fromEntries(Object.entries({
-        'United States': 'us', 'Canada': 'ca', 'Mexico': 'mx',
-        'Argentina': 'ar', 'Brazil': 'br', 'Colombia': 'co',
-        'Ecuador': 'ec', 'Paraguay': 'py', 'Uruguay': 'uy',
-        'Austria': 'at', 'Belgium': 'be', 'Bosnia-Herzegovina': 'ba',
-        'Croatia': 'hr', 'Czechia': 'cz', 'England': 'gb-eng',
-        'France': 'fr', 'Germany': 'de', 'Netherlands': 'nl',
-        'Norway': 'no', 'Portugal': 'pt', 'Scotland': 'gb-sct',
-        'Spain': 'es', 'Sweden': 'se', 'Switzerland': 'ch',
-        'Turkey': 'tr', 'Australia': 'au', 'Iran': 'ir',
-        'Japan': 'jp', 'Jordan': 'jo', 'Qatar': 'qa',
-        'Saudi Arabia': 'sa', 'South Korea': 'kr', 'Uzbekistan': 'uz',
-        'Algeria': 'dz', 'Cape Verde Islands': 'cv', 'Egypt': 'eg',
-        'Ghana': 'gh', 'Ivory Coast': 'ci', 'Morocco': 'ma',
-        'Senegal': 'sn', 'South Africa': 'za', 'Tunisia': 'tn',
-        'Curaçao': 'cw', 'Haiti': 'ht', 'Panama': 'pa',
-        'New Zealand': 'nz', 'Congo DR': 'cd', 'Iraq': 'iq',
-      }).map(([k, v]) => [k.toLowerCase(), v]));
-      preloadFlags();
-      function flagHtml(teamName) {
-        if (!teamName) return '';
-        const code = TEAM_FLAG[teamName.trim().toLowerCase()];
-        if (!code) return '';
-        return `<img src="flags/${code}.png" width="24" height="16" style="border-radius:2px;flex-shrink:0;display:block;border:1px solid rgba(0,0,0,0.1);" alt="${teamName}">`;
-      }
+  </main>
+  <div class="toast" id="toast"></div>
+  <div class="filter-fab" id="filterFab">
+    <button class="filter-fab-btn" id="filterFabBtn" onclick="onFabClick()">
+      <span class="filter-fab-icon">
+        <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 3h14v1.5l-5 5V14l-4-2V9.5L1 4.5V3z" />
+        </svg>
+      </span>
+      <span class="filter-fab-label" id="fabLabel">All Matches</span>
+      <span class="fab-accent">▾</span>
+    </button>
+  </div>
+  <div class="filter-sheet-overlay" id="sheetOverlay" onclick="closeFilterSheet()"></div>
+  <div class="filter-sheet" id="filterSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Show</div>
+    <div id="sheetItems"></div>
+  </div>
+  <script>
+    function preloadFlags() {
+      Object.values(TEAM_FLAG).forEach(code => { const img = new Image(); img.src = 'flags/' + code + '.png'; });
+    }
+    const TEAM_FLAG = Object.fromEntries(Object.entries({
+      'United States': 'us', 'Canada': 'ca', 'Mexico': 'mx',
+      'Argentina': 'ar', 'Brazil': 'br', 'Colombia': 'co',
+      'Ecuador': 'ec', 'Paraguay': 'py', 'Uruguay': 'uy',
+      'Austria': 'at', 'Belgium': 'be', 'Bosnia-Herzegovina': 'ba',
+      'Croatia': 'hr', 'Czechia': 'cz', 'England': 'gb-eng',
+      'France': 'fr', 'Germany': 'de', 'Netherlands': 'nl',
+      'Norway': 'no', 'Portugal': 'pt', 'Scotland': 'gb-sct',
+      'Spain': 'es', 'Sweden': 'se', 'Switzerland': 'ch',
+      'Turkey': 'tr', 'Australia': 'au', 'Iran': 'ir',
+      'Japan': 'jp', 'Jordan': 'jo', 'Qatar': 'qa',
+      'Saudi Arabia': 'sa', 'South Korea': 'kr', 'Uzbekistan': 'uz',
+      'Algeria': 'dz', 'Cape Verde Islands': 'cv', 'Egypt': 'eg',
+      'Ghana': 'gh', 'Ivory Coast': 'ci', 'Morocco': 'ma',
+      'Senegal': 'sn', 'South Africa': 'za', 'Tunisia': 'tn',
+      'Curaçao': 'cw', 'Haiti': 'ht', 'Panama': 'pa',
+      'New Zealand': 'nz', 'Congo DR': 'cd', 'Iraq': 'iq',
+    }).map(([k, v]) => [k.toLowerCase(), v]));
+    preloadFlags();
+    function flagHtml(teamName) {
+      if (!teamName) return '';
+      const code = TEAM_FLAG[teamName.trim().toLowerCase()];
+      if (!code) return '';
+      return `<img src="flags/${code}.png" width="24" height="16" style="border-radius:2px;flex-shrink:0;display:block;border:1px solid rgba(0,0,0,0.1);" alt="${teamName}">`;
+    }
 
-      const API = 'https://nowhere-admission-draft-adapters.trycloudflare.com';
-      const STAGE_LABEL = { group: 'Group Stage', r32: 'Round of 32', r16: 'Round of 16', qf: 'Quarter Finals', sf: 'Semi Finals', third: 'Third Place', final: 'Final' };
-      const PLAYER_COLORS = ['#1a5c2a', '#1a3a6b', '#b8860b', '#6b3fa0', '#c0392b', '#2c7a8b', '#a0522d', '#d97706', '#5ddb7c', '#4a7bc8'];
-      const predBuffer = {};
-      const timers = {};
-      let matches = [], users = [];
-      let toastTimer;
-      let lbInitialized = false, statsInitialized = false;
-      let lastLBJson = null;
+    const API = 'https://nowhere-admission-draft-adapters.trycloudflare.com';
+    const STAGE_LABEL = { group: 'Group Stage', r32: 'Round of 32', r16: 'Round of 16', qf: 'Quarter Finals', sf: 'Semi Finals', third: 'Third Place', final: 'Final' };
+    const PLAYER_COLORS = ['#1a5c2a', '#1a3a6b', '#b8860b', '#6b3fa0', '#c0392b', '#2c7a8b', '#a0522d', '#d97706', '#5ddb7c', '#4a7bc8'];
+    const predBuffer = {};
+    const timers = {};
+    let matches = [], users = [];
+    let toastTimer;
+    let lbInitialized = false, statsInitialized = false;
+    let lastLBJson = null;
 
-      let activeFilter = 'all';
-      const FILTER_LABELS = { all: 'All Matches', today: "Today's Matches", group: 'Group Stage Matches', r32: 'Round of 32 Matches', r16: 'Round of 16 Matches', qf: 'Quarter Finals', sf: 'Semi Finals', third: 'Third Place', final: 'Final' };
+    let activeFilter = 'all';
+    const FILTER_LABELS = { all: 'All Matches', today: "Today's Matches", group: 'Group Stage Matches', r32: 'Round of 32 Matches', r16: 'Round of 16 Matches', qf: 'Quarter Finals', sf: 'Semi Finals', third: 'Third Place', final: 'Final' };
 
-      function getTodayWindow() {
-        const now = new Date();
-        const ist = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-        const start = new Date(ist); start.setHours(0, 0, 0, 0);
-        const end = new Date(ist); end.setDate(end.getDate() + 1); end.setHours(23, 59, 59, 999);
-        const offset = now.getTime() - ist.getTime();
-        return { start: new Date(start.getTime() + offset), end: new Date(end.getTime() + offset) };
+    function getTodayWindow() {
+      const now = new Date();
+      const ist = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+      const start = new Date(ist); start.setHours(0, 0, 0, 0);
+      const end = new Date(ist); end.setDate(end.getDate() + 1); end.setHours(23, 59, 59, 999);
+      const offset = now.getTime() - ist.getTime();
+      return { start: new Date(start.getTime() + offset), end: new Date(end.getTime() + offset) };
+    }
+    function matchesFilter(m, filter) {
+      if (filter === 'all') return true;
+      if (filter === 'today') {
+        const { start, end } = getTodayWindow();
+        const kickoff = parseUTC(m.kickoff);
+        if (!kickoff) return false;
+        return kickoff >= start && kickoff <= end;
       }
-      function matchesFilter(m, filter) {
-        if (filter === 'all') return true;
-        if (filter === 'today') {
-          const { start, end } = getTodayWindow();
-          const kickoff = parseUTC(m.kickoff);
-          if (!kickoff) return false;
-          return kickoff >= start && kickoff <= end;
-        }
-        return m.stage === filter;
-      }
-      function getAvailableFilters() {
-        const stages = [...new Set(matches.map(m => m.stage))];
-        return ['all', 'today', ...stages];
-      }
-      function getNearestMatch() {
-        const now = new Date();
-        const upcoming = matches.filter(m => { const k = parseUTC(m.kickoff); return k && k > now && m.status !== 'FINISHED'; });
-        if (!upcoming.length) return null;
-        return upcoming.reduce((a, b) => parseUTC(a.kickoff) < parseUTC(b.kickoff) ? a : b);
-      }
-      function buildSheetItems() {
-        const filters = getAvailableFilters();
-        const container = document.getElementById('sheetItems');
-        if (!container) return;
-        container.innerHTML = filters.map(f => {
-          const isActive = f === activeFilter;
-          return `<div class="sheet-item" onclick="applyFilter('${f}')">
+      return m.stage === filter;
+    }
+    function getAvailableFilters() {
+      const stages = [...new Set(matches.map(m => m.stage))];
+      return ['all', 'today', ...stages];
+    }
+    function getNearestMatch() {
+      const now = new Date();
+      const upcoming = matches.filter(m => { const k = parseUTC(m.kickoff); return k && k > now && m.status !== 'FINISHED'; });
+      if (!upcoming.length) return null;
+      return upcoming.reduce((a, b) => parseUTC(a.kickoff) < parseUTC(b.kickoff) ? a : b);
+    }
+    function buildSheetItems() {
+      const filters = getAvailableFilters();
+      const container = document.getElementById('sheetItems');
+      if (!container) return;
+      container.innerHTML = filters.map(f => {
+        const isActive = f === activeFilter;
+        return `<div class="sheet-item" onclick="applyFilter('${f}')">
           <div class="sheet-item-left">
             <div class="sheet-dot ${isActive ? 'active' : ''}"></div>
             <div class="sheet-item-name ${isActive ? 'active' : ''}">${FILTER_LABELS[f] || f}</div>
           </div>
           <div class="sheet-check ${isActive ? 'active' : ''}">✓</div>
         </div>`;
-        }).join('');
-      }
-      function openFilterSheet() {
-        buildSheetItems();
-        document.getElementById('sheetOverlay').classList.add('open');
-        document.getElementById('filterSheet').classList.add('open');
-      }
-      function closeFilterSheet() {
-        document.getElementById('sheetOverlay').classList.remove('open');
-        document.getElementById('filterSheet').classList.remove('open');
-      }
-      function applyFilter(filter) {
-        activeFilter = filter;
-        closeFilterSheet();
-        const label = document.getElementById('fabLabel');
-        if (label) label.textContent = FILTER_LABELS[filter] || filter;
-        expandFab();
-        const container = document.getElementById('matchList');
-        if (!container) return;
-        if (filter === 'today') {
-          const todayMatches = matches.filter(m => matchesFilter(m, 'today'));
-          let target = null;
-          if (todayMatches.length) {
-            target = container.querySelector(`[data-matchid="${todayMatches[0].match_id}"]`);
-          } else {
-            const nearest = getNearestMatch();
-            if (nearest) target = container.querySelector(`[data-matchid="${nearest.match_id}"]`);
-          }
-          if (target) {
-            const top = target.getBoundingClientRect().top + window.scrollY - 120;
-            window.scrollTo({ top, behavior: 'smooth' });
-          }
-          return;
+      }).join('');
+    }
+    function openFilterSheet() {
+      buildSheetItems();
+      document.getElementById('sheetOverlay').classList.add('open');
+      document.getElementById('filterSheet').classList.add('open');
+    }
+    function closeFilterSheet() {
+      document.getElementById('sheetOverlay').classList.remove('open');
+      document.getElementById('filterSheet').classList.remove('open');
+    }
+    function applyFilter(filter) {
+      activeFilter = filter;
+      closeFilterSheet();
+      const label = document.getElementById('fabLabel');
+      if (label) label.textContent = FILTER_LABELS[filter] || filter;
+      expandFab();
+      const container = document.getElementById('matchList');
+      if (!container) return;
+      if (filter === 'today') {
+        const todayMatches = matches.filter(m => matchesFilter(m, 'today'));
+        let target = null;
+        if (todayMatches.length) {
+          target = container.querySelector(`[data-matchid="${todayMatches[0].match_id}"]`);
+        } else {
+          const nearest = getNearestMatch();
+          if (nearest) target = container.querySelector(`[data-matchid="${nearest.match_id}"]`);
         }
-        const allCards = container.querySelectorAll('.match-card');
-        const allHeaders = container.querySelectorAll('.stage-header');
-        allCards.forEach(card => {
-          card.classList.remove('hidden');
-          const mid = card.dataset.matchid;
-          const sent = container.querySelector(`.pred-sentence[data-matchid="${mid}"]`);
-          if (sent) sent.classList.remove('hidden');
-        });
-        allHeaders.forEach(header => header.classList.remove('hidden'));
-        if (filter !== 'all') {
-          allCards.forEach(card => {
-            const mid = card.dataset.matchid;
-            const m = matches.find(x => String(x.match_id) === String(mid));
-            if (!m) return;
-            const visible = matchesFilter(m, filter);
-            if (!visible) {
-              card.classList.add('hidden');
-              const sent = container.querySelector(`.pred-sentence[data-matchid="${mid}"]`);
-              if (sent) sent.classList.add('hidden');
-            }
-          });
-          allHeaders.forEach(header => {
-            const stage = header.dataset.stage;
-            const anyVisible = [...allCards].some(card => {
-              if (card.classList.contains('hidden')) return false;
-              const mid = card.dataset.matchid;
-              const m = matches.find(x => String(x.match_id) === String(mid));
-              return m && m.stage === stage && matchesFilter(m, filter);
-            });
-            if (!anyVisible) header.classList.add('hidden');
-          });
-        }
-        const firstVisible = container.querySelector('.match-card:not(.hidden)');
-        if (firstVisible) {
-          const top = firstVisible.getBoundingClientRect().top + window.scrollY - 120;
+        if (target) {
+          const top = target.getBoundingClientRect().top + window.scrollY - 120;
           window.scrollTo({ top, behavior: 'smooth' });
         }
+        return;
       }
-      function autoSelectFilter() {
-        const todayMatches = matches.filter(m => matchesFilter(m, 'today'));
-        if (todayMatches.length) applyFilter('today');
-      }
-
-      let fabCollapseTimer = null;
-      let fabExpanded = true;
-      function expandFab() {
-        const btn = document.getElementById('filterFabBtn');
-        if (!btn) return;
-        btn.classList.remove('collapsed');
-        fabExpanded = true;
-        clearTimeout(fabCollapseTimer);
-        fabCollapseTimer = setTimeout(collapseFab, 3500);
-      }
-      function collapseFab() {
-        const btn = document.getElementById('filterFabBtn');
-        if (!btn) return;
-        btn.classList.add('collapsed');
-        fabExpanded = false;
-      }
-      function onFabClick() {
-        if (!fabExpanded) { expandFab(); return; }
-        openFilterSheet();
-      }
-      function setFabVisibility(tabId) {
-        const fab = document.getElementById('filterFab');
-        if (!fab) return;
-        if (tabId === 'predict') fab.classList.remove('hidden');
-        else fab.classList.add('hidden');
-      }
-      window.addEventListener('scroll', () => {
-        const activeTab = document.querySelector('.tab-content.active');
-        if (activeTab && activeTab.id === 'predict') {
-          expandFab();
-          clearTimeout(fabCollapseTimer);
-          fabCollapseTimer = setTimeout(collapseFab, 1500);
-        }
-      }, { passive: true });
-      function initFab() { fabCollapseTimer = setTimeout(collapseFab, 3500); }
-
-      function tickCountdowns() {
-        const now = new Date();
-        document.querySelectorAll('.match-countdown').forEach(el => {
-          const status = el.dataset.status;
-          const kickoff = parseUTC(el.dataset.kickoff);
-          if (!kickoff) { el.innerHTML = ''; return; }
-          if (status === 'FINISHED') { el.innerHTML = ''; return; }
-          const diff = kickoff.getTime() - now.getTime();
-          if (diff <= 0) { el.innerHTML = ''; return; }
-          const totalSec = Math.floor(diff / 1000);
-          const d = Math.floor(totalSec / 86400);
-          const h = Math.floor((totalSec % 86400) / 3600);
-          const m = Math.floor((totalSec % 3600) / 60);
-          const s = totalSec % 60;
-          let label, dotColor;
-          if (diff >= 86400000) { label = d + 'd ' + h + 'h'; dotColor = '#6e6760'; }
-          else if (diff >= 3600000) { label = h + 'h ' + m + 'm'; dotColor = '#b8860b'; }
-          else if (diff >= 60000) { label = m + 'm ' + s + 's'; dotColor = '#c0392b'; }
-          else { label = s + 's'; dotColor = '#c0392b'; }
-          el.innerHTML =
-            '<span style="display:inline-flex;align-items:center;gap:5px;background:var(--paper2);border-radius:20px;padding:2px 8px 2px 6px;">' +
-            '<span style="width:6px;height:6px;border-radius:50%;background:' + dotColor + ';flex-shrink:0;display:inline-block;animation:blink-dot 1.2s infinite;"></span>' +
-            '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.06em;color:' + dotColor + ';">' + label + '</span>' +
-            '</span>';
+      const allCards = container.querySelectorAll('.match-card');
+      const allHeaders = container.querySelectorAll('.stage-header');
+      allCards.forEach(card => {
+        card.classList.remove('hidden');
+        const mid = card.dataset.matchid;
+        const sent = container.querySelector(`.pred-sentence[data-matchid="${mid}"]`);
+        if (sent) sent.classList.remove('hidden');
+      });
+      allHeaders.forEach(header => header.classList.remove('hidden'));
+      if (filter !== 'all') {
+        allCards.forEach(card => {
+          const mid = card.dataset.matchid;
+          const m = matches.find(x => String(x.match_id) === String(mid));
+          if (!m) return;
+          const visible = matchesFilter(m, filter);
+          if (!visible) {
+            card.classList.add('hidden');
+            const sent = container.querySelector(`.pred-sentence[data-matchid="${mid}"]`);
+            if (sent) sent.classList.add('hidden');
+          }
+        });
+        allHeaders.forEach(header => {
+          const stage = header.dataset.stage;
+          const anyVisible = [...allCards].some(card => {
+            if (card.classList.contains('hidden')) return false;
+            const mid = card.dataset.matchid;
+            const m = matches.find(x => String(x.match_id) === String(mid));
+            return m && m.stage === stage && matchesFilter(m, filter);
+          });
+          if (!anyVisible) header.classList.add('hidden');
         });
       }
-      setInterval(tickCountdowns, 1000);
-      tickCountdowns();
-
-      async function boot() {
-        renderSkeleton();
-        try {
-          const [ru, rm] = await Promise.all([
-            fetch(API + '/users').then(r => { if (!r.ok) throw new Error(); return r.json(); }),
-            fetch(API + '/matches').then(r => { if (!r.ok) throw new Error(); return r.json(); })
-          ]);
-          users = ru; matches = rm; sortUsers();
-          buildMatchDOM();
-          autoSelectFilter();
-          initFab();
-        } catch (err) {
-          document.getElementById('matchList').innerHTML = '<div class="state-msg">Could not load data. Check your connection.</div>';
-          showToast('Failed to load data', true);
-        }
+      const firstVisible = container.querySelector('.match-card:not(.hidden)');
+      if (firstVisible) {
+        const top = firstVisible.getBoundingClientRect().top + window.scrollY - 120;
+        window.scrollTo({ top, behavior: 'smooth' });
       }
+    }
+    function autoSelectFilter() {
+      const todayMatches = matches.filter(m => matchesFilter(m, 'today'));
+      if (todayMatches.length) applyFilter('today');
+    }
 
-      function renderSkeleton() {
-        var cards = Array.from({ length: 5 }, function () {
-          return '<div class="skel-card">' +
-            '<div class="skel sk-team"></div>' +
-            '<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div class="skel sk-score"></div><div class="skel sk-meta"></div></div>' +
-            '<div class="skel sk-team"></div>' +
-            '</div>';
-        }).join('');
-        document.getElementById('matchList').innerHTML =
-          '<div class="stage-header"><div class="skel" style="height:12px;width:80px"></div><div class="stage-rule"></div></div>' + cards;
+    let fabCollapseTimer = null;
+    let fabExpanded = true;
+    function expandFab() {
+      const btn = document.getElementById('filterFabBtn');
+      if (!btn) return;
+      btn.classList.remove('collapsed');
+      fabExpanded = true;
+      clearTimeout(fabCollapseTimer);
+      fabCollapseTimer = setTimeout(collapseFab, 3500);
+    }
+    function collapseFab() {
+      const btn = document.getElementById('filterFabBtn');
+      if (!btn) return;
+      btn.classList.add('collapsed');
+      fabExpanded = false;
+    }
+    function onFabClick() {
+      if (!fabExpanded) { expandFab(); return; }
+      openFilterSheet();
+    }
+    function setFabVisibility(tabId) {
+      const fab = document.getElementById('filterFab');
+      if (!fab) return;
+      if (tabId === 'predict') fab.classList.remove('hidden');
+      else fab.classList.add('hidden');
+    }
+    window.addEventListener('scroll', () => {
+      const activeTab = document.querySelector('.tab-content.active');
+      if (activeTab && activeTab.id === 'predict') {
+        expandFab();
+        clearTimeout(fabCollapseTimer);
+        fabCollapseTimer = setTimeout(collapseFab, 1500);
       }
+    }, { passive: true });
+    function initFab() { fabCollapseTimer = setTimeout(collapseFab, 3500); }
 
-      function sortUsers() { users.sort((a, b) => (a.display_name || '').localeCompare(b.display_name || '')); }
-      function parseUTC(str) {
-        if (!str) return null;
-        var s = str;
-        if (s.charAt(s.length - 1) !== 'Z' && s.indexOf('+') === -1 && !/\d\d:\d\d:\d\d-\d\d/.test(s)) s += 'Z';
-        var d = new Date(s);
-        return isNaN(d.getTime()) ? null : d;
-      }
-      function fmtDate(dt) { return dt.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }); }
-      function fmtTime(dt) { return dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }).toUpperCase() + ' IST'; }
-      function escHtml(s) { if (s === undefined || s === null) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-      function getMatchMeta(m) {
-        var finished = m.status === 'FINISHED';
-        var kickoffDt = parseUTC(m.kickoff);
-        var lockTime = kickoffDt ? new Date(kickoffDt.getTime() + 3600000) : null;
-        var locked = finished || (lockTime && new Date() > lockTime);
-        return {
-          finished: finished, kickoffDt: kickoffDt, locked: locked,
-          badgeCls: finished ? 'finished' : 'upcoming',
-          badgeTxt: finished ? 'Full Time' : (kickoffDt ? fmtDate(kickoffDt) : ''),
-          timeStr: kickoffDt ? fmtTime(kickoffDt) : ''
-        };
-      }
+    function tickCountdowns() {
+      const now = new Date();
+      document.querySelectorAll('.match-countdown').forEach(el => {
+        const status = el.dataset.status;
+        const kickoff = parseUTC(el.dataset.kickoff);
+        if (!kickoff) { el.innerHTML = ''; return; }
+        if (status === 'FINISHED') { el.innerHTML = ''; return; }
+        const diff = kickoff.getTime() - now.getTime();
+        if (diff <= 0) { el.innerHTML = ''; return; }
+        const totalSec = Math.floor(diff / 1000);
+        const d = Math.floor(totalSec / 86400);
+        const h = Math.floor((totalSec % 86400) / 3600);
+        const m = Math.floor((totalSec % 3600) / 60);
+        const s = totalSec % 60;
+        let label, dotColor;
+        if (diff >= 86400000) { label = d + 'd ' + h + 'h'; dotColor = '#6e6760'; }
+        else if (diff >= 3600000) { label = h + 'h ' + m + 'm'; dotColor = '#b8860b'; }
+        else if (diff >= 60000) { label = m + 'm ' + s + 's'; dotColor = '#c0392b'; }
+        else { label = s + 's'; dotColor = '#c0392b'; }
+        el.innerHTML =
+          '<span style="display:inline-flex;align-items:center;gap:5px;background:var(--paper2);border-radius:20px;padding:2px 8px 2px 6px;">' +
+          '<span style="width:6px;height:6px;border-radius:50%;background:' + dotColor + ';flex-shrink:0;display:inline-block;animation:blink-dot 1.2s infinite;"></span>' +
+          '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.06em;color:' + dotColor + ';">' + label + '</span>' +
+          '</span>';
+      });
+    }
+    setInterval(tickCountdowns, 1000);
+    tickCountdowns();
 
-      function buildPredItemHTML(u, matchid, pred, finished, locked) {
-        var ph = (pred != null && pred.pred_home !== undefined) ? pred.pred_home : '';
-        var pa = (pred != null && pred.pred_away !== undefined) ? pred.pred_away : '';
-        var pts = pred ? pred.points : null;
-        var pillCls = 'pnd', pillTxt = 'Pending';
-        if (finished) {
-          if (!pred) { pillCls = 'p0'; pillTxt = 'No pick'; }
-          else if (pts === 3) { pillCls = 'p3'; pillTxt = '3 Exact'; }
-          else if (pts === 1) { pillCls = 'p1'; pillTxt = '1 Result'; }
-          else { pillCls = 'p0'; pillTxt = '0 Miss'; }
-        }
-        var dis = locked ? 'disabled' : '';
-        var uid = escHtml(u.user_id);
-        var mid = escHtml(matchid);
-        return '<div class="pred-item" data-userid="' + uid + '">' +
-          '<div class="pred-name">' + escHtml(u.display_name) + '</div>' +
-          '<div class="pred-score-row">' +
-          '<input class="pred-input" type="number" min="0" max="20" placeholder="-" value="' + ph + '" ' + dis +
-          ' data-matchid="' + mid + '" data-userid="' + uid + '" data-side="home"' +
-          ' onclick="event.stopPropagation()" onblur="savePred(this)" data-role="input-home">' +
-          '<span class="pred-sep">:</span>' +
-          '<input class="pred-input" type="number" min="0" max="20" placeholder="-" value="' + pa + '" ' + dis +
-          ' data-matchid="' + mid + '" data-userid="' + uid + '" data-side="away"' +
-          ' onclick="event.stopPropagation()" onblur="savePred(this)" data-role="input-away">' +
-          '</div>' +
-          '<div class="points-pill ' + pillCls + '" data-role="pill">' + pillTxt + '</div>' +
+    async function boot() {
+      renderSkeleton();
+      try {
+        const [ru, rm] = await Promise.all([
+          fetch(API + '/users').then(r => { if (!r.ok) throw new Error(); return r.json(); }),
+          fetch(API + '/matches').then(r => { if (!r.ok) throw new Error(); return r.json(); })
+        ]);
+        users = ru; matches = rm; sortUsers();
+        buildMatchDOM();
+        autoSelectFilter();
+        initFab();
+      } catch (err) {
+        document.getElementById('matchList').innerHTML = '<div class="state-msg">Could not load data. Check your connection.</div>';
+        showToast('Failed to load data', true);
+      }
+    }
+
+    function renderSkeleton() {
+      var cards = Array.from({ length: 5 }, function () {
+        return '<div class="skel-card">' +
+          '<div class="skel sk-team"></div>' +
+          '<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div class="skel sk-score"></div><div class="skel sk-meta"></div></div>' +
+          '<div class="skel sk-team"></div>' +
           '</div>';
+      }).join('');
+      document.getElementById('matchList').innerHTML =
+        '<div class="stage-header"><div class="skel" style="height:12px;width:80px"></div><div class="stage-rule"></div></div>' + cards;
+    }
+
+    function sortUsers() { users.sort((a, b) => (a.display_name || '').localeCompare(b.display_name || '')); }
+    function parseUTC(str) {
+      if (!str) return null;
+      var s = str;
+      if (s.charAt(s.length - 1) !== 'Z' && s.indexOf('+') === -1 && !/\d\d:\d\d:\d\d-\d\d/.test(s)) s += 'Z';
+      var d = new Date(s);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    function fmtDate(dt) { return dt.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }); }
+    function fmtTime(dt) { return dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }).toUpperCase() + ' IST'; }
+    function escHtml(s) { if (s === undefined || s === null) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function getMatchMeta(m) {
+      var finished = m.status === 'FINISHED';
+      var kickoffDt = parseUTC(m.kickoff);
+      var lockTime = kickoffDt ? new Date(kickoffDt.getTime() + 3600000) : null;
+      var locked = finished || (lockTime && new Date() > lockTime);
+      return {
+        finished: finished, kickoffDt: kickoffDt, locked: locked,
+        badgeCls: finished ? 'finished' : 'upcoming',
+        badgeTxt: finished ? 'Full Time' : (kickoffDt ? fmtDate(kickoffDt) : ''),
+        timeStr: kickoffDt ? fmtTime(kickoffDt) : ''
+      };
+    }
+
+    function buildPredItemHTML(u, matchid, pred, finished, locked) {
+      var ph = (pred != null && pred.pred_home !== undefined) ? pred.pred_home : '';
+      var pa = (pred != null && pred.pred_away !== undefined) ? pred.pred_away : '';
+      var pts = pred ? pred.points : null;
+      var pillCls = 'pnd', pillTxt = 'Pending';
+      if (finished) {
+        if (!pred) { pillCls = 'p0'; pillTxt = 'No pick'; }
+        else if (pts === 3) { pillCls = 'p3'; pillTxt = '3 Exact'; }
+        else if (pts === 1) { pillCls = 'p1'; pillTxt = '1 Result'; }
+        else { pillCls = 'p0'; pillTxt = '0 Miss'; }
       }
-      function buildPredSentence(m, users) {
-        var predicted = [];
+      var dis = locked ? 'disabled' : '';
+      var uid = escHtml(u.user_id);
+      var mid = escHtml(matchid);
+      return '<div class="pred-item" data-userid="' + uid + '">' +
+        '<div class="pred-name">' + escHtml(u.display_name) + '</div>' +
+        '<div class="pred-score-row">' +
+        '<input class="pred-input" type="number" min="0" max="20" placeholder="-" value="' + ph + '" ' + dis +
+        ' data-matchid="' + mid + '" data-userid="' + uid + '" data-side="home"' +
+        ' onclick="event.stopPropagation()" onblur="savePred(this)" data-role="input-home">' +
+        '<span class="pred-sep">:</span>' +
+        '<input class="pred-input" type="number" min="0" max="20" placeholder="-" value="' + pa + '" ' + dis +
+        ' data-matchid="' + mid + '" data-userid="' + uid + '" data-side="away"' +
+        ' onclick="event.stopPropagation()" onblur="savePred(this)" data-role="input-away">' +
+        '</div>' +
+        '<div class="points-pill ' + pillCls + '" data-role="pill">' + pillTxt + '</div>' +
+        '</div>';
+    }
+    function buildPredSentence(m, users) {
+      var predicted = [];
+      users.forEach(function (u) {
+        var pred = m.predictions ? m.predictions[u.user_id] : null;
+        if (pred && pred.pred_home !== undefined && pred.pred_away !== undefined) {
+          predicted.push((u.display_name || '').split(' ')[0]);
+        }
+      });
+      if (!predicted.length) return '<span style="color:var(--ink4)">No predictions yet</span>';
+      var predStr = predicted.length > 3
+        ? predicted.slice(0, 2).join(', ') + ' &amp; ' + (predicted.length - 2) + ' others'
+        : predicted.join(', ');
+      return '<span style="font-weight:800;color:var(--green)">' + predStr + '</span> predicted';
+    }
+    function alignLastPredRow(grid) {
+      const items = grid.querySelectorAll('.pred-item');
+      if (!items.length) return;
+      const firstTop = items[0].getBoundingClientRect().top;
+      let cols = 0;
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].getBoundingClientRect().top !== firstTop) break;
+        cols++;
+      }
+      if (cols < 1) cols = 1;
+      const remainder = items.length % cols;
+      if (remainder === 0) return;
+      items.forEach(el => el.style.gridColumnStart = '');
+      const offset = Math.floor((cols - remainder) / 2) + 1;
+      for (let i = items.length - remainder; i < items.length; i++) {
+        items[i].style.gridColumnStart = offset + (i - (items.length - remainder));
+      }
+    }
+    window.addEventListener('resize', () => { document.querySelectorAll('.pred-grid').forEach(alignLastPredRow); });
+
+    function buildCardHTML(m) {
+      var meta = getMatchMeta(m);
+      var homeTeam = m.team_home || 'TBD';
+      var awayTeam = m.team_away || 'TBD';
+      var sh = meta.finished
+        ? '<span class="score-num final" data-role="sh">' + (m.score_home !== undefined && m.score_home !== null ? m.score_home : '') + '</span>'
+        : '<span class="score-num pending" data-role="sh">–</span>';
+      var sa = meta.finished
+        ? '<span class="score-num final" data-role="sa">' + (m.score_away !== undefined && m.score_away !== null ? m.score_away : '') + '</span>'
+        : '<span class="score-num pending" data-role="sa">–</span>';
+      var predsHtml = '';
+      if (users.length) {
+        predsHtml = '<div class="pred-grid">';
         users.forEach(function (u) {
           var pred = m.predictions ? m.predictions[u.user_id] : null;
-          if (pred && pred.pred_home !== undefined && pred.pred_away !== undefined) {
-            predicted.push((u.display_name || '').split(' ')[0]);
-          }
+          predsHtml += buildPredItemHTML(u, m.match_id, pred, meta.finished, meta.locked);
         });
-        if (!predicted.length) return '<span style="color:var(--ink4)">No predictions yet</span>';
-        var predStr = predicted.length > 3
-          ? predicted.slice(0, 2).join(', ') + ' &amp; ' + (predicted.length - 2) + ' others'
-          : predicted.join(', ');
-        return '<span style="font-weight:800;color:var(--green)">' + predStr + '</span> predicted';
+        predsHtml += '</div>';
+      } else {
+        predsHtml = '<div style="color:var(--ink4);font-family:Instrument Serif,serif;font-style:italic;font-size:0.9rem">No players added yet.</div>';
       }
-      function alignLastPredRow(grid) {
-        const items = grid.querySelectorAll('.pred-item');
-        if (!items.length) return;
-        const firstTop = items[0].getBoundingClientRect().top;
-        let cols = 0;
-        for (let i = 0; i < items.length; i++) {
-          if (items[i].getBoundingClientRect().top !== firstTop) break;
-          cols++;
-        }
-        if (cols < 1) cols = 1;
-        const remainder = items.length % cols;
-        if (remainder === 0) return;
-        items.forEach(el => el.style.gridColumnStart = '');
-        const offset = Math.floor((cols - remainder) / 2) + 1;
-        for (let i = items.length - remainder; i < items.length; i++) {
-          items[i].style.gridColumnStart = offset + (i - (items.length - remainder));
-        }
-      }
-      window.addEventListener('resize', () => { document.querySelectorAll('.pred-grid').forEach(alignLastPredRow); });
+      return '<div class="match-card new-card" data-matchid="' + escHtml(m.match_id) + '" onclick="toggleCard(this)">' +
+        '<div class="match-row">' +
+        '<div class="team-cell home"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(homeTeam) + '<span class="team-name">' + escHtml(homeTeam) + '</span></div></div>' +
+        '<div class="centre-block">' +
+        '<div class="score-display">' + sh + '<span class="score-dash">·</span>' + sa + '</div>' +
+        '<div class="match-status">' +
+        '<div class="badge ' + meta.badgeCls + '" data-role="badge">' + meta.badgeTxt + '</div>' +
+        '<div class="match-time" data-role="time">' + meta.timeStr + '</div>' +
+        '</div></div>' +
+        '<div class="team-cell away"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(awayTeam) + '<span class="team-name">' + escHtml(awayTeam) + '</span></div></div>' +
+        '</div>' +
+        '<div class="predictions-panel"><div class="predictions-panel-inner">' + predsHtml + '</div></div>' +
+        '<div class="pred-sentence" data-matchid="' + escHtml(m.match_id) + '" style="padding:7px 16px 8px;border-top:1px solid var(--rule);background:var(--paper);font-family:\'Barlow Condensed\',sans-serif;font-size:0.82rem;letter-spacing:0.01em;color:var(--ink4);display:flex;align-items:center;gap:8px;overflow:hidden;">' +
+        '<span class="pred-sentence-txt" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + buildPredSentence(m, users) + '</span>' +
+        '<span class="match-countdown" data-kickoff="' + escHtml(m.kickoff || '') + '" data-status="' + escHtml(m.status || '') + '" style="flex-shrink:0;white-space:nowrap;margin-left:auto;"></span>' +
+        '</div>' +
+        '</div>';
+    }
 
-      function buildCardHTML(m) {
-        var meta = getMatchMeta(m);
-        var homeTeam = m.team_home || 'TBD';
-        var awayTeam = m.team_away || 'TBD';
-        var sh = meta.finished
-          ? '<span class="score-num final" data-role="sh">' + (m.score_home !== undefined && m.score_home !== null ? m.score_home : '') + '</span>'
-          : '<span class="score-num pending" data-role="sh">–</span>';
-        var sa = meta.finished
-          ? '<span class="score-num final" data-role="sa">' + (m.score_away !== undefined && m.score_away !== null ? m.score_away : '') + '</span>'
-          : '<span class="score-num pending" data-role="sa">–</span>';
-        var predsHtml = '';
-        if (users.length) {
-          predsHtml = '<div class="pred-grid">';
-          users.forEach(function (u) {
-            var pred = m.predictions ? m.predictions[u.user_id] : null;
-            predsHtml += buildPredItemHTML(u, m.match_id, pred, meta.finished, meta.locked);
-          });
-          predsHtml += '</div>';
-        } else {
-          predsHtml = '<div style="color:var(--ink4);font-family:Instrument Serif,serif;font-style:italic;font-size:0.9rem">No players added yet.</div>';
+    function buildMatchDOM() {
+      var container = document.getElementById('matchList');
+      if (!matches.length) { container.innerHTML = '<div class="state-msg">No matches yet.</div>'; return; }
+      var html = '', lastStage = null;
+      matches.forEach(function (m) {
+        if (m.stage !== lastStage) {
+          html += '<div class="stage-header" data-stage="' + escHtml(m.stage) + '">' +
+            '<div class="stage-label">' + (STAGE_LABEL[m.stage] || m.stage) + '</div>' +
+            '<div class="stage-rule"></div></div>';
+          lastStage = m.stage;
         }
-        return '<div class="match-card new-card" data-matchid="' + escHtml(m.match_id) + '" onclick="toggleCard(this)">' +
-          '<div class="match-row">' +
-          '<div class="team-cell home"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(homeTeam) + '<span class="team-name">' + escHtml(homeTeam) + '</span></div></div>' +
-          '<div class="centre-block">' +
-          '<div class="score-display">' + sh + '<span class="score-dash">·</span>' + sa + '</div>' +
-          '<div class="match-status">' +
-          '<div class="badge ' + meta.badgeCls + '" data-role="badge">' + meta.badgeTxt + '</div>' +
-          '<div class="match-time" data-role="time">' + meta.timeStr + '</div>' +
-          '</div></div>' +
-          '<div class="team-cell away"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(awayTeam) + '<span class="team-name">' + escHtml(awayTeam) + '</span></div></div>' +
-          '</div>' +
-          '<div class="predictions-panel"><div class="predictions-panel-inner">' + predsHtml + '</div></div>' +
-          '<div class="pred-sentence" data-matchid="' + escHtml(m.match_id) + '" style="padding:7px 16px 8px;border-top:1px solid var(--rule);background:var(--paper);font-family:\'Barlow Condensed\',sans-serif;font-size:0.82rem;letter-spacing:0.01em;color:var(--ink4);display:flex;align-items:center;gap:8px;overflow:hidden;">' +
-          '<span class="pred-sentence-txt" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + buildPredSentence(m, users) + '</span>' +
-          '<span class="match-countdown" data-kickoff="' + escHtml(m.kickoff || '') + '" data-status="' + escHtml(m.status || '') + '" style="flex-shrink:0;white-space:nowrap;margin-left:auto;"></span>' +
-          '</div>' +
-          '</div>';
-      }
+        html += buildCardHTML(m);
+      });
+      container.innerHTML = html;
+      requestAnimationFrame(() => { container.querySelectorAll('.pred-grid').forEach(alignLastPredRow); });
+    }
 
-      function buildMatchDOM() {
-        var container = document.getElementById('matchList');
-        if (!matches.length) { container.innerHTML = '<div class="state-msg">No matches yet.</div>'; return; }
-        var html = '', lastStage = null;
-        matches.forEach(function (m) {
-          if (m.stage !== lastStage) {
-            html += '<div class="stage-header" data-stage="' + escHtml(m.stage) + '">' +
-              '<div class="stage-label">' + (STAGE_LABEL[m.stage] || m.stage) + '</div>' +
-              '<div class="stage-rule"></div></div>';
-            lastStage = m.stage;
-          }
-          html += buildCardHTML(m);
-        });
-        container.innerHTML = html;
-        requestAnimationFrame(() => { container.querySelectorAll('.pred-grid').forEach(alignLastPredRow); });
-      }
-
-      function patchMatchDOM(oldMatches, newMatches, newUsers) {
-        const container = document.getElementById('matchList');
-        if (!container) return;
-        const activeEl = document.activeElement;
-        newMatches.forEach(function (nm) {
-          const card = container.querySelector('[data-matchid="' + nm.match_id + '"]');
-          if (!card) return;
-          const meta = getMatchMeta(nm);
-          const homeCell = card.querySelector('.team-cell.home');
-          const awayCell = card.querySelector('.team-cell.away');
-          if (homeCell) {
-            const img = homeCell.querySelector('img');
-            const hn = homeCell.querySelector('.team-name');
-            if (img) { const code = TEAM_FLAG[(nm.team_home || '').toLowerCase()]; if (code) img.src = 'flags/' + code + '.png'; }
-            if (hn) hn.textContent = nm.team_home || 'TBD';
-          }
-          if (awayCell) {
-            const img = awayCell.querySelector('img');
-            const an = awayCell.querySelector('.team-name');
-            if (img) { const code = TEAM_FLAG[(nm.team_away || '').toLowerCase()]; if (code) img.src = 'flags/' + code + '.png'; }
-            if (an) an.textContent = nm.team_away || 'TBD';
-          }
-          const sh = card.querySelector('[data-role="sh"]');
-          const sa = card.querySelector('[data-role="sa"]');
-          if (sh && meta.finished) { sh.className = 'score-num final'; sh.textContent = (nm.score_home !== undefined && nm.score_home !== null ? nm.score_home : ''); }
-          if (sa && meta.finished) { sa.className = 'score-num final'; sa.textContent = (nm.score_away !== undefined && nm.score_away !== null ? nm.score_away : ''); }
-          const badge = card.querySelector('[data-role="badge"]');
-          if (badge) { badge.className = 'badge ' + meta.badgeCls; badge.textContent = meta.badgeTxt; }
-          const timeEl = card.querySelector('[data-role="time"]');
-          if (timeEl) timeEl.textContent = meta.timeStr;
-          const sentenceEl = container.querySelector('.pred-sentence[data-matchid="' + nm.match_id + '"]');
-          if (sentenceEl) {
-            const sentTxt = sentenceEl.querySelector('.pred-sentence-txt');
-            if (sentTxt) sentTxt.innerHTML = buildPredSentence(nm, newUsers);
-          }
-          const cd = card.querySelector('.match-countdown');
-          if (cd) cd.dataset.status = nm.status || '';
-          newUsers.forEach(function (u) {
-            const pred = nm.predictions ? nm.predictions[u.user_id] : null;
-            const predItem = card.querySelector('.pred-item[data-userid="' + u.user_id + '"]');
-            if (!predItem) return;
-            const pill = predItem.querySelector('[data-role="pill"]');
-            if (pill) {
-              let cls = 'pnd', txt = 'Pending';
-              if (meta.finished) {
-                if (!pred) { cls = 'p0'; txt = 'No pick'; }
-                else if (pred.points === 3) { cls = 'p3'; txt = '3 Exact'; }
-                else if (pred.points === 1) { cls = 'p1'; txt = '1 Result'; }
-                else { cls = 'p0'; txt = '0 Miss'; }
-              }
-              pill.className = 'points-pill ' + cls;
-              pill.textContent = txt;
+    function patchMatchDOM(oldMatches, newMatches, newUsers) {
+      const container = document.getElementById('matchList');
+      if (!container) return;
+      const activeEl = document.activeElement;
+      newMatches.forEach(function (nm) {
+        const card = container.querySelector('[data-matchid="' + nm.match_id + '"]');
+        if (!card) return;
+        const meta = getMatchMeta(nm);
+        const homeCell = card.querySelector('.team-cell.home');
+        const awayCell = card.querySelector('.team-cell.away');
+        if (homeCell) {
+          const img = homeCell.querySelector('img');
+          const hn = homeCell.querySelector('.team-name');
+          if (img) { const code = TEAM_FLAG[(nm.team_home || '').toLowerCase()]; if (code) img.src = 'flags/' + code + '.png'; }
+          if (hn) hn.textContent = nm.team_home || 'TBD';
+        }
+        if (awayCell) {
+          const img = awayCell.querySelector('img');
+          const an = awayCell.querySelector('.team-name');
+          if (img) { const code = TEAM_FLAG[(nm.team_away || '').toLowerCase()]; if (code) img.src = 'flags/' + code + '.png'; }
+          if (an) an.textContent = nm.team_away || 'TBD';
+        }
+        const sh = card.querySelector('[data-role="sh"]');
+        const sa = card.querySelector('[data-role="sa"]');
+        if (sh && meta.finished) { sh.className = 'score-num final'; sh.textContent = (nm.score_home !== undefined && nm.score_home !== null ? nm.score_home : ''); }
+        if (sa && meta.finished) { sa.className = 'score-num final'; sa.textContent = (nm.score_away !== undefined && nm.score_away !== null ? nm.score_away : ''); }
+        const badge = card.querySelector('[data-role="badge"]');
+        if (badge) { badge.className = 'badge ' + meta.badgeCls; badge.textContent = meta.badgeTxt; }
+        const timeEl = card.querySelector('[data-role="time"]');
+        if (timeEl) timeEl.textContent = meta.timeStr;
+        const sentenceEl = container.querySelector('.pred-sentence[data-matchid="' + nm.match_id + '"]');
+        if (sentenceEl) {
+          const sentTxt = sentenceEl.querySelector('.pred-sentence-txt');
+          if (sentTxt) sentTxt.innerHTML = buildPredSentence(nm, newUsers);
+        }
+        const cd = card.querySelector('.match-countdown');
+        if (cd) cd.dataset.status = nm.status || '';
+        newUsers.forEach(function (u) {
+          const pred = nm.predictions ? nm.predictions[u.user_id] : null;
+          const predItem = card.querySelector('.pred-item[data-userid="' + u.user_id + '"]');
+          if (!predItem) return;
+          const pill = predItem.querySelector('[data-role="pill"]');
+          if (pill) {
+            let cls = 'pnd', txt = 'Pending';
+            if (meta.finished) {
+              if (!pred) { cls = 'p0'; txt = 'No pick'; }
+              else if (pred.points === 3) { cls = 'p3'; txt = '3 Exact'; }
+              else if (pred.points === 1) { cls = 'p1'; txt = '1 Result'; }
+              else { cls = 'p0'; txt = '0 Miss'; }
             }
-            const inHome = predItem.querySelector('[data-role="input-home"]');
-            const inAway = predItem.querySelector('[data-role="input-away"]');
-            if (inHome && inHome !== activeEl && pred && pred.pred_home !== undefined) inHome.value = pred.pred_home;
-            if (inAway && inAway !== activeEl && pred && pred.pred_away !== undefined) inAway.value = pred.pred_away;
-            if (inHome) inHome.disabled = meta.locked;
-            if (inAway) inAway.disabled = meta.locked;
-          });
+            pill.className = 'points-pill ' + cls;
+            pill.textContent = txt;
+          }
+          const inHome = predItem.querySelector('[data-role="input-home"]');
+          const inAway = predItem.querySelector('[data-role="input-away"]');
+          if (inHome && inHome !== activeEl && pred && pred.pred_home !== undefined) inHome.value = pred.pred_home;
+          if (inAway && inAway !== activeEl && pred && pred.pred_away !== undefined) inAway.value = pred.pred_away;
+          if (inHome) inHome.disabled = meta.locked;
+          if (inAway) inAway.disabled = meta.locked;
         });
-        requestAnimationFrame(() => { document.querySelectorAll('.pred-grid').forEach(alignLastPredRow); });
-      }
-      function toggleCard(card) { card.classList.toggle('open'); }
+      });
+      requestAnimationFrame(() => { document.querySelectorAll('.pred-grid').forEach(alignLastPredRow); });
+    }
+    function toggleCard(card) { card.classList.toggle('open'); }
 
-      function switchTab(id, el) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        el.classList.add('active');
-        setFabVisibility(id);
-        if (id === 'leaderboard') renderLeaderboard();
-        if (id === 'stats') renderStats();
-      }
+    function switchTab(id, el) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      el.classList.add('active');
+      setFabVisibility(id);
+      if (id === 'leaderboard') renderLeaderboard();
+      if (id === 'stats') renderStats();
+    }
 
-      function renderLBData(data) {
-        if (!data.length) { document.getElementById('lbList').innerHTML = '<div class="state-msg">No players yet.</div>'; return; }
-        data.sort((a, b) => {
-          if (b.total_points !== a.total_points) return b.total_points - a.total_points;
-          if ((b.exact || 0) !== (a.exact || 0)) return (b.exact || 0) - (a.exact || 0);
-          return (a.display_name || '').localeCompare(b.display_name || '');
-        });
-        const medals = ['&#x1F947;', '&#x1F948;', '&#x1F949;'];
-        let html = '<div class="lb-wrap">' +
-          '<div class="lb-title-row"><div class="lb-title">Standings</div>' +
-          '<div class="lb-sub">' + data.length + ' player' + (data.length !== 1 ? 's' : '') + ' competing since 2018</div></div>' +
-          '<div class="lb-header-row"><div></div><div>Player</div><div>Pts</div><div>Exact</div><div>Result</div></div>';
-        data.forEach((u, i) => {
-          const rowcls = i === 0 ? 'top1' : '';
-          const rcls = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'rn';
-          const rankDisplay = i < 3 ? medals[i] : (i + 1);
-          html += '<div class="lb-row ' + rowcls + '">' +
-            '<div class="rank-cell"><span class="rank-num ' + rcls + '">' + rankDisplay + '</span></div>' +
-            '<div class="lb-name-cell"><div class="lb-name">' + escHtml(u.display_name) + '</div></div>' +
-            '<div class="lb-pts">' + (u.total_points || 0) + '</div>' +
-            '<div class="lb-num">' + (u.exact || 0) + '</div>' +
-            '<div class="lb-num">' + (u.correct || 0) + '</div>' +
-            '</div>';
-        });
-        html += '</div>' +
-          '<div class="rules-box">' +
-          '<div class="rules-title">How It Works</div>' +
-          '<table class="rules-table"><thead><tr><th>Event</th><th class="pts-col">Points</th></tr></thead>' +
-          '<tbody>' +
-          '<tr><td>Exact score</td><td class="pts-col"><span class="green-pts">3</span></td></tr>' +
-          '<tr><td>Correct result (win/draw/loss)</td><td class="pts-col"><span class="blue-pts">1</span></td></tr>' +
-          '<tr><td>Wrong prediction</td><td class="pts-col"><span class="grey-pts">0</span></td></tr>' +
-          '</tbody></table>' +
-          '<div class="rules-divider"></div>' +
-          '<div class="rules-sub">Tiebreakers in order</div>' +
-          '<ol class="rules-list"><li>More exact scores (3-pt calls)</li><li>Alphabetical order of name</li></ol>' +
-          '<div class="rules-divider"></div>' +
-          '<div class="rules-list-item">Predictions lock <strong>60 minutes</strong> after kickoff — submit early!</div>' +
+    function renderLBData(data) {
+      if (!data.length) { document.getElementById('lbList').innerHTML = '<div class="state-msg">No players yet.</div>'; return; }
+      data.sort((a, b) => {
+        if (b.total_points !== a.total_points) return b.total_points - a.total_points;
+        if ((b.exact || 0) !== (a.exact || 0)) return (b.exact || 0) - (a.exact || 0);
+        return (a.display_name || '').localeCompare(b.display_name || '');
+      });
+      const medals = ['&#x1F947;', '&#x1F948;', '&#x1F949;'];
+      let html = '<div class="lb-wrap">' +
+        '<div class="lb-title-row"><div class="lb-title">Standings</div>' +
+        '<div class="lb-sub">' + data.length + ' player' + (data.length !== 1 ? 's' : '') + ' competing since 2018</div></div>' +
+        '<div class="lb-header-row"><div></div><div>Player</div><div>Pts</div><div>Exact</div><div>Result</div></div>';
+      data.forEach((u, i) => {
+        const rowcls = i === 0 ? 'top1' : '';
+        const rcls = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'rn';
+        const rankDisplay = i < 3 ? medals[i] : (i + 1);
+        html += '<div class="lb-row ' + rowcls + '">' +
+          '<div class="rank-cell"><span class="rank-num ' + rcls + '">' + rankDisplay + '</span></div>' +
+          '<div class="lb-name-cell"><div class="lb-name">' + escHtml(u.display_name) + '</div></div>' +
+          '<div class="lb-pts">' + (u.total_points || 0) + '</div>' +
+          '<div class="lb-num">' + (u.exact || 0) + '</div>' +
+          '<div class="lb-num">' + (u.correct || 0) + '</div>' +
           '</div>';
-        document.getElementById('lbList').innerHTML = html;
-      }
-      function renderLeaderboard() {
-        if (lbInitialized) return;
-        lbInitialized = true;
-        renderLBSkeleton();
-        fetch(API + '/leaderboard')
-          .then(res => res.json())
-          .then(data => {
-            if (!Array.isArray(data)) return;
-            lastLBJson = JSON.stringify(data);
-            renderLBData(data);
-          })
-          .catch(() => {
-            document.getElementById('lbList').innerHTML = '<div class="state-msg">Could not load leaderboard.</div>';
-            lbInitialized = false;
-          });
-      }
-      function renderLBSkeleton() {
-        var rows = Array.from({ length: 7 }, () =>
-          '<div class="sk-lb-row"><div class="skel sk-rank"></div><div class="skel sk-name"></div><div class="skel sk-pts"></div><div class="skel sk-stat"></div><div class="skel sk-stat"></div></div>'
-        ).join('');
-        document.getElementById('lbList').innerHTML =
-          '<div class="lb-wrap"><div class="lb-title-row"><div class="lb-title">Standings</div></div>' +
-          '<div class="lb-header-row"><div></div><div>Player</div><div>Pts</div><div>Exact</div><div>Result</div></div>' +
-          rows + '</div>';
-      }
+      });
+      html += '</div>' +
+        '<div class="rules-box">' +
+        '<div class="rules-title">How It Works</div>' +
+        '<table class="rules-table"><thead><tr><th>Event</th><th class="pts-col">Points</th></tr></thead>' +
+        '<tbody>' +
+        '<tr><td>Exact score</td><td class="pts-col"><span class="green-pts">3</span></td></tr>' +
+        '<tr><td>Correct result (win/draw/loss)</td><td class="pts-col"><span class="blue-pts">1</span></td></tr>' +
+        '<tr><td>Wrong prediction</td><td class="pts-col"><span class="grey-pts">0</span></td></tr>' +
+        '</tbody></table>' +
+        '<div class="rules-divider"></div>' +
+        '<div class="rules-sub">Tiebreakers in order</div>' +
+        '<ol class="rules-list"><li>More exact scores (3-pt calls)</li><li>Alphabetical order of name</li></ol>' +
+        '<div class="rules-divider"></div>' +
+        '<div class="rules-list-item">Predictions lock <strong>60 minutes</strong> after kickoff — submit early!</div>' +
+        '</div>';
+      document.getElementById('lbList').innerHTML = html;
+    }
+    function renderLeaderboard() {
+      if (lbInitialized) return;
+      lbInitialized = true;
+      renderLBSkeleton();
+      fetch(API + '/leaderboard')
+        .then(res => res.json())
+        .then(data => {
+          if (!Array.isArray(data)) return;
+          lastLBJson = JSON.stringify(data);
+          renderLBData(data);
+        })
+        .catch(() => {
+          document.getElementById('lbList').innerHTML = '<div class="state-msg">Could not load leaderboard.</div>';
+          lbInitialized = false;
+        });
+    }
+    function renderLBSkeleton() {
+      var rows = Array.from({ length: 7 }, () =>
+        '<div class="sk-lb-row"><div class="skel sk-rank"></div><div class="skel sk-name"></div><div class="skel sk-pts"></div><div class="skel sk-stat"></div><div class="skel sk-stat"></div></div>'
+      ).join('');
+      document.getElementById('lbList').innerHTML =
+        '<div class="lb-wrap"><div class="lb-title-row"><div class="lb-title">Standings</div></div>' +
+        '<div class="lb-header-row"><div></div><div>Player</div><div>Pts</div><div>Exact</div><div>Result</div></div>' +
+        rows + '</div>';
+    }
 
-      // ── STATS TAB ───────────────────────────────────────────────────────────
-      function computeStats() {
-        const finishedMatches = matches.filter(m => m.status === 'FINISHED');
-        const totalMatches = matches.length;
-        let totalPredictions = 0;
-        let exactCount = 0, resultCount = 0, missCount = 0, noPickCount = 0;
-        let totalPredHomeGoals = 0, totalPredAwayGoals = 0, totalActualHomeGoals = 0, totalActualAwayGoals = 0;
-        const scorelineMap = {}; // "h-a" -> count (predictions)
-        const playerStats = {}; // user_id -> { name, predictions, exact, correct, miss, points, predGoals, totalGoalsByMatch }
+    // ── STATS TAB ───────────────────────────────────────────────────────────
+    function computeStats() {
+      const finishedMatches = matches.filter(m => m.status === 'FINISHED');
+      const totalMatches = matches.length;
+      let totalPredictions = 0;
+      let exactCount = 0, resultCount = 0, missCount = 0, noPickCount = 0;
+      let totalPredHomeGoals = 0, totalPredAwayGoals = 0, totalActualHomeGoals = 0, totalActualAwayGoals = 0;
+      const scorelineMap = {}; // "h-a" -> count (predictions)
+      const playerStats = {}; // user_id -> { name, predictions, exact, correct, miss, points, predGoals, totalGoalsByMatch }
+      users.forEach(u => {
+        playerStats[u.user_id] = { name: u.display_name, predictions: 0, exact: 0, correct: 0, miss: 0, points: 0, predGoalsTotal: 0 };
+      });
+
+      // cumulative for line chart
+      const sortedMatches = [...matches].sort((a, b) => {
+        const ka = parseUTC(a.kickoff)?.getTime() || 0;
+        const kb = parseUTC(b.kickoff)?.getTime() || 0;
+        return ka - kb;
+      });
+
+      const cumulative = {}; // user_id -> [{matchIdx, points}]
+      users.forEach(u => { cumulative[u.user_id] = []; });
+      const matchTimeline = []; // labels for x axis
+      let runningTotals = {}; users.forEach(u => runningTotals[u.user_id] = 0);
+
+      sortedMatches.forEach((m, idx) => {
+        if (m.status !== 'FINISHED') return;
+        matchTimeline.push({ idx, matchId: m.match_id, label: (m.team_home || '').slice(0, 3).toUpperCase() + ' v ' + (m.team_away || '').slice(0, 3).toUpperCase() });
         users.forEach(u => {
-          playerStats[u.user_id] = { name: u.display_name, predictions: 0, exact: 0, correct: 0, miss: 0, points: 0, predGoalsTotal: 0 };
-        });
-
-        // cumulative for line chart
-        const sortedMatches = [...matches].sort((a, b) => {
-          const ka = parseUTC(a.kickoff)?.getTime() || 0;
-          const kb = parseUTC(b.kickoff)?.getTime() || 0;
-          return ka - kb;
-        });
-
-        const cumulative = {}; // user_id -> [{matchIdx, points}]
-        users.forEach(u => { cumulative[u.user_id] = []; });
-        const matchTimeline = []; // labels for x axis
-        let runningTotals = {}; users.forEach(u => runningTotals[u.user_id] = 0);
-
-        sortedMatches.forEach((m, idx) => {
-          if (m.status !== 'FINISHED') return;
-          matchTimeline.push({ idx, matchId: m.match_id, label: (m.team_home || '').slice(0, 3).toUpperCase() + ' v ' + (m.team_away || '').slice(0, 3).toUpperCase() });
-          users.forEach(u => {
-            const pred = m.predictions ? m.predictions[u.user_id] : null;
-            if (pred && pred.points !== undefined && pred.points !== null) {
-              runningTotals[u.user_id] += pred.points;
-            }
-            cumulative[u.user_id].push({ idx: matchTimeline.length - 1, total: runningTotals[u.user_id] });
-          });
-        });
-
-        // overall counts
-        matches.forEach(m => {
-          const isFinished = m.status === 'FINISHED';
-          if (isFinished && m.score_home !== undefined && m.score_away !== undefined && m.score_home !== null && m.score_away !== null) {
-            totalActualHomeGoals += +m.score_home;
-            totalActualAwayGoals += +m.score_away;
+          const pred = m.predictions ? m.predictions[u.user_id] : null;
+          if (pred && pred.points !== undefined && pred.points !== null) {
+            runningTotals[u.user_id] += pred.points;
           }
-          users.forEach(u => {
-            const pred = m.predictions ? m.predictions[u.user_id] : null;
-            if (pred && pred.pred_home !== undefined && pred.pred_away !== undefined && pred.pred_home !== null && pred.pred_away !== null) {
-              totalPredictions++;
-              totalPredHomeGoals += +pred.pred_home;
-              totalPredAwayGoals += +pred.pred_away;
-              playerStats[u.user_id].predictions++;
-              playerStats[u.user_id].predGoalsTotal += (+pred.pred_home + +pred.pred_away);
-              const key = pred.pred_home + '-' + pred.pred_away;
-              scorelineMap[key] = (scorelineMap[key] || 0) + 1;
-              if (isFinished) {
-                if (pred.points === 3) { exactCount++; playerStats[u.user_id].exact++; }
-                else if (pred.points === 1) { resultCount++; playerStats[u.user_id].correct++; }
-                else { missCount++; playerStats[u.user_id].miss++; }
-                playerStats[u.user_id].points += (pred.points || 0);
-              }
-            } else if (isFinished) {
-              noPickCount++;
-            }
-          });
+          cumulative[u.user_id].push({ idx: matchTimeline.length - 1, total: runningTotals[u.user_id] });
         });
+      });
 
-        const finishedTotal = exactCount + resultCount + missCount + noPickCount;
-        const avgPointsPerMatch = finishedMatches.length ? ((exactCount * 3 + resultCount) / finishedMatches.length).toFixed(2) : '0.00';
+      // overall counts
+      matches.forEach(m => {
+        const isFinished = m.status === 'FINISHED';
+        if (isFinished && m.score_home !== undefined && m.score_away !== undefined && m.score_home !== null && m.score_away !== null) {
+          totalActualHomeGoals += +m.score_home;
+          totalActualAwayGoals += +m.score_away;
+        }
+        users.forEach(u => {
+          const pred = m.predictions ? m.predictions[u.user_id] : null;
+          if (pred && pred.pred_home !== undefined && pred.pred_away !== undefined && pred.pred_home !== null && pred.pred_away !== null) {
+            totalPredictions++;
+            totalPredHomeGoals += +pred.pred_home;
+            totalPredAwayGoals += +pred.pred_away;
+            playerStats[u.user_id].predictions++;
+            playerStats[u.user_id].predGoalsTotal += (+pred.pred_home + +pred.pred_away);
+            const key = pred.pred_home + '-' + pred.pred_away;
+            scorelineMap[key] = (scorelineMap[key] || 0) + 1;
+            if (isFinished) {
+              if (pred.points === 3) { exactCount++; playerStats[u.user_id].exact++; }
+              else if (pred.points === 1) { resultCount++; playerStats[u.user_id].correct++; }
+              else { missCount++; playerStats[u.user_id].miss++; }
+              playerStats[u.user_id].points += (pred.points || 0);
+            }
+          } else if (isFinished) {
+            noPickCount++;
+          }
+        });
+      });
 
-        return {
-          totalPredictions,
-          totalMatches,
-          finishedMatches: finishedMatches.length,
-          exactCount, resultCount, missCount, noPickCount, finishedTotal,
-          avgPointsPerMatch,
-          totalPredHomeGoals, totalPredAwayGoals, totalActualHomeGoals, totalActualAwayGoals,
-          scorelineMap,
-          playerStats,
-          cumulative,
-          matchTimeline
-        };
-      }
+      const finishedTotal = exactCount + resultCount + missCount + noPickCount;
+      const avgPointsPerMatch = finishedMatches.length ? ((exactCount * 3 + resultCount) / finishedMatches.length).toFixed(2) : '0.00';
 
-      function renderKPIs(s) {
-        const totalGoalsPredicted = s.totalPredHomeGoals + s.totalPredAwayGoals;
-        const avgGoals = s.totalPredictions ? (totalGoalsPredicted / s.totalPredictions).toFixed(2) : '0.00';
-        return `<div class="stats-kpi-grid">
+      return {
+        totalPredictions,
+        totalMatches,
+        finishedMatches: finishedMatches.length,
+        exactCount, resultCount, missCount, noPickCount, finishedTotal,
+        avgPointsPerMatch,
+        totalPredHomeGoals, totalPredAwayGoals, totalActualHomeGoals, totalActualAwayGoals,
+        scorelineMap,
+        playerStats,
+        cumulative,
+        matchTimeline
+      };
+    }
+
+    function renderKPIs(s) {
+      const totalGoalsPredicted = s.totalPredHomeGoals + s.totalPredAwayGoals;
+      const avgGoals = s.totalPredictions ? (totalGoalsPredicted / s.totalPredictions).toFixed(2) : '0.00';
+      return `<div class="stats-kpi-grid">
         <div class="kpi-card green">
           <div class="kpi-label">Total Picks</div>
           <div class="kpi-value">${s.totalPredictions}</div>
@@ -2324,82 +2309,82 @@
           <div class="kpi-sub">predicted per match</div>
         </div>
       </div>`;
-      }
+    }
 
-      function renderHorizontalBars(s) {
-        const players = Object.values(s.playerStats).sort((a, b) => b.points - a.points);
-        if (!players.length) return '';
-        const max = Math.max(...players.map(p => p.points), 1);
-        const rows = players.map(p => {
-          const pct = (p.points / max) * 100;
-          return `<div class="hbar-row">
+    function renderHorizontalBars(s) {
+      const players = Object.values(s.playerStats).sort((a, b) => b.points - a.points);
+      if (!players.length) return '';
+      const max = Math.max(...players.map(p => p.points), 1);
+      const rows = players.map(p => {
+        const pct = (p.points / max) * 100;
+        return `<div class="hbar-row">
           <div class="hbar-name">${escHtml(p.name)}</div>
           <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%"></div></div>
           <div class="hbar-val">${p.points}</div>
         </div>`;
-        }).join('');
-        return `<div class="stats-card">
+      }).join('');
+      return `<div class="stats-card">
         <div class="stats-card-header">
           <div class="stats-card-title">Points by Player</div>
           <div class="stats-card-sub">Total points earned this tournament</div>
         </div>
         <div class="stats-card-body">${rows}</div>
       </div>`;
-      }
+    }
 
-      function renderPredictionsBars(s) {
-        const players = Object.values(s.playerStats).sort((a, b) => b.predictions - a.predictions);
-        if (!players.length) return '';
-        const max = Math.max(...players.map(p => p.predictions), 1);
-        const totalPossible = s.totalMatches;
-        const rows = players.map(p => {
-          const pct = (p.predictions / max) * 100;
-          const partRate = totalPossible ? Math.round((p.predictions / totalPossible) * 100) : 0;
-          return `<div class="hbar-row">
+    function renderPredictionsBars(s) {
+      const players = Object.values(s.playerStats).sort((a, b) => b.predictions - a.predictions);
+      if (!players.length) return '';
+      const max = Math.max(...players.map(p => p.predictions), 1);
+      const totalPossible = s.totalMatches;
+      const rows = players.map(p => {
+        const pct = (p.predictions / max) * 100;
+        const partRate = totalPossible ? Math.round((p.predictions / totalPossible) * 100) : 0;
+        return `<div class="hbar-row">
           <div class="hbar-name">${escHtml(p.name)}</div>
           <div class="hbar-track"><div class="hbar-fill blue" style="width:${pct}%"></div></div>
           <div class="hbar-val">${p.predictions} <span style="color:var(--ink4);font-weight:500;font-size:0.75rem">${partRate}%</span></div>
         </div>`;
-        }).join('');
-        return `<div class="stats-card">
+      }).join('');
+      return `<div class="stats-card">
         <div class="stats-card-header">
           <div class="stats-card-title">Predictions Submitted</div>
           <div class="stats-card-sub">Participation level — % of all matches predicted</div>
         </div>
         <div class="stats-card-body">${rows}</div>
       </div>`;
-      }
+    }
 
-      function renderHitRateDonut(s) {
-        const total = s.exactCount + s.resultCount + s.missCount + s.noPickCount;
-        if (!total) return '';
-        const segs = [
-          { label: 'Exact (3pt)', val: s.exactCount, color: '#1a5c2a' },
-          { label: 'Result (1pt)', val: s.resultCount, color: '#1a3a6b' },
-          { label: 'Miss (0pt)', val: s.missCount, color: '#c0392b' },
-          { label: 'No pick', val: s.noPickCount, color: '#a8a39a' }
-        ];
-        const r = 60, cx = 80, cy = 80, stroke = 22;
-        const C = 2 * Math.PI * r;
-        let acc = 0;
-        const paths = segs.map(seg => {
-          const frac = seg.val / total;
-          const len = frac * C;
-          const dasharray = `${len} ${C - len}`;
-          const offset = -acc;
-          acc += len;
-          return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${stroke}" stroke-dasharray="${dasharray}" stroke-dashoffset="${offset}" transform="rotate(-90 ${cx} ${cy})"></circle>`;
-        }).join('');
-        const legend = segs.map(seg => {
-          const pct = total ? Math.round((seg.val / total) * 100) : 0;
-          return `<div class="donut-legend-row">
+    function renderHitRateDonut(s) {
+      const total = s.exactCount + s.resultCount + s.missCount + s.noPickCount;
+      if (!total) return '';
+      const segs = [
+        { label: 'Exact (3pt)', val: s.exactCount, color: '#1a5c2a' },
+        { label: 'Result (1pt)', val: s.resultCount, color: '#1a3a6b' },
+        { label: 'Miss (0pt)', val: s.missCount, color: '#c0392b' },
+        { label: 'No pick', val: s.noPickCount, color: '#a8a39a' }
+      ];
+      const r = 60, cx = 80, cy = 80, stroke = 22;
+      const C = 2 * Math.PI * r;
+      let acc = 0;
+      const paths = segs.map(seg => {
+        const frac = seg.val / total;
+        const len = frac * C;
+        const dasharray = `${len} ${C - len}`;
+        const offset = -acc;
+        acc += len;
+        return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${stroke}" stroke-dasharray="${dasharray}" stroke-dashoffset="${offset}" transform="rotate(-90 ${cx} ${cy})"></circle>`;
+      }).join('');
+      const legend = segs.map(seg => {
+        const pct = total ? Math.round((seg.val / total) * 100) : 0;
+        return `<div class="donut-legend-row">
           <div class="donut-dot" style="background:${seg.color}"></div>
           <div class="donut-legend-label">${seg.label}</div>
           <div class="donut-legend-val">${seg.val}</div>
           <div class="donut-legend-pct">${pct}%</div>
         </div>`;
-        }).join('');
-        return `<div class="stats-card">
+      }).join('');
+      return `<div class="stats-card">
         <div class="stats-card-header">
           <div class="stats-card-title">Hit Rate Breakdown</div>
           <div class="stats-card-sub">All predictions across finished matches</div>
@@ -2415,23 +2400,23 @@
           </div>
         </div>
       </div>`;
-      }
+    }
 
-      function renderStackedBars(s) {
-        const players = Object.values(s.playerStats).sort((a, b) => b.points - a.points);
-        if (!players.length) return '';
-        const colors = { exact: '#1a5c2a', correct: '#1a3a6b', miss: '#c0392b' };
-        const rows = players.map(p => {
-          const total = p.exact + p.correct + p.miss;
-          if (total === 0) {
-            return `<div class="stacked-row">
+    function renderStackedBars(s) {
+      const players = Object.values(s.playerStats).sort((a, b) => b.points - a.points);
+      if (!players.length) return '';
+      const colors = { exact: '#1a5c2a', correct: '#1a3a6b', miss: '#c0392b' };
+      const rows = players.map(p => {
+        const total = p.exact + p.correct + p.miss;
+        if (total === 0) {
+          return `<div class="stacked-row">
             <div class="hbar-name">${escHtml(p.name)}</div>
             <div class="stacked-track"></div>
             <div class="hbar-val" style="color:var(--ink4);font-weight:500">—</div>
           </div>`;
-          }
-          const e = (p.exact / total) * 100, c = (p.correct / total) * 100, m = (p.miss / total) * 100;
-          return `<div class="stacked-row">
+        }
+        const e = (p.exact / total) * 100, c = (p.correct / total) * 100, m = (p.miss / total) * 100;
+        return `<div class="stacked-row">
           <div class="hbar-name">${escHtml(p.name)}</div>
           <div class="stacked-track">
             <div class="stacked-seg" style="width:${e}%;background:${colors.exact}" title="${p.exact} exact"></div>
@@ -2440,8 +2425,8 @@
           </div>
           <div class="hbar-val">${total}</div>
         </div>`;
-        }).join('');
-        return `<div class="stats-card">
+      }).join('');
+      return `<div class="stats-card">
         <div class="stats-card-header">
           <div class="stats-card-title">Per-Player Breakdown</div>
           <div class="stats-card-sub">Exact / Result / Miss across all picks</div>
@@ -2455,59 +2440,61 @@
           </div>
         </div>
       </div>`;
+    }
+
+    function renderLineChart(s) {
+      const players = Object.values(s.playerStats);
+      if (!players.length || !s.matchTimeline.length) {
+        return `<div class="stats-card"><div class="stats-card-header"><div class="stats-card-title">Points Trend</div><div class="stats-card-sub">Cumulative points over completed matches</div></div><div class="stats-card-body"><div style="text-align:center;color:var(--ink4);font-family:Instrument Serif,serif;font-style:italic;padding:20px">No completed matches yet.</div></div></div>`;
+      }
+      const W = 600, H = 240, padL = 30, padR = 16, padT = 14, padB = 16;
+      const innerW = W - padL - padR;
+      const innerH = H - padT - padB;
+      const N = s.matchTimeline.length;
+
+      // Build per-user lines, sorted by total descending so top players draw last/on top
+      const playerKeys = Object.keys(s.playerStats).sort((a, b) => s.playerStats[b].points - s.playerStats[a].points);
+      let maxY = 1;
+      playerKeys.forEach(uid => {
+        s.cumulative[uid].forEach(pt => { if (pt.total > maxY) maxY = pt.total; });
+      });
+      // pad y a bit
+      maxY = Math.ceil(maxY * 1.1) || 1;
+
+      const xAt = i => padL + (N <= 1 ? innerW / 2 : (i / (N - 1)) * innerW);
+      const yAt = v => padT + innerH - (v / maxY) * innerH;
+
+      // grid lines (4 horizontal)
+      const gridLines = [];
+      for (let i = 0; i <= 4; i++) {
+        const yVal = (maxY / 4) * i;
+        const y = yAt(yVal);
+        gridLines.push(`<line x1="${padL}" y1="${y}" x2="${padL + innerW}" y2="${y}" stroke="rgba(14,14,14,0.08)" stroke-width="1"/>`);
+        gridLines.push(`<text x="${padL - 4}" y="${y + 3}" text-anchor="end" font-family="Barlow Condensed" font-size="9" fill="#6e6760">${Math.round(yVal)}</text>`);
       }
 
-      function renderLineChart(s) {
-        const players = Object.values(s.playerStats);
-        if (!players.length || !s.matchTimeline.length) {
-          return `<div class="stats-card"><div class="stats-card-header"><div class="stats-card-title">Points Trend</div><div class="stats-card-sub">Cumulative points over completed matches</div></div><div class="stats-card-body"><div style="text-align:center;color:var(--ink4);font-family:Instrument Serif,serif;font-style:italic;padding:20px">No completed matches yet.</div></div></div>`;
-        }
-        const W = 600, H = 240, padL = 30, padR = 16, padT = 14, padB = 28;
-        const innerW = W - padL - padR;
-        const innerH = H - padT - padB;
-        const N = s.matchTimeline.length;
+      const linesSvg = playerKeys.map((uid, idx) => {
+        const color = PLAYER_COLORS[idx % PLAYER_COLORS.length];
+        const data = s.cumulative[uid];
+        if (!data.length) return '';
+        const path = data.map((pt, i) => `${i === 0 ? 'M' : 'L'}${xAt(pt.idx).toFixed(1)},${yAt(pt.total).toFixed(1)}`).join(' ');
+        return `<path d="${path}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" opacity="0.9"/>`;
+      }).join('');
 
-        // Build per-user lines, sorted by total descending so top players draw last/on top
-        const playerKeys = Object.keys(s.playerStats).sort((a, b) => s.playerStats[b].points - s.playerStats[a].points);
-        let maxY = 1;
-        playerKeys.forEach(uid => {
-          s.cumulative[uid].forEach(pt => { if (pt.total > maxY) maxY = pt.total; });
-        });
-        // pad y a bit
-        maxY = Math.ceil(maxY * 1.1) || 1;
+      const xLabels = [];
+if (N > 0) {
+  xLabels.push(`<text x="${xAt(0)}" y="${H - 8}" text-anchor="start" font-family="Barlow Condensed" font-size="9" fill="#6e6760">M1</text>`);
+  if (N > 1) {
+    xLabels.push(`<text x="${xAt(N - 1)}" y="${H - 8}" text-anchor="end" font-family="Barlow Condensed" font-size="9" fill="#6e6760">M${N}</text>`);
+  }
+}
 
-        const xAt = i => padL + (N <= 1 ? innerW / 2 : (i / (N - 1)) * innerW);
-        const yAt = v => padT + innerH - (v / maxY) * innerH;
+      const legend = playerKeys.map((uid, idx) => {
+        const color = PLAYER_COLORS[idx % PLAYER_COLORS.length];
+        return `<div class="line-legend-item"><div class="line-legend-dash" style="background:${color}"></div>${escHtml(s.playerStats[uid].name)}</div>`;
+      }).join('');
 
-        // grid lines (4 horizontal)
-        const gridLines = [];
-        for (let i = 0; i <= 4; i++) {
-          const yVal = (maxY / 4) * i;
-          const y = yAt(yVal);
-          gridLines.push(`<line x1="${padL}" y1="${y}" x2="${padL + innerW}" y2="${y}" stroke="rgba(14,14,14,0.08)" stroke-width="1"/>`);
-          gridLines.push(`<text x="${padL - 4}" y="${y + 3}" text-anchor="end" font-family="Barlow Condensed" font-size="9" fill="#6e6760">${Math.round(yVal)}</text>`);
-        }
-
-        const linesSvg = playerKeys.map((uid, idx) => {
-          const color = PLAYER_COLORS[idx % PLAYER_COLORS.length];
-          const data = s.cumulative[uid];
-          if (!data.length) return '';
-          const path = data.map((pt, i) => `${i === 0 ? 'M' : 'L'}${xAt(pt.idx).toFixed(1)},${yAt(pt.total).toFixed(1)}`).join(' ');
-          return `<path d="${path}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" opacity="0.9"/>`;
-        }).join('');
-
-        const xLabels = [];
-        const labelStep = Math.max(1, Math.ceil(N / 6));
-        for (let i = 0; i < N; i += labelStep) {
-          xLabels.push(`<text x="${xAt(i)}" y="${H - 8}" text-anchor="middle" font-family="Barlow Condensed" font-size="9" fill="#6e6760">${escHtml(s.matchTimeline[i].label)}</text>`);
-        }
-
-        const legend = playerKeys.map((uid, idx) => {
-          const color = PLAYER_COLORS[idx % PLAYER_COLORS.length];
-          return `<div class="line-legend-item"><div class="line-legend-dash" style="background:${color}"></div>${escHtml(s.playerStats[uid].name)}</div>`;
-        }).join('');
-
-        return `<div class="stats-card">
+      return `<div class="stats-card">
         <div class="stats-card-header">
           <div class="stats-card-title">Points Trend</div>
           <div class="stats-card-sub">Cumulative points across completed matches</div>
@@ -2521,52 +2508,52 @@
           <div class="line-legend">${legend}</div>
         </div>
       </div>`;
+    }
+
+    function renderScorelineHeatmap(s) {
+      // Build a 6x6 grid (0-5 for both home and away)
+      const max = 5;
+      let topMax = 0;
+      const grid = {};
+      for (let h = 0; h <= max; h++) {
+        for (let a = 0; a <= max; a++) {
+          const k = h + '-' + a;
+          const v = s.scorelineMap[k] || 0;
+          grid[k] = v;
+          if (v > topMax) topMax = v;
+        }
+      }
+      // find top scoreline overall (any number)
+      let topKey = null, topVal = 0;
+      Object.keys(s.scorelineMap).forEach(k => { if (s.scorelineMap[k] > topVal) { topVal = s.scorelineMap[k]; topKey = k; } });
+
+      function colorFor(v) {
+        if (!v) return '#f5f0e8';
+        const t = topMax ? v / topMax : 0;
+        // interpolate paper -> green
+        const r = Math.round(245 - (245 - 26) * t);
+        const g = Math.round(240 - (240 - 92) * t);
+        const b = Math.round(232 - (232 - 42) * t);
+        return `rgb(${r},${g},${b})`;
       }
 
-      function renderScorelineHeatmap(s) {
-        // Build a 6x6 grid (0-5 for both home and away)
-        const max = 5;
-        let topMax = 0;
-        const grid = {};
-        for (let h = 0; h <= max; h++) {
-          for (let a = 0; a <= max; a++) {
-            const k = h + '-' + a;
-            const v = s.scorelineMap[k] || 0;
-            grid[k] = v;
-            if (v > topMax) topMax = v;
-          }
+      let html = '<div class="hm-axis-label">Away score →</div><div class="heatmap-grid">';
+      // header row
+      html += '<div></div>';
+      for (let a = 0; a <= max; a++) html += `<div class="hm-axis">${a}</div>`;
+      for (let h = 0; h <= max; h++) {
+        html += `<div class="hm-axis">${h}</div>`;
+        for (let a = 0; a <= max; a++) {
+          const v = grid[h + '-' + a];
+          const fg = v && (v / Math.max(topMax, 1)) > 0.5 ? '#fff' : 'var(--ink2)';
+          html += `<div class="hm-cell" style="background:${colorFor(v)};color:${fg}" title="${h}-${a}: ${v} picks">${v || ''}</div>`;
         }
-        // find top scoreline overall (any number)
-        let topKey = null, topVal = 0;
-        Object.keys(s.scorelineMap).forEach(k => { if (s.scorelineMap[k] > topVal) { topVal = s.scorelineMap[k]; topKey = k; } });
-
-        function colorFor(v) {
-          if (!v) return '#f5f0e8';
-          const t = topMax ? v / topMax : 0;
-          // interpolate paper -> green
-          const r = Math.round(245 - (245 - 26) * t);
-          const g = Math.round(240 - (240 - 92) * t);
-          const b = Math.round(232 - (232 - 42) * t);
-          return `rgb(${r},${g},${b})`;
-        }
-
-        let html = '<div class="hm-axis-label">Away score →</div><div class="heatmap-grid">';
-        // header row
-        html += '<div></div>';
-        for (let a = 0; a <= max; a++) html += `<div class="hm-axis">${a}</div>`;
-        for (let h = 0; h <= max; h++) {
-          html += `<div class="hm-axis">${h}</div>`;
-          for (let a = 0; a <= max; a++) {
-            const v = grid[h + '-' + a];
-            const fg = v && (v / Math.max(topMax, 1)) > 0.5 ? '#fff' : 'var(--ink2)';
-            html += `<div class="hm-cell" style="background:${colorFor(v)};color:${fg}" title="${h}-${a}: ${v} picks">${v || ''}</div>`;
-          }
-        }
-        html += '</div>';
-        const sub = topKey
-          ? `Most-picked scoreline: <strong>${topKey.replace('-', ' – ')}</strong> · ${topVal} time${topVal !== 1 ? 's' : ''}`
-          : 'No predictions yet';
-        return `<div class="stats-card">
+      }
+      html += '</div>';
+      const sub = topKey
+        ? `Most-picked scoreline: <strong>${topKey.replace('-', ' – ')}</strong> · ${topVal} time${topVal !== 1 ? 's' : ''}`
+        : 'No predictions yet';
+      return `<div class="stats-card">
         <div class="stats-card-header">
           <div class="stats-card-title">Scoreline Heatmap</div>
           <div class="stats-card-sub">${sub}</div>
@@ -2576,172 +2563,165 @@
           <div class="heatmap-wrap">${html}</div>
         </div>
       </div>`;
-      }
+    }
 
-      function renderGoalsComparison(s) {
-        const players = Object.values(s.playerStats).filter(p => p.predictions > 0).sort((a, b) => (b.predGoalsTotal / Math.max(b.predictions, 1)) - (a.predGoalsTotal / Math.max(a.predictions, 1)));
-        if (!players.length) return '';
-        const max = Math.max(...players.map(p => p.predGoalsTotal / p.predictions), 1);
-        const rows = players.map(p => {
-          const avg = (p.predGoalsTotal / p.predictions);
-          const pct = (avg / max) * 100;
-          return `<div class="hbar-row">
+    function renderGoalsComparison(s) {
+      const players = Object.values(s.playerStats).filter(p => p.predictions > 0).sort((a, b) => (b.predGoalsTotal / Math.max(b.predictions, 1)) - (a.predGoalsTotal / Math.max(a.predictions, 1)));
+      if (!players.length) return '';
+      const max = Math.max(...players.map(p => p.predGoalsTotal / p.predictions), 1);
+      const rows = players.map(p => {
+        const avg = (p.predGoalsTotal / p.predictions);
+        const pct = (avg / max) * 100;
+        return `<div class="hbar-row">
           <div class="hbar-name">${escHtml(p.name)}</div>
           <div class="hbar-track"><div class="hbar-fill purple" style="width:${pct}%"></div></div>
           <div class="hbar-val">${avg.toFixed(2)}</div>
         </div>`;
-        }).join('');
-        const actualAvg = s.finishedMatches ? ((s.totalActualHomeGoals + s.totalActualAwayGoals) / s.finishedMatches).toFixed(2) : 'N/A';
-        return `<div class="stats-card">
+      }).join('');
+      const actualAvg = s.finishedMatches ? ((s.totalActualHomeGoals + s.totalActualAwayGoals) / s.finishedMatches).toFixed(2) : 'N/A';
+      return `<div class="stats-card">
         <div class="stats-card-header">
           <div class="stats-card-title">Goal Optimism</div>
           <div class="stats-card-sub">Avg goals predicted per match · actual avg so far: <strong>${actualAvg}</strong></div>
         </div>
         <div class="stats-card-body">${rows}</div>
       </div>`;
-      }
+    }
 
-      function renderStats() {
-        const container = document.getElementById('statsContent');
-        if (!container) return;
-        if (!users.length) {
-          container.innerHTML = '<div class="state-msg">No data yet. Add players first.</div>';
-          return;
+    function renderStats() {
+      const container = document.getElementById('statsContent');
+      if (!container) return;
+      if (!users.length) {
+        container.innerHTML = '<div class="state-msg">No data yet. Add players first.</div>';
+        return;
+      }
+      const s = computeStats();
+      let html = '';
+      html += renderKPIs(s);
+      html += renderHorizontalBars(s);
+      html += renderLineChart(s);
+      html += renderHitRateDonut(s);
+      html += renderStackedBars(s);
+      html += renderPredictionsBars(s);
+      html += renderGoalsComparison(s);
+      html += renderScorelineHeatmap(s);
+      container.innerHTML = html;
+      statsInitialized = true;
+    }
+
+    function savePred(input) {
+      var matchId = input.dataset.matchid;
+      var userId = input.dataset.userid;
+      var side = input.dataset.side;
+      var val = input.value.trim();
+      if (!matchId || !userId || !side || val === '') return;
+      var key = matchId + userId;
+      if (!predBuffer[key]) {
+        var inputs = input.closest('.pred-item').querySelectorAll('.pred-input');
+        predBuffer[key] = {
+          home: inputs[0].value.trim() !== '' ? parseInt(inputs[0].value, 10) : null,
+          away: inputs[1].value.trim() !== '' ? parseInt(inputs[1].value, 10) : null
+        };
+      }
+      predBuffer[key][side] = parseInt(val, 10);
+      if (timers[key]) clearTimeout(timers[key]);
+      timers[key] = setTimeout(function () {
+        var buf = predBuffer[key];
+        if (buf.home === null || buf.away === null) return;
+        showToast('Saving…');
+        fetch(API + '/predictions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: userId, match_id: parseInt(matchId, 10), pred_home: buf.home, pred_away: buf.away })
+        }).then(r => r.json()).then(d => {
+          if (d.status === 'saved') showToast('Saved ✓');
+          else showToast(d.error || 'Error saving', true);
+        }).catch(() => showToast('Network error', true));
+      }, 500);
+    }
+
+    async function syncAll() {
+      var btn = document.getElementById('syncBtn');
+      var lbl = btn.querySelector('.btn-label');
+      btn.disabled = true; btn.classList.add('spinning');
+      if (lbl) lbl.textContent = 'Refreshing…';
+      try {
+        var data = await fetch(API + '/sync', { method: 'POST' }).then(r => r.json());
+        showToast('Synced ' + data.count + ' match' + (data.count !== 1 ? 'es' : ''));
+        const [mu, mm] = await Promise.all([
+          fetch(API + '/users').then(r => r.json()),
+          fetch(API + '/matches').then(r => r.json())
+        ]);
+        users = mu; matches = mm; sortUsers();
+        patchMatchDOM(matches, mm, mu);
+        if (document.getElementById('leaderboard').classList.contains('active')) { lbInitialized = false; renderLeaderboard(); }
+        if (document.getElementById('stats').classList.contains('active')) renderStats();
+      } catch (e) {
+        console.error('[WC2026] sync failed:', e);
+        showToast('Sync failed', true);
+      } finally {
+        btn.disabled = false; btn.classList.remove('spinning');
+        if (lbl) lbl.textContent = 'Refresh Results';
+      }
+    }
+
+    function showToast(msg, isError) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast' + (isError ? ' error' : '') + ' show';
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    async function doPoll() {
+      if (document.hidden || (document.activeElement && document.activeElement.classList.contains('pred-input'))) return;
+      try {
+        const [mu, mm] = await Promise.all([
+          fetch(API + '/users').then(r => r.ok ? r.json() : null).catch(() => null),
+          fetch(API + '/matches').then(r => r.ok ? r.json() : null).catch(() => null)
+        ]);
+        if (!mu || !mm || !Array.isArray(mu) || !Array.isArray(mm)) return;
+        users = mu; matches = mm; sortUsers();
+        patchMatchDOM(matches, mm, mu);
+        if (document.getElementById('leaderboard').classList.contains('active')) {
+          fetch(API + '/leaderboard').then(r => r.json()).then(data => {
+            if (!Array.isArray(data)) return;
+            const json = JSON.stringify(data);
+            if (json === lastLBJson) return;
+            lastLBJson = json;
+            renderLBData(data);
+          }).catch(() => { });
         }
-        const s = computeStats();
-        let html = '';
-        html += renderKPIs(s);
-        html += renderHorizontalBars(s);
-        html += renderLineChart(s);
-        html += renderHitRateDonut(s);
-        html += renderStackedBars(s);
-        html += renderPredictionsBars(s);
-        html += renderGoalsComparison(s);
-        html += renderScorelineHeatmap(s);
-        container.innerHTML = html;
-        statsInitialized = true;
+        if (document.getElementById('stats').classList.contains('active')) renderStats();
+      } catch (e) { }
+    }
+    let fastPoll = null;
+    let slowPoll = null;
+    let idleTimeout = null;
+    function startFastPoll() { if (fastPoll) return; fastPoll = setInterval(doPoll, 20 * 60 * 1000); }
+    function switchToSlowPoll() {
+      if (fastPoll) { clearInterval(fastPoll); fastPoll = null; }
+      slowPoll = setInterval(doPoll, 2 * 60 * 1000);
+    }
+    function resetIdleTimer() {
+      clearTimeout(idleTimeout);
+      if (slowPoll) { clearInterval(slowPoll); slowPoll = null; startFastPoll(); }
+      idleTimeout = setTimeout(switchToSlowPoll, 30 * 60 * 1000);
+    }
+    boot();
+    setTimeout(() => { startFastPoll(); resetIdleTimer(); }, 3000);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        clearInterval(fastPoll); fastPoll = null;
+        clearInterval(slowPoll); slowPoll = null;
+      } else {
+        startFastPoll();
+        resetIdleTimer();
+        setTimeout(doPoll, 500);
       }
-
-      function savePred(input) {
-        var matchId = input.dataset.matchid;
-        var userId = input.dataset.userid;
-        var side = input.dataset.side;
-        var val = input.value.trim();
-        if (!matchId || !userId || !side || val === '') return;
-        var key = matchId + userId;
-        if (!predBuffer[key]) {
-          var inputs = input.closest('.pred-item').querySelectorAll('.pred-input');
-          predBuffer[key] = {
-            home: inputs[0].value.trim() !== '' ? parseInt(inputs[0].value, 10) : null,
-            away: inputs[1].value.trim() !== '' ? parseInt(inputs[1].value, 10) : null
-          };
-        }
-        predBuffer[key][side] = parseInt(val, 10);
-        if (timers[key]) clearTimeout(timers[key]);
-        timers[key] = setTimeout(function () {
-          var buf = predBuffer[key];
-          if (buf.home === null || buf.away === null) return;
-          showToast('Saving…');
-          fetch(API + '/predictions', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: userId, match_id: parseInt(matchId, 10), pred_home: buf.home, pred_away: buf.away })
-          }).then(r => r.json()).then(d => {
-            if (d.status === 'saved') showToast('Saved ✓');
-            else showToast(d.error || 'Error saving', true);
-          }).catch(() => showToast('Network error', true));
-        }, 500);
-      }
-
-      async function syncAll() {
-        var btn = document.getElementById('syncBtn');
-        var lbl = btn.querySelector('.btn-label');
-        btn.disabled = true; btn.classList.add('spinning');
-        if (lbl) lbl.textContent = 'Refreshing…';
-        try {
-          var data = await fetch(API + '/sync', { method: 'POST' }).then(r => r.json());
-          showToast('Synced ' + data.count + ' match' + (data.count !== 1 ? 'es' : ''));
-          const [mu, mm] = await Promise.all([
-            fetch(API + '/users').then(r => r.json()),
-            fetch(API + '/matches').then(r => r.json())
-          ]);
-          users = mu; matches = mm; sortUsers();
-          patchMatchDOM(matches, mm, mu);
-          if (document.getElementById('leaderboard').classList.contains('active')) { lbInitialized = false; renderLeaderboard(); }
-          if (document.getElementById('stats').classList.contains('active')) renderStats();
-        } catch (e) {
-          console.error('[WC2026] sync failed:', e);
-          showToast('Sync failed', true);
-        } finally {
-          btn.disabled = false; btn.classList.remove('spinning');
-          if (lbl) lbl.textContent = 'Refresh Results';
-        }
-      }
-
-      function showToast(msg, isError) {
-        var t = document.getElementById('toast');
-        t.textContent = msg;
-        t.className = 'toast' + (isError ? ' error' : '') + ' show';
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
-      }
-
-      async function doPoll() {
-        if (document.hidden || (document.activeElement && document.activeElement.classList.contains('pred-input'))) return;
-        try {
-          const [mu, mm] = await Promise.all([
-            fetch(API + '/users').then(r => r.ok ? r.json() : null).catch(() => null),
-            fetch(API + '/matches').then(r => r.ok ? r.json() : null).catch(() => null)
-          ]);
-          if (!mu || !mm || !Array.isArray(mu) || !Array.isArray(mm)) return;
-          users = mu; matches = mm; sortUsers();
-          patchMatchDOM(matches, mm, mu);
-          if (document.getElementById('leaderboard').classList.contains('active')) {
-            fetch(API + '/leaderboard').then(r => r.json()).then(data => {
-              if (!Array.isArray(data)) return;
-              const json = JSON.stringify(data);
-              if (json === lastLBJson) return;
-              lastLBJson = json;
-              renderLBData(data);
-            }).catch(() => { });
-          }
-          if (document.getElementById('stats').classList.contains('active')) renderStats();
-        } catch (e) { }
-      }
-      let fastPoll = null;
-      let slowPoll = null;
-      let idleTimeout = null;
-      function startFastPoll() { if (fastPoll) return; fastPoll = setInterval(doPoll, 20 * 60 * 1000); }
-      function switchToSlowPoll() {
-        if (fastPoll) { clearInterval(fastPoll); fastPoll = null; }
-        slowPoll = setInterval(doPoll, 2 * 60 * 1000);
-      }
-      function resetIdleTimer() {
-        clearTimeout(idleTimeout);
-        if (slowPoll) { clearInterval(slowPoll); slowPoll = null; startFastPoll(); }
-        idleTimeout = setTimeout(switchToSlowPoll, 30 * 60 * 1000);
-      }
-      boot();
-      setTimeout(() => { startFastPoll(); resetIdleTimer(); }, 3000);
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          clearInterval(fastPoll); fastPoll = null;
-          clearInterval(slowPoll); slowPoll = null;
-        } else {
-          startFastPoll();
-          resetIdleTimer();
-          setTimeout(doPoll, 500);
-        }
-      });
-      document.addEventListener('click', resetIdleTimer);
-      document.addEventListener('keydown', resetIdleTimer);
-    </script>
-  </body>
-
-  </html>
-
-  <script>
-
+    });
+    document.addEventListener('click', resetIdleTimer);
+    document.addEventListener('keydown', resetIdleTimer);
   </script>
 </body>
 
