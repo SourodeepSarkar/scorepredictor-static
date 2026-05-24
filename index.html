@@ -387,6 +387,7 @@
       flex-direction: column;
       gap: 8px;
       transition: border-color 0.15s;
+      position: relative;
     }
     .pred-item:hover {
       border-color: var(--rule-strong);
@@ -401,6 +402,39 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      padding-right: 18px;
+    }
+    .pred-clear {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      color: var(--ink4);
+      cursor: pointer;
+      font-family: Barlow, sans-serif;
+      font-size: 14px;
+      line-height: 1;
+      border-radius: 50%;
+      transition: background 0.15s, color 0.15s;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pred-clear:hover {
+      background: var(--red-light);
+      color: var(--red);
+    }
+    .pred-clear:disabled {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .pred-clear.hidden {
+      display: none;
     }
     .pred-score-row {
       display: flex;
@@ -1011,7 +1045,7 @@
     /* Line chart */
     .line-chart-svg {
       width: 100%;
-      height: 260px;
+      height: 280px;
       display: block;
     }
     .line-legend {
@@ -1081,104 +1115,101 @@
       flex-wrap: wrap;
       padding: 12px 0 4px;
     }
-    /* Heatmap dual */
-    .dual-heatmap-wrap {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    @media(max-width: 560px) {
-      .dual-heatmap-wrap {
-        grid-template-columns: 1fr;
-      }
-    }
-    .heatmap-block {
+    /* Scoreline frequency heatmap (1D row) */
+    .scoreline-heatmap-wrap {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 18px;
     }
-    .heatmap-block-title {
+    .scoreline-block {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .scoreline-block-title {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.78rem;
       font-weight: 800;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--ink2);
       text-align: center;
-      padding: 4px 0;
+      padding: 5px 8px;
       border-radius: 3px;
     }
-    .heatmap-block-title.predicted {
+    .scoreline-block-title.predicted {
       background: var(--blue-light);
       color: var(--blue);
     }
-    .heatmap-block-title.actual {
+    .scoreline-block-title.actual {
       background: var(--green-light);
       color: var(--green);
     }
-    .heatmap-grid {
+    .scoreline-row {
       display: grid;
-      grid-template-columns: 22px repeat(6, 1fr);
-      gap: 2px;
+      grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
+      gap: 4px;
     }
-    .hm-cell {
-      aspect-ratio: 1.4/1;
+    .scoreline-cell {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      border-radius: 2px;
-      font-family: "Barlow Condensed", sans-serif;
-      font-weight: 800;
-      font-size: 0.78rem;
-      color: var(--ink);
+      gap: 2px;
+      padding: 8px 4px;
+      border-radius: 3px;
+      min-height: 54px;
       transition: transform 0.15s;
       cursor: default;
-      min-height: 26px;
-    }
-    .hm-cell:hover {
-      transform: scale(1.08);
-      z-index: 2;
       position: relative;
     }
-    .hm-cell.top {
+    .scoreline-cell:hover {
+      transform: scale(1.06);
+      z-index: 2;
+    }
+    .scoreline-cell.top {
       outline: 2px solid var(--gold);
       outline-offset: -2px;
     }
-    .hm-axis {
+    .scoreline-label {
       font-family: "Barlow Condensed", sans-serif;
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: var(--ink4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      letter-spacing: 0.05em;
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+      line-height: 1;
     }
-    .hm-axis-label {
+    .scoreline-count {
       font-family: "Barlow Condensed", sans-serif;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-weight: 600;
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+      opacity: 0.85;
+      line-height: 1;
+    }
+    .scoreline-empty {
+      font-family: "Instrument Serif", serif;
+      font-style: italic;
+      font-size: 0.85rem;
       color: var(--ink4);
       text-align: center;
-      margin: 4px 0 2px;
+      padding: 14px 8px;
+      background: var(--paper);
+      border-radius: 3px;
     }
-    .hm-summary {
+    .scoreline-summary {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
       padding: 6px 8px;
       background: var(--paper);
       border-radius: 3px;
-      margin-top: 4px;
       font-family: "Barlow Condensed", sans-serif;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: var(--ink2);
       letter-spacing: 0.02em;
+      flex-wrap: wrap;
     }
-    .hm-summary strong {
+    .scoreline-summary strong {
       font-weight: 800;
       color: var(--ink);
       font-size: 0.95rem;
@@ -1450,8 +1481,14 @@
         width: 130px;
         height: 130px;
       }
-      .hm-cell {
-        font-size: 0.7rem;
+      .scoreline-row {
+        grid-template-columns: repeat(auto-fit, minmax(42px, 1fr));
+      }
+      .scoreline-label {
+        font-size: 0.85rem;
+      }
+      .scoreline-count {
+        font-size: 0.65rem;
       }
     }
   </style>
@@ -1512,6 +1549,19 @@
     <div id="sheetItems"></div>
   </div>
   <script>
+    // Sentinel value used to "clear" a prediction since the API has no DELETE.
+    // Any negative pred_home/pred_away is treated as "no prediction" by the UI.
+    // The backend will store -1/-1 with points: null, and calc_points won't match
+    // any real score (since real scores are always >= 0), so it'll stay 0 points
+    // — exactly equivalent to no prediction for scoring.
+    const NULL_SENTINEL = -1;
+    function isCleared(pred) {
+      if (!pred) return true;
+      if (pred.pred_home === undefined || pred.pred_home === null) return true;
+      if (pred.pred_away === undefined || pred.pred_away === null) return true;
+      if (pred.pred_home < 0 || pred.pred_away < 0) return true;
+      return false;
+    }
     function preloadFlags() {
       Object.values(TEAM_FLAG).forEach(code => { const img = new Image(); img.src = 'flags/' + code + '.png'; });
     }
@@ -1542,18 +1592,20 @@
     }
     const API = 'https://nowhere-admission-draft-adapters.trycloudflare.com';
     const STAGE_LABEL = { group: 'Group Stage', r32: 'Round of 32', r16: 'Round of 16', qf: 'Quarter Finals', sf: 'Semi Finals', third: 'Third Place', final: 'Final' };
-    // Modern, vibrant, distinct color palette (Tailwind-inspired modern hues)
+    // 12 modern, distinct, vibrant colors — assigned by users array index (stable across renders)
     const PLAYER_COLORS = [
-      '#10b981', // emerald-500
-      '#3b82f6', // blue-500
-      '#f59e0b', // amber-500
-      '#8b5cf6', // violet-500
-      '#ef4444', // red-500
-      '#06b6d4', // cyan-500
-      '#ec4899', // pink-500
-      '#84cc16', // lime-500
-      '#f97316', // orange-500
-      '#6366f1'  // indigo-500
+      '#10b981', // emerald
+      '#3b82f6', // blue
+      '#f59e0b', // amber
+      '#8b5cf6', // violet
+      '#ef4444', // red
+      '#06b6d4', // cyan
+      '#ec4899', // pink
+      '#84cc16', // lime
+      '#f97316', // orange
+      '#6366f1', // indigo
+      '#14b8a6', // teal
+      '#d946ef'  // fuchsia
     ];
     const predBuffer = {};
     const timers = {};
@@ -1561,6 +1613,8 @@
     let toastTimer;
     let lbInitialized = false, statsInitialized = false;
     let lastLBJson = null;
+    let lastMatchesJson = null;
+    let lastUsersJson = null;
     let activeFilter = 'all';
     const FILTER_LABELS = { all: 'All Matches', today: "Today's Matches", group: 'Group Stage Matches', r32: 'Round of 32 Matches', r16: 'Round of 16 Matches', qf: 'Quarter Finals', sf: 'Semi Finals', third: 'Third Place', final: 'Final' };
     function getTodayWindow() {
@@ -1751,6 +1805,8 @@
           fetch(API + '/matches').then(r => { if (!r.ok) throw new Error(); return r.json(); })
         ]);
         users = ru; matches = rm; sortUsers();
+        lastUsersJson = JSON.stringify(users);
+        lastMatchesJson = JSON.stringify(matches);
         buildMatchDOM();
         autoSelectFilter();
         initFab();
@@ -1794,12 +1850,14 @@
       };
     }
     function buildPredItemHTML(u, matchid, pred, finished, locked) {
-      var ph = (pred != null && pred.pred_home !== undefined) ? pred.pred_home : '';
-      var pa = (pred != null && pred.pred_away !== undefined) ? pred.pred_away : '';
-      var pts = pred ? pred.points : null;
+      // Treat sentinel/null as "no prediction" — show empty inputs
+      const cleared = isCleared(pred);
+      var ph = cleared ? '' : pred.pred_home;
+      var pa = cleared ? '' : pred.pred_away;
+      var pts = (!cleared && pred) ? pred.points : null;
       var pillCls = 'pnd', pillTxt = 'Pending';
       if (finished) {
-        if (!pred) { pillCls = 'p0'; pillTxt = 'No pick'; }
+        if (cleared) { pillCls = 'p0'; pillTxt = 'No pick'; }
         else if (pts === 3) { pillCls = 'p3'; pillTxt = '3 Exact'; }
         else if (pts === 1) { pillCls = 'p1'; pillTxt = '1 Result'; }
         else { pillCls = 'p0'; pillTxt = '0 Miss'; }
@@ -1807,8 +1865,12 @@
       var dis = locked ? 'disabled' : '';
       var uid = escHtml(u.user_id);
       var mid = escHtml(matchid);
+      // Show clear (×) button only if there IS a prediction and not locked
+      const showClear = !cleared && !locked;
+      const clearBtnHtml = `<button class="pred-clear ${showClear ? '' : 'hidden'}" data-role="clear" title="Clear prediction" onclick="event.stopPropagation();clearPred('${mid}','${uid}')" ${locked ? 'disabled' : ''}>×</button>`;
       return '<div class="pred-item" data-userid="' + uid + '">' +
         '<div class="pred-name">' + escHtml(u.display_name) + '</div>' +
+        clearBtnHtml +
         '<div class="pred-score-row">' +
         '<input class="pred-input" type="number" min="0" max="20" placeholder="-" value="' + ph + '" ' + dis +
         ' data-matchid="' + mid + '" data-userid="' + uid + '" data-side="home"' +
@@ -1825,7 +1887,7 @@
       var predicted = [];
       users.forEach(function (u) {
         var pred = m.predictions ? m.predictions[u.user_id] : null;
-        if (pred && pred.pred_home !== undefined && pred.pred_away !== undefined) {
+        if (!isCleared(pred)) {
           predicted.push((u.display_name || '').split(' ')[0]);
         }
       });
@@ -1939,22 +2001,27 @@
         if (badge) { badge.className = 'badge ' + meta.badgeCls; badge.textContent = meta.badgeTxt; }
         const timeEl = card.querySelector('[data-role="time"]');
         if (timeEl) timeEl.textContent = meta.timeStr;
+        // Always update the "predicted by" sentence
         const sentenceEl = container.querySelector('.pred-sentence[data-matchid="' + nm.match_id + '"]');
         if (sentenceEl) {
           const sentTxt = sentenceEl.querySelector('.pred-sentence-txt');
-          if (sentTxt) sentTxt.innerHTML = buildPredSentence(nm, newUsers);
+          if (sentTxt) {
+            const newSentenceHTML = buildPredSentence(nm, newUsers);
+            if (sentTxt.innerHTML !== newSentenceHTML) sentTxt.innerHTML = newSentenceHTML;
+          }
         }
         const cd = card.querySelector('.match-countdown');
         if (cd) cd.dataset.status = nm.status || '';
         newUsers.forEach(function (u) {
           const pred = nm.predictions ? nm.predictions[u.user_id] : null;
+          const cleared = isCleared(pred);
           const predItem = card.querySelector('.pred-item[data-userid="' + u.user_id + '"]');
           if (!predItem) return;
           const pill = predItem.querySelector('[data-role="pill"]');
           if (pill) {
             let cls = 'pnd', txt = 'Pending';
             if (meta.finished) {
-              if (!pred) { cls = 'p0'; txt = 'No pick'; }
+              if (cleared) { cls = 'p0'; txt = 'No pick'; }
               else if (pred.points === 3) { cls = 'p3'; txt = '3 Exact'; }
               else if (pred.points === 1) { cls = 'p1'; txt = '1 Result'; }
               else { cls = 'p0'; txt = '0 Miss'; }
@@ -1964,10 +2031,24 @@
           }
           const inHome = predItem.querySelector('[data-role="input-home"]');
           const inAway = predItem.querySelector('[data-role="input-away"]');
-          if (inHome && inHome !== activeEl && pred && pred.pred_home !== undefined) inHome.value = pred.pred_home;
-          if (inAway && inAway !== activeEl && pred && pred.pred_away !== undefined) inAway.value = pred.pred_away;
+          // Update inputs only if not focused (don't disturb someone typing)
+          if (inHome && inHome !== activeEl) {
+            const newVal = cleared ? '' : String(pred.pred_home);
+            if (inHome.value !== newVal) inHome.value = newVal;
+          }
+          if (inAway && inAway !== activeEl) {
+            const newVal = cleared ? '' : String(pred.pred_away);
+            if (inAway.value !== newVal) inAway.value = newVal;
+          }
           if (inHome) inHome.disabled = meta.locked;
           if (inAway) inAway.disabled = meta.locked;
+          // Toggle clear (×) button visibility
+          const clearBtn = predItem.querySelector('[data-role="clear"]');
+          if (clearBtn) {
+            const showClear = !cleared && !meta.locked;
+            clearBtn.classList.toggle('hidden', !showClear);
+            clearBtn.disabled = meta.locked;
+          }
         });
       });
       requestAnimationFrame(() => { document.querySelectorAll('.pred-grid').forEach(alignLastPredRow); });
@@ -2020,6 +2101,7 @@
         '<ol class="rules-list"><li>More exact scores (3-pt calls)</li><li>Alphabetical order of name</li></ol>' +
         '<div class="rules-divider"></div>' +
         '<div class="rules-list-item">Predictions lock <strong>60 minutes</strong> after kickoff — submit early!</div>' +
+        '<div class="rules-list-item">Tap the <strong>×</strong> next to any prediction to clear it before kickoff.</div>' +
         '</div>';
       document.getElementById('lbList').innerHTML = html;
     }
@@ -2049,14 +2131,18 @@
         rows + '</div>';
     }
     // ── STATS TAB ───────────────────────────────────────────────────────────
+    function normalizeScoreline(a, b) {
+      const x = +a, y = +b;
+      return (x >= y) ? (x + '-' + y) : (y + '-' + x);
+    }
     function computeStats() {
       const finishedMatches = matches.filter(m => m.status === 'FINISHED');
       const totalMatches = matches.length;
       let totalPredictions = 0;
       let exactCount = 0, resultCount = 0, missCount = 0, noPickCount = 0;
       let totalPredHomeGoals = 0, totalPredAwayGoals = 0, totalActualHomeGoals = 0, totalActualAwayGoals = 0;
-      const predictedScorelineMap = {}; // "h-a" -> count of predictions
-      const actualScorelineMap = {}; // "h-a" -> count of actual results
+      const predictedScorelineMap = {};
+      const actualScorelineMap = {};
       const playerStats = {};
       users.forEach(u => {
         playerStats[u.user_id] = { name: u.display_name, predictions: 0, exact: 0, correct: 0, miss: 0, points: 0, predGoalsTotal: 0 };
@@ -2075,7 +2161,8 @@
         matchTimeline.push({ idx, matchId: m.match_id, label: (m.team_home || '').slice(0, 3).toUpperCase() + ' v ' + (m.team_away || '').slice(0, 3).toUpperCase() });
         users.forEach(u => {
           const pred = m.predictions ? m.predictions[u.user_id] : null;
-          if (pred && pred.points !== undefined && pred.points !== null) {
+          // Cleared predictions don't earn points (and points should be null/0 in DB anyway)
+          if (!isCleared(pred) && pred.points !== undefined && pred.points !== null) {
             runningTotals[u.user_id] += pred.points;
           }
           cumulative[u.user_id].push({ idx: matchTimeline.length - 1, total: runningTotals[u.user_id] });
@@ -2086,18 +2173,19 @@
         if (isFinished && m.score_home !== undefined && m.score_away !== undefined && m.score_home !== null && m.score_away !== null) {
           totalActualHomeGoals += +m.score_home;
           totalActualAwayGoals += +m.score_away;
-          const ak = (+m.score_home) + '-' + (+m.score_away);
+          const ak = normalizeScoreline(m.score_home, m.score_away);
           actualScorelineMap[ak] = (actualScorelineMap[ak] || 0) + 1;
         }
         users.forEach(u => {
           const pred = m.predictions ? m.predictions[u.user_id] : null;
-          if (pred && pred.pred_home !== undefined && pred.pred_away !== undefined && pred.pred_home !== null && pred.pred_away !== null) {
+          // Skip cleared predictions entirely from stats
+          if (!isCleared(pred)) {
             totalPredictions++;
             totalPredHomeGoals += +pred.pred_home;
             totalPredAwayGoals += +pred.pred_away;
             playerStats[u.user_id].predictions++;
             playerStats[u.user_id].predGoalsTotal += (+pred.pred_home + +pred.pred_away);
-            const key = pred.pred_home + '-' + pred.pred_away;
+            const key = normalizeScoreline(pred.pred_home, pred.pred_away);
             predictedScorelineMap[key] = (predictedScorelineMap[key] || 0) + 1;
             if (isFinished) {
               if (pred.points === 3) { exactCount++; playerStats[u.user_id].exact++; }
@@ -2278,58 +2366,79 @@
     }
     function renderLineChart(s) {
       const players = Object.values(s.playerStats);
-      if (!players.length || !s.matchTimeline.length) {
-        return `<div class="stats-card"><div class="stats-card-header"><div class="stats-card-title">Points Trend</div><div class="stats-card-sub">Cumulative points over completed matches</div></div><div class="stats-card-body"><div style="text-align:center;color:var(--ink4);font-family:Instrument Serif,serif;font-style:italic;padding:20px">No completed matches yet.</div></div></div>`;
-      }
-      const W = 600, H = 260, padL = 32, padR = 18, padT = 16, padB = 22;
+      // Always render with axes — even when empty — so the user sees the structure
+      const W = 600, H = 280;
+      const padL = 44, padR = 18, padT = 14, padB = 38;
       const innerW = W - padL - padR;
       const innerH = H - padT - padB;
       const N = s.matchTimeline.length;
-      // Sort users by total points descending, but keep stable color assignment by user_id index
-      const orderedUserIds = Object.keys(s.playerStats).sort((a, b) => s.playerStats[b].points - s.playerStats[a].points);
-      // Stable color map: use users array order so colors don't change between renders
+      // Stable color map: assigned by index in users array — never changes
       const colorMap = {};
       users.forEach((u, idx) => { colorMap[u.user_id] = PLAYER_COLORS[idx % PLAYER_COLORS.length]; });
-      let maxY = 1;
+      const orderedUserIds = Object.keys(s.playerStats).sort((a, b) => s.playerStats[b].points - s.playerStats[a].points);
+      // Compute Y axis maximum: at least 10, expanded above the highest point
+      let dataMax = 0;
       orderedUserIds.forEach(uid => {
-        s.cumulative[uid].forEach(pt => { if (pt.total > maxY) maxY = pt.total; });
+        s.cumulative[uid].forEach(pt => { if (pt.total > dataMax) dataMax = pt.total; });
       });
-      maxY = Math.ceil(maxY * 1.15) || 1;
-      const xAt = i => padL + (N <= 1 ? innerW / 2 : (i / (N - 1)) * innerW);
+      const maxY = Math.max(10, Math.ceil(dataMax * 1.15) || 10);
+      // Y ticks: 5 evenly spaced
+      const yTickCount = 5;
+      const yStep = maxY / yTickCount;
+      const xCount = Math.max(N, 1);
+      const xAt = i => padL + (xCount <= 1 ? innerW / 2 : (i / (xCount - 1)) * innerW);
       const yAt = v => padT + innerH - (v / maxY) * innerH;
-      const gridLines = [];
-      for (let i = 0; i <= 4; i++) {
-        const yVal = (maxY / 4) * i;
+      // Build axis grid + ticks
+      const yGrid = [];
+      const yLabels = [];
+      for (let i = 0; i <= yTickCount; i++) {
+        const yVal = yStep * i;
         const y = yAt(yVal);
-        gridLines.push(`<line x1="${padL}" y1="${y}" x2="${padL + innerW}" y2="${y}" stroke="rgba(14,14,14,0.07)" stroke-width="1"/>`);
-        gridLines.push(`<text x="${padL - 6}" y="${y + 3}" text-anchor="end" font-family="Barlow Condensed" font-size="9" fill="#6e6760">${Math.round(yVal)}</text>`);
+        yGrid.push(`<line x1="${padL}" y1="${y}" x2="${padL + innerW}" y2="${y}" stroke="rgba(14,14,14,0.06)" stroke-width="1"/>`);
+        yLabels.push(`<text x="${padL - 8}" y="${y + 3.5}" text-anchor="end" font-family="Barlow Condensed" font-weight="600" font-size="10" fill="#6e6760">${Math.round(yVal)}</text>`);
       }
-      // Draw lines (highest scoring last, so they're on top)
+      // X axis ticks: show up to 6 labels evenly spaced (M1, M2 …)
+      const xTicks = [];
+      const xTickLabels = [];
+      if (N > 0) {
+        const maxLabels = Math.min(N, 6);
+        const stride = Math.max(1, Math.floor((N - 1) / (maxLabels - 1 || 1)));
+        const tickIdxs = new Set();
+        for (let i = 0; i < N; i += stride) tickIdxs.add(i);
+        tickIdxs.add(N - 1); // always include last
+        if (N > 1) tickIdxs.add(0); // always include first
+        [...tickIdxs].sort((a, b) => a - b).forEach(i => {
+          const x = xAt(i);
+          xTicks.push(`<line x1="${x}" y1="${padT + innerH}" x2="${x}" y2="${padT + innerH + 4}" stroke="rgba(14,14,14,0.25)" stroke-width="1"/>`);
+          xTickLabels.push(`<text x="${x}" y="${padT + innerH + 16}" text-anchor="middle" font-family="Barlow Condensed" font-weight="600" font-size="10" fill="#6e6760">M${i + 1}</text>`);
+        });
+      } else {
+        // Empty chart — show a single "Start" marker
+        xTickLabels.push(`<text x="${padL + innerW / 2}" y="${padT + innerH + 16}" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="11" fill="#6e6760">No matches played yet</text>`);
+      }
+      // Axis lines
+      const axes = `
+        <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + innerH}" stroke="rgba(14,14,14,0.45)" stroke-width="1.2"/>
+        <line x1="${padL}" y1="${padT + innerH}" x2="${padL + innerW}" y2="${padT + innerH}" stroke="rgba(14,14,14,0.45)" stroke-width="1.2"/>
+      `;
+      // Axis titles
+      const axisTitles = `
+        <text x="${padL - 32}" y="${padT + innerH / 2}" text-anchor="middle" font-family="Barlow Condensed" font-weight="700" font-size="10" fill="#45403a" letter-spacing="1.5" transform="rotate(-90 ${padL - 32} ${padT + innerH / 2})">POINTS</text>
+        <text x="${padL + innerW / 2}" y="${H - 6}" text-anchor="middle" font-family="Barlow Condensed" font-weight="700" font-size="10" fill="#45403a" letter-spacing="1.5">MATCHES PLAYED →</text>
+      `;
+      // Lines (lowest scoring drawn first, leaders on top)
       const drawOrder = [...orderedUserIds].reverse();
       const linesSvg = drawOrder.map(uid => {
         const color = colorMap[uid];
         const data = s.cumulative[uid];
         if (!data.length) return '';
         const path = data.map((pt, i) => `${i === 0 ? 'M' : 'L'}${xAt(pt.idx).toFixed(1)},${yAt(pt.total).toFixed(1)}`).join(' ');
-        // End-point dot
         const last = data[data.length - 1];
         const dot = `<circle cx="${xAt(last.idx).toFixed(1)}" cy="${yAt(last.total).toFixed(1)}" r="3.5" fill="${color}" stroke="#fff" stroke-width="1.5"/>`;
         return `<path d="${path}" fill="none" stroke="${color}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" opacity="0.95"/>${dot}`;
       }).join('');
-      const xLabels = [];
-      if (N > 0) {
-        xLabels.push(`<text x="${xAt(0)}" y="${H - 6}" text-anchor="start" font-family="Barlow Condensed" font-size="9" fill="#6e6760">M1</text>`);
-        if (N > 1) {
-          xLabels.push(`<text x="${xAt(N - 1)}" y="${H - 6}" text-anchor="end" font-family="Barlow Condensed" font-size="9" fill="#6e6760">M${N}</text>`);
-        }
-        // Mid-tick if more than 4 matches
-        if (N > 4) {
-          const midIdx = Math.floor(N / 2);
-          xLabels.push(`<text x="${xAt(midIdx)}" y="${H - 6}" text-anchor="middle" font-family="Barlow Condensed" font-size="9" fill="#6e6760">M${midIdx + 1}</text>`);
-        }
-      }
-      // Legend ordered by current standings (highest points first)
-      const legend = orderedUserIds.map(uid => {
+      // Legend ordered by current standings
+      const legend = orderedUserIds.length ? orderedUserIds.map(uid => {
         const color = colorMap[uid];
         const pts = s.playerStats[uid].points;
         return `<div class="line-legend-item">
@@ -2337,85 +2446,88 @@
           <div class="line-legend-name">${escHtml(s.playerStats[uid].name)}</div>
           <div class="line-legend-pts">${pts}</div>
         </div>`;
-      }).join('');
+      }).join('') : '<div style="color:var(--ink4);font-family:Instrument Serif,serif;font-style:italic;font-size:0.85rem;padding:4px 0">No players yet.</div>';
       return `<div class="stats-card">
         <div class="stats-card-header">
           <div class="stats-card-title">Points Trend</div>
           <div class="stats-card-sub">Cumulative points across completed matches · ranked by current total</div>
         </div>
         <div class="stats-card-body">
-          <svg class="line-chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-            ${gridLines.join('')}
+          <svg class="line-chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+            ${yGrid.join('')}
+            ${axes}
+            ${yLabels.join('')}
+            ${xTicks.join('')}
+            ${xTickLabels.join('')}
+            ${axisTitles}
             ${linesSvg}
-            ${xLabels.join('')}
           </svg>
           <div class="line-legend">${legend}</div>
         </div>
       </div>`;
     }
-    function renderDualHeatmap(s) {
-      const max = 5;
-      // Build grids
-      function buildGrid(map) {
-        const grid = {};
-        let topKey = null, topVal = 0, gridMax = 0;
-        for (let h = 0; h <= max; h++) {
-          for (let a = 0; a <= max; a++) {
-            const k = h + '-' + a;
-            const v = map[k] || 0;
-            grid[k] = v;
-            if (v > gridMax) gridMax = v;
-          }
-        }
-        // find absolute top scoreline (could exceed 5-5)
-        Object.keys(map).forEach(k => { if (map[k] > topVal) { topVal = map[k]; topKey = k; } });
-        return { grid, topKey, topVal, gridMax };
+    function renderScorelineHeatmap(s) {
+      function sortScorelines(keys) {
+        return keys.sort((a, b) => {
+          const [a1, a2] = a.split('-').map(Number);
+          const [b1, b2] = b.split('-').map(Number);
+          const totalA = a1 + a2, totalB = b1 + b2;
+          if (totalA !== totalB) return totalA - totalB;
+          const marginA = a1 - a2, marginB = b1 - b2;
+          return marginA - marginB;
+        });
       }
-      const pred = buildGrid(s.predictedScorelineMap);
-      const actual = buildGrid(s.actualScorelineMap);
       function colorFor(v, gridMax, baseRGB) {
         if (!v) return '#f5f0e8';
-        const t = gridMax ? v / gridMax : 0;
-        // blend paper -> baseRGB
+        const t = gridMax ? Math.pow(v / gridMax, 0.7) : 0;
         const r = Math.round(245 + (baseRGB[0] - 245) * t);
         const g = Math.round(240 + (baseRGB[1] - 240) * t);
         const b = Math.round(232 + (baseRGB[2] - 232) * t);
         return `rgb(${r},${g},${b})`;
       }
-      function buildBlockHTML(label, data, baseRGB, klass) {
-        let html = `<div class="heatmap-block">
-          <div class="heatmap-block-title ${klass}">${label}</div>
-          <div class="hm-axis-label">Away score →</div>
-          <div class="heatmap-grid">`;
-        html += '<div></div>';
-        for (let a = 0; a <= max; a++) html += `<div class="hm-axis">${a}</div>`;
-        for (let h = 0; h <= max; h++) {
-          html += `<div class="hm-axis">${h}</div>`;
-          for (let a = 0; a <= max; a++) {
-            const k = h + '-' + a;
-            const v = data.grid[k];
-            const isTop = v && k === data.topKey && v > 0;
-            const fg = v && (v / Math.max(data.gridMax, 1)) > 0.55 ? '#fff' : 'var(--ink2)';
-            html += `<div class="hm-cell ${isTop ? 'top' : ''}" style="background:${colorFor(v, data.gridMax, baseRGB)};color:${fg}" title="${h}–${a}: ${v}">${v || ''}</div>`;
-          }
+      function buildBlock(label, klass, dataMap, baseRGB) {
+        const keys = Object.keys(dataMap);
+        if (!keys.length) {
+          return `<div class="scoreline-block">
+            <div class="scoreline-block-title ${klass}">${label}</div>
+            <div class="scoreline-empty">No data yet.</div>
+          </div>`;
         }
-        html += `</div>
-          <div class="hm-summary">Top: <strong>${data.topKey ? data.topKey.replace('-', '–') : '—'}</strong>${data.topVal ? ` · ${data.topVal}×` : ''}</div>
+        const sorted = sortScorelines([...keys]);
+        const max = Math.max(...keys.map(k => dataMap[k]));
+        const total = keys.reduce((sum, k) => sum + dataMap[k], 0);
+        let topKey = sorted[0], topVal = 0;
+        keys.forEach(k => { if (dataMap[k] > topVal) { topVal = dataMap[k]; topKey = k; } });
+        const cells = sorted.map(k => {
+          const v = dataMap[k];
+          const isTop = k === topKey;
+          const ratio = v / max;
+          const fg = ratio > 0.6 ? '#fff' : 'var(--ink2)';
+          const display = k.replace('-', '–');
+          return `<div class="scoreline-cell ${isTop ? 'top' : ''}" style="background:${colorFor(v, max, baseRGB)};color:${fg}" title="${display}: ${v} time${v !== 1 ? 's' : ''}">
+            <div class="scoreline-label">${display}</div>
+            <div class="scoreline-count">×${v}</div>
+          </div>`;
+        }).join('');
+        return `<div class="scoreline-block">
+          <div class="scoreline-block-title ${klass}">${label}</div>
+          <div class="scoreline-row">${cells}</div>
+          <div class="scoreline-summary">Most common: <strong>${topKey.replace('-', '–')}</strong> · ${topVal}/${total}</div>
         </div>`;
-        return html;
       }
-      const predHTML = buildBlockHTML('What players picked', pred, [26, 58, 107], 'predicted'); // blue-ish
-      const actualHTML = buildBlockHTML('What actually happened', actual, [26, 92, 42], 'actual'); // green-ish
-      // Insight line
+      const predBlock = buildBlock('What players are picking', 'predicted', s.predictedScorelineMap, [26, 58, 107]);
+      const actualBlock = buildBlock('What actually happened', 'actual', s.actualScorelineMap, [26, 92, 42]);
+      const predKeys = Object.keys(s.predictedScorelineMap);
+      const actualKeys = Object.keys(s.actualScorelineMap);
+      let predTop = null, actualTop = null;
+      if (predKeys.length) predTop = predKeys.reduce((a, b) => s.predictedScorelineMap[a] >= s.predictedScorelineMap[b] ? a : b);
+      if (actualKeys.length) actualTop = actualKeys.reduce((a, b) => s.actualScorelineMap[a] >= s.actualScorelineMap[b] ? a : b);
       let insight = '';
-      if (pred.topKey && actual.topKey) {
-        if (pred.topKey === actual.topKey) {
-          insight = `Players nailed the vibe — most-picked and most-occurring scoreline are both <strong>${pred.topKey.replace('-', '–')}</strong>.`;
-        } else {
-          insight = `Most-picked: <strong>${pred.topKey.replace('-', '–')}</strong> · Most-actual: <strong>${actual.topKey.replace('-', '–')}</strong>`;
-        }
-      } else if (pred.topKey) {
-        insight = `Most-picked scoreline so far: <strong>${pred.topKey.replace('-', '–')}</strong> · No finished matches yet.`;
+      if (predTop && actualTop) {
+        if (predTop === actualTop) insight = `Wisdom of the crowd! Most-picked and most-occurring scoreline are both <strong>${predTop.replace('-', '–')}</strong>.`;
+        else insight = `Most picked: <strong>${predTop.replace('-', '–')}</strong> · Most actual: <strong>${actualTop.replace('-', '–')}</strong>`;
+      } else if (predTop) {
+        insight = `Most-picked scoreline so far: <strong>${predTop.replace('-', '–')}</strong> · No finished matches yet.`;
       } else {
         insight = 'No predictions or results yet.';
       }
@@ -2425,8 +2537,8 @@
           <div class="stats-card-sub">${insight}</div>
         </div>
         <div class="stats-card-body">
-          <div class="dual-heatmap-wrap">${predHTML}${actualHTML}</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;color:var(--ink4);text-align:center;margin-top:10px;letter-spacing:0.05em;">↓ Home score · darker = more frequent · gold outline marks the peak</div>
+          <div class="scoreline-heatmap-wrap">${predBlock}${actualBlock}</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;color:var(--ink4);text-align:center;margin-top:12px;letter-spacing:0.05em;">Sorted by total goals · darker = more frequent · gold outline marks the peak · scorelines are venue-neutral (e.g. 2–1 covers both 2:1 and 1:2)</div>
         </div>
       </div>`;
     }
@@ -2468,36 +2580,122 @@
       html += renderStackedBars(s);
       html += renderPredictionsBars(s);
       html += renderGoalsComparison(s);
-      html += renderDualHeatmap(s);
+      html += renderScorelineHeatmap(s);
       container.innerHTML = html;
       statsInitialized = true;
+    }
+    // ── Save & clear predictions ────────────────────────────────────────
+    // Apply optimistic update to local state + DOM, no backend call
+    function applyLocalPred(matchId, userId, ph, pa) {
+      const m = matches.find(x => String(x.match_id) === String(matchId));
+      if (!m) return;
+      if (!m.predictions) m.predictions = {};
+      if (ph === null && pa === null) {
+        // Optimistic clear — remove from local state until server confirms
+        delete m.predictions[userId];
+      } else {
+        if (!m.predictions[userId]) m.predictions[userId] = {};
+        m.predictions[userId].pred_home = ph;
+        m.predictions[userId].pred_away = pa;
+        // points stays whatever it was (will be recomputed on sync)
+      }
+      // Update sentence
+      const sentenceEl = document.querySelector(`.pred-sentence[data-matchid="${matchId}"] .pred-sentence-txt`);
+      if (sentenceEl) sentenceEl.innerHTML = buildPredSentence(m, users);
+      // Toggle clear button visibility
+      const card = document.querySelector(`.match-card[data-matchid="${matchId}"]`);
+      if (card) {
+        const predItem = card.querySelector(`.pred-item[data-userid="${userId}"]`);
+        if (predItem) {
+          const clearBtn = predItem.querySelector('[data-role="clear"]');
+          const meta = getMatchMeta(m);
+          if (clearBtn) {
+            const cleared = ph === null && pa === null;
+            const showClear = !cleared && !meta.locked;
+            clearBtn.classList.toggle('hidden', !showClear);
+          }
+        }
+      }
+      lastMatchesJson = JSON.stringify(matches);
+    }
+    function clearPred(matchId, userId) {
+      // Find DOM inputs and clear them visually
+      const card = document.querySelector(`.match-card[data-matchid="${matchId}"]`);
+      if (!card) return;
+      const predItem = card.querySelector(`.pred-item[data-userid="${userId}"]`);
+      if (!predItem) return;
+      const inHome = predItem.querySelector('[data-role="input-home"]');
+      const inAway = predItem.querySelector('[data-role="input-away"]');
+      if (inHome) inHome.value = '';
+      if (inAway) inAway.value = '';
+      // Cancel any pending save timer for this key
+      const key = matchId + userId;
+      if (timers[key]) { clearTimeout(timers[key]); delete timers[key]; }
+      delete predBuffer[key];
+      // Optimistic local update
+      applyLocalPred(matchId, userId, null, null);
+      // Send sentinel to backend (since there's no DELETE endpoint)
+      showToast('Clearing…');
+      fetch(API + '/predictions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          match_id: parseInt(matchId, 10),
+          pred_home: NULL_SENTINEL,
+          pred_away: NULL_SENTINEL
+        })
+      }).then(r => r.json()).then(d => {
+        if (d.status === 'saved') {
+          showToast('Cleared ✓');
+          setTimeout(doPoll, 200);
+        } else {
+          showToast(d.error || 'Error clearing', true);
+        }
+      }).catch(() => showToast('Network error', true));
     }
     function savePred(input) {
       var matchId = input.dataset.matchid;
       var userId = input.dataset.userid;
       var side = input.dataset.side;
       var val = input.value.trim();
-      if (!matchId || !userId || !side || val === '') return;
+      if (!matchId || !userId || !side) return;
       var key = matchId + userId;
-      if (!predBuffer[key]) {
-        var inputs = input.closest('.pred-item').querySelectorAll('.pred-input');
-        predBuffer[key] = {
-          home: inputs[0].value.trim() !== '' ? parseInt(inputs[0].value, 10) : null,
-          away: inputs[1].value.trim() !== '' ? parseInt(inputs[1].value, 10) : null
-        };
+      // Read both inputs
+      var inputs = input.closest('.pred-item').querySelectorAll('.pred-input');
+      var hVal = inputs[0].value.trim();
+      var aVal = inputs[1].value.trim();
+      // If BOTH are empty, treat as clear
+      if (hVal === '' && aVal === '') {
+        if (timers[key]) { clearTimeout(timers[key]); delete timers[key]; }
+        delete predBuffer[key];
+        // Only fire clear if the previous state had a real prediction
+        const m = matches.find(x => String(x.match_id) === String(matchId));
+        const prevPred = m && m.predictions ? m.predictions[userId] : null;
+        if (!isCleared(prevPred)) clearPred(matchId, userId);
+        return;
       }
-      predBuffer[key][side] = parseInt(val, 10);
+      // If only one side filled, do nothing yet (wait for the other)
+      if (hVal === '' || aVal === '') return;
+      predBuffer[key] = {
+        home: parseInt(hVal, 10),
+        away: parseInt(aVal, 10)
+      };
       if (timers[key]) clearTimeout(timers[key]);
       timers[key] = setTimeout(function () {
         var buf = predBuffer[key];
-        if (buf.home === null || buf.away === null) return;
+        if (!buf || buf.home === null || buf.away === null || isNaN(buf.home) || isNaN(buf.away)) return;
         showToast('Saving…');
         fetch(API + '/predictions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ user_id: userId, match_id: parseInt(matchId, 10), pred_home: buf.home, pred_away: buf.away })
         }).then(r => r.json()).then(d => {
-          if (d.status === 'saved') showToast('Saved ✓');
+          if (d.status === 'saved') {
+            showToast('Saved ✓');
+            applyLocalPred(matchId, userId, buf.home, buf.away);
+            setTimeout(doPoll, 200);
+          }
           else showToast(d.error || 'Error saving', true);
         }).catch(() => showToast('Network error', true));
       }, 500);
@@ -2515,6 +2713,8 @@
           fetch(API + '/matches').then(r => r.json())
         ]);
         users = mu; matches = mm; sortUsers();
+        lastUsersJson = JSON.stringify(users);
+        lastMatchesJson = JSON.stringify(matches);
         patchMatchDOM(matches, mm, mu);
         if (document.getElementById('leaderboard').classList.contains('active')) { lbInitialized = false; renderLeaderboard(); }
         if (document.getElementById('stats').classList.contains('active')) renderStats();
@@ -2534,15 +2734,25 @@
       toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
     }
     async function doPoll() {
-      if (document.hidden || (document.activeElement && document.activeElement.classList.contains('pred-input'))) return;
+      if (document.hidden) return;
       try {
         const [mu, mm] = await Promise.all([
           fetch(API + '/users').then(r => r.ok ? r.json() : null).catch(() => null),
           fetch(API + '/matches').then(r => r.ok ? r.json() : null).catch(() => null)
         ]);
         if (!mu || !mm || !Array.isArray(mu) || !Array.isArray(mm)) return;
+        const newUsersJson = JSON.stringify(mu);
+        const newMatchesJson = JSON.stringify(mm);
+        if (newUsersJson === lastUsersJson && newMatchesJson === lastMatchesJson) return;
+        const usersChanged = newUsersJson !== lastUsersJson;
         users = mu; matches = mm; sortUsers();
-        patchMatchDOM(matches, mm, mu);
+        lastUsersJson = newUsersJson;
+        lastMatchesJson = newMatchesJson;
+        if (usersChanged) {
+          buildMatchDOM();
+        } else {
+          patchMatchDOM(matches, mm, mu);
+        }
         if (document.getElementById('leaderboard').classList.contains('active')) {
           fetch(API + '/leaderboard').then(r => r.json()).then(data => {
             if (!Array.isArray(data)) return;
@@ -2558,7 +2768,8 @@
     let fastPoll = null;
     let slowPoll = null;
     let idleTimeout = null;
-    function startFastPoll() { if (fastPoll) return; fastPoll = setInterval(doPoll, 20 * 60 * 1000); }
+    // Active polling: every 20s. Idle (after 5 min no interaction): every 2 min.
+    function startFastPoll() { if (fastPoll) return; fastPoll = setInterval(doPoll, 20 * 1000); }
     function switchToSlowPoll() {
       if (fastPoll) { clearInterval(fastPoll); fastPoll = null; }
       slowPoll = setInterval(doPoll, 2 * 60 * 1000);
@@ -2566,10 +2777,10 @@
     function resetIdleTimer() {
       clearTimeout(idleTimeout);
       if (slowPoll) { clearInterval(slowPoll); slowPoll = null; startFastPoll(); }
-      idleTimeout = setTimeout(switchToSlowPoll, 30 * 60 * 1000);
+      idleTimeout = setTimeout(switchToSlowPoll, 5 * 60 * 1000);
     }
     boot();
-    setTimeout(() => { startFastPoll(); resetIdleTimer(); }, 3000);
+    setTimeout(() => { startFastPoll(); resetIdleTimer(); }, 2000);
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         clearInterval(fastPoll); fastPoll = null;
@@ -2577,7 +2788,7 @@
       } else {
         startFastPoll();
         resetIdleTimer();
-        setTimeout(doPoll, 500);
+        setTimeout(doPoll, 300);
       }
     });
     document.addEventListener('click', resetIdleTimer);
