@@ -1212,17 +1212,27 @@
     /* Line chart */
     .line-chart-svg {
       width: 100%;
-      height: 280px;
+      height: auto;
       display: block;
+      aspect-ratio: 600 / 280;
+      /* optional fallback for older browsers */
     }
 
     .line-legend {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
+      /* mobile default: 2 cols */
       gap: 8px 14px;
       padding-top: 14px;
       margin-top: 12px;
       border-top: 1px solid var(--rule);
+    }
+
+    @media (min-width: 561px) {
+      .line-legend {
+        grid-template-columns: repeat(5, 1fr);
+        /* desktop: 5 cols → 2 rows of 5 for 10 users */
+      }
     }
 
     .line-legend-item {
@@ -1487,11 +1497,6 @@
       opacity: 0;
     }
 
-    .match-card.hidden,
-    .pred-sentence.hidden,
-    .stage-header.hidden {
-      display: none !important;
-    }
 
     .filter-sheet-overlay {
       position: fixed;
@@ -1921,64 +1926,42 @@
       const label = document.getElementById('fabLabel');
       if (label) label.textContent = FILTER_LABELS[filter] || filter;
       expandFab();
+
       const container = document.getElementById('matchList');
       if (!container) return;
-      if (filter === 'today') {
-        const todayMatches = matches.filter(m => matchesFilter(m, 'today'));
-        let target = null;
-        if (todayMatches.length) {
-          target = container.querySelector(`[data-matchid="${todayMatches[0].match_id}"]`);
-        } else {
-          const nearest = getNearestMatch();
-          if (nearest) target = container.querySelector(`[data-matchid="${nearest.match_id}"]`);
-        }
-        if (target) {
-          const top = target.getBoundingClientRect().top + window.scrollY - 120;
-          window.scrollTo({ top, behavior: 'smooth' });
-        }
+
+      let targetEl = null;
+
+      if (filter === 'all') {
+        // Scroll to very top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
+      } else if (filter === 'today') {
+        const todayMatches = matches.filter(m => matchesFilter(m, 'today'));
+        const targetMatch = todayMatches.length ? todayMatches[0] : getNearestMatch();
+        if (targetMatch) {
+          targetEl = container.querySelector(`[data-matchid="${targetMatch.match_id}"]`);
+        }
+      } else {
+        // Stage filter — scroll to the stage header instead of first card
+        targetEl = container.querySelector(`.stage-header[data-stage="${filter}"]`);
       }
-      const allCards = container.querySelectorAll('.match-card');
-      const allHeaders = container.querySelectorAll('.stage-header');
-      allCards.forEach(card => {
-        card.classList.remove('hidden');
-        const mid = card.dataset.matchid;
-        const sent = container.querySelector(`.pred-sentence[data-matchid="${mid}"]`);
-        if (sent) sent.classList.remove('hidden');
-      });
-      allHeaders.forEach(header => header.classList.remove('hidden'));
-      if (filter !== 'all') {
-        allCards.forEach(card => {
-          const mid = card.dataset.matchid;
-          const m = matches.find(x => String(x.match_id) === String(mid));
-          if (!m) return;
-          const visible = matchesFilter(m, filter);
-          if (!visible) {
-            card.classList.add('hidden');
-            const sent = container.querySelector(`.pred-sentence[data-matchid="${mid}"]`);
-            if (sent) sent.classList.add('hidden');
-          }
-        });
-        allHeaders.forEach(header => {
-          const stage = header.dataset.stage;
-          const anyVisible = [...allCards].some(card => {
-            if (card.classList.contains('hidden')) return false;
-            const mid = card.dataset.matchid;
-            const m = matches.find(x => String(x.match_id) === String(mid));
-            return m && m.stage === stage && matchesFilter(m, filter);
-          });
-          if (!anyVisible) header.classList.add('hidden');
-        });
-      }
-      const firstVisible = container.querySelector('.match-card:not(.hidden)');
-      if (firstVisible) {
-        const top = firstVisible.getBoundingClientRect().top + window.scrollY - 120;
-        window.scrollTo({ top, behavior: 'smooth' });
-      }
+
+      if (!targetEl) return;
+
+      const stickyShell = document.querySelector('.sticky-shell');
+      const stickyHeight = stickyShell ? stickyShell.offsetHeight : 0;
+      const buffer = 16;
+      const top = targetEl.getBoundingClientRect().top + window.scrollY - stickyHeight - buffer;
+      window.scrollTo({ top, behavior: 'smooth' });
     }
     function autoSelectFilter() {
       const todayMatches = matches.filter(m => matchesFilter(m, 'today'));
-      if (todayMatches.length) applyFilter('today');
+      if (todayMatches.length) {
+        activeFilter = 'today';
+        const label = document.getElementById('fabLabel');
+        if (label) label.textContent = FILTER_LABELS['today'];
+      }
     }
     let fabCollapseTimer = null;
     let fabExpanded = true;
@@ -2506,24 +2489,26 @@
     function renderPredictionsBars(s) {
       const players = Object.values(s.playerStats).sort((a, b) => b.predictions - a.predictions);
       if (!players.length) return '';
-      const max = Math.max(...players.map(p => p.predictions), 1);
       const totalPossible = s.totalMatches;
+      if (!totalPossible) return '';
+
       const rows = players.map(p => {
-        const pct = (p.predictions / max) * 100;
-        const partRate = totalPossible ? Math.round((p.predictions / totalPossible) * 100) : 0;
+        const partRate = Math.round((p.predictions / totalPossible) * 100);
+        const pct = (p.predictions / totalPossible) * 100;  // bar width = actual %
         return `<div class="hbar-row">
-          <div class="hbar-name">${escHtml(p.name)}</div>
-          <div class="hbar-track"><div class="hbar-fill blue" style="width:${pct}%"></div></div>
-          <div class="hbar-val">${p.predictions} <span style="color:var(--ink4);font-weight:500;font-size:0.75rem">${partRate}%</span></div>
-        </div>`;
+      <div class="hbar-name">${escHtml(p.name)}</div>
+      <div class="hbar-track"><div class="hbar-fill blue" style="width:${pct}%"></div></div>
+      <div class="hbar-val">${p.predictions} <span style="color:var(--ink4);font-weight:500;font-size:0.75rem">${partRate}%</span></div>
+    </div>`;
       }).join('');
+
       return `<div class="stats-card">
-        <div class="stats-card-header">
-          <div class="stats-card-title">Predictions Submitted</div>
-          <div class="stats-card-sub">Participation level — % of all matches predicted</div>
-        </div>
-        <div class="stats-card-body">${rows}</div>
-      </div>`;
+    <div class="stats-card-header">
+      <div class="stats-card-title">Predictions Submitted</div>
+      <div class="stats-card-sub">Participation level — ${totalPossible} total matches</div>
+    </div>
+    <div class="stats-card-body">${rows}</div>
+  </div>`;
     }
     function renderHitRateDonut(s) {
       const total = s.exactCount + s.resultCount + s.missCount + s.noPickCount;
