@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -43,7 +42,6 @@
       --rule-strong: rgba(14, 14, 14, 0.25);
       --radius: 4px;
     }
-
     html {
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -51,7 +49,6 @@
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
     }
-
     *,
     *::before,
     *::after {
@@ -59,7 +56,6 @@
       margin: 0;
       padding: 0;
     }
-
     body {
       background: var(--paper);
       color: var(--ink);
@@ -69,11 +65,9 @@
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
     }
-
     header {
       background: var(--ink);
     }
-
     .header-top {
       display: flex;
       align-items: center;
@@ -82,13 +76,11 @@
       height: 60px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
-
     .logo {
       display: flex;
       align-items: baseline;
       gap: 10px;
     }
-
     .logo-main {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 900;
@@ -98,11 +90,9 @@
       color: #fff;
       line-height: 1;
     }
-
     .logo-main span {
       color: #5ddb7c;
     }
-
     .logo-sub {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 300;
@@ -112,7 +102,6 @@
       color: rgba(255, 255, 255, 0.5);
       padding-bottom: 2px;
     }
-
     .sync-btn {
       background: transparent;
       color: rgba(255, 255, 255, 0.6);
@@ -130,43 +119,42 @@
       gap: 7px;
       transition: all 0.2s;
     }
-
     .sync-btn:hover {
       border-color: rgba(255, 255, 255, 0.4);
       color: #fff;
     }
-
     .sync-btn:disabled {
       opacity: 0.3;
       cursor: not-allowed;
     }
-
     .sync-icon {
       font-size: 0.85rem;
       display: inline-block;
     }
-
     .sync-btn.spinning .sync-icon {
       animation: spin 0.7s linear infinite;
     }
-
     @keyframes spin {
       to {
         transform: rotate(360deg);
       }
     }
-
     .tabs-wrapper {
       background: var(--ink);
       display: flex;
+      align-items: stretch;
       padding: 0 28px;
-      overflow-x: auto;
+      position: relative;
     }
-
-    .tabs-wrapper::-webkit-scrollbar {
+    .tabs-list {
+      display: flex;
+      flex: 1;
+      overflow-x: auto;
+      min-width: 0;
+    }
+    .tabs-list::-webkit-scrollbar {
       display: none;
     }
-
     .sticky-shell {
       position: sticky;
       top: 0;
@@ -174,7 +162,6 @@
       will-change: transform;
       isolation: isolate;
     }
-
     .tab {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -189,41 +176,322 @@
       user-select: none;
       white-space: nowrap;
     }
-
     .tab:hover {
       color: rgba(255, 255, 255, 0.65);
     }
-
     .tab.active {
       color: #5ddb7c;
       border-bottom-color: #5ddb7c;
     }
-
+    /* ── SEARCH TOGGLE (in tabs row) ── */
+    .search-toggle-wrap {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      padding-left: 12px;
+    }
+    .search-toggle {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.45);
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: var(--radius);
+      transition: color 0.18s, background 0.18s;
+      -webkit-tap-highlight-color: transparent;
+      padding: 0;
+    }
+    .search-toggle:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .search-toggle.active {
+      color: #5ddb7c;
+      background: rgba(93, 219, 124, 0.12);
+    }
+    /* ── FLOATING SEARCH ROW ── */
+    .search-row-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: none;
+    }
+    .search-row-wrap.open {
+      display: block;
+      animation: searchSlideIn 0.25s ease both;
+    }
+    @keyframes searchSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .search-row {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      margin-top: 16px;
+      overflow: hidden;
+    }
+    .search-input-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+    }
+    .search-input-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      min-width: 0;
+    }
+    .search-input-icon {
+      color: var(--ink4);
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .search-input-row.has-filter .search-input-icon {
+      color: var(--green);
+    }
+    .search-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--ink);
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      height: 28px;
+      width: 100%;
+      min-width: 0;
+    }
+    .search-input::placeholder {
+      color: var(--ink4);
+      font-family: "Instrument Serif", serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 0.95rem;
+      letter-spacing: 0;
+    }
+    .search-chip {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: var(--green-light);
+      border: 1px solid var(--green-mid);
+      border-radius: var(--radius);
+      padding: 4px 6px 4px 8px;
+      max-width: 280px;
+      margin-right: auto;
+    }
+    .search-input-row.has-filter .search-chip {
+      display: flex;
+    }
+    .search-input-row.has-filter .search-input-wrap {
+      display: none;
+    }
+    .search-chip-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--green);
+      white-space: nowrap;
+    }
+    .search-chip-vs {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.7rem;
+      color: var(--green);
+      opacity: 0.65;
+      font-weight: 600;
+    }
+    .search-chip-clear {
+      background: rgba(26, 92, 42, 0.15);
+      border: none;
+      color: var(--green);
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1;
+      padding: 0;
+      flex-shrink: 0;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .search-chip-clear:hover {
+      background: rgba(26, 92, 42, 0.3);
+    }
+    .search-close {
+      background: transparent;
+      border: none;
+      color: var(--ink4);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      padding: 0;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .search-close:hover {
+      background: var(--paper);
+      color: var(--ink);
+    }
+    .search-results {
+      border-top: 1px solid var(--rule);
+      max-height: 60vh;
+      overflow-y: auto;
+      padding: 6px 0;
+    }
+    .search-results.empty {
+      display: none;
+    }
+    .search-section-title {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink4);
+      padding: 8px 14px 4px;
+    }
+    .search-result {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: background 0.12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .search-result:hover {
+      background: var(--paper);
+    }
+    .search-result-team-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--ink);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .search-result-meta {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--ink4);
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+    .search-match-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: background 0.12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .search-match-row:hover {
+      background: var(--paper);
+    }
+    .search-match-teams {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+    }
+    .search-match-team {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+    }
+    .search-match-team-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .search-match-vs {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.72rem;
+      color: var(--ink4);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .search-match-meta {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--ink4);
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .search-empty {
+      padding: 18px 14px;
+      font-family: "Instrument Serif", serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--ink4);
+      text-align: center;
+    }
     main {
       max-width: 780px;
       margin: 0 auto;
       padding: 36px 24px 100px;
     }
-
     .tab-content {
       display: none;
     }
-
     .tab-content.active {
       display: block;
     }
-
     .stage-header {
       display: flex;
       align-items: center;
       gap: 16px;
       margin: 40px 0 16px;
     }
-
     .stage-header:first-child {
       margin-top: 0;
     }
-
     .stage-label {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
@@ -233,13 +501,11 @@
       color: var(--ink3);
       white-space: nowrap;
     }
-
     .stage-rule {
       flex: 1;
       height: 1px;
       background: var(--rule);
     }
-
     .match-card {
       background: #fff;
       border: 1.5px solid var(--rule);
@@ -251,26 +517,22 @@
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
-
     @media(hover:hover) {
       .match-card:hover {
         border-color: #5ddb7c;
         box-shadow: 0 0 0 3px rgba(93, 219, 124, 0.13), 0 4px 20px rgba(0, 0, 0, 0.06);
       }
     }
-
     .match-card.open {
       border-color: #5ddb7c;
       box-shadow: 0 0 0 3px rgba(93, 219, 124, 0.13), 0 4px 20px rgba(0, 0, 0, 0.06);
     }
-
     .match-row {
       display: grid;
       grid-template-columns: 1fr 130px 1fr;
       align-items: stretch;
       min-height: 72px;
     }
-
     .team-cell {
       display: flex;
       align-items: center;
@@ -278,17 +540,14 @@
       min-width: 0;
       overflow: hidden;
     }
-
     .team-cell.home {
       justify-content: center;
       border-right: 1px solid var(--rule);
     }
-
     .team-cell.away {
       justify-content: center;
       border-left: 1px solid var(--rule);
     }
-
     .team-name {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -303,7 +562,6 @@
       color: var(--ink);
       text-align: center;
     }
-
     .centre-block {
       display: flex;
       flex-direction: column;
@@ -314,11 +572,9 @@
       background: var(--paper);
       transition: background 0.18s;
     }
-
     .match-card.open .centre-block {
       background: var(--green-light);
     }
-
     .score-display {
       display: flex;
       align-items: center;
@@ -329,37 +585,31 @@
       letter-spacing: -0.02em;
       line-height: 1;
     }
-
     .score-num {
       color: var(--ink);
       min-width: 26px;
       text-align: center;
     }
-
     .score-num.final {
       color: var(--green);
     }
-
     .score-num.pending {
       color: var(--ink3);
       font-size: 1.4rem;
       font-weight: 400;
     }
-
     .score-dash {
       color: var(--ink3);
       font-weight: 400;
       font-size: 1.6rem;
       padding: 0 2px;
     }
-
     .match-status {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 2px;
     }
-
     .badge {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.75rem;
@@ -370,35 +620,28 @@
       letter-spacing: 0.1em;
       white-space: nowrap;
     }
-
     .badge.upcoming {
       background: var(--paper3);
       color: var(--ink2);
     }
-
     .badge.finished {
       background: var(--green-light);
       color: var(--green);
     }
-
     .badge.live {
       background: var(--red-light);
       color: var(--red);
       animation: blink 1.4s infinite;
     }
-
     @keyframes blink {
-
       0%,
       100% {
         opacity: 1;
       }
-
       50% {
         opacity: 0.5;
       }
     }
-
     .match-time {
       font-family: Barlow, sans-serif;
       font-size: 0.78rem;
@@ -406,7 +649,6 @@
       color: var(--ink3);
       letter-spacing: 0.03em;
     }
-
     .predictions-panel {
       display: grid;
       grid-template-rows: 0fr;
@@ -414,29 +656,24 @@
       background: var(--paper);
       overflow: hidden;
     }
-
     .predictions-panel-inner {
       overflow: hidden;
       padding: 0 20px;
       transition: padding 0.22s ease;
     }
-
     .match-card.open .predictions-panel {
       grid-template-rows: 1fr;
       border-top: 1px solid var(--rule);
     }
-
     .match-card.open .predictions-panel-inner {
       padding: 14px 20px;
     }
-
     .pred-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 8px;
       justify-items: stretch;
     }
-
     .pred-item {
       background: #fff;
       border: 1px solid var(--rule);
@@ -448,11 +685,9 @@
       transition: border-color 0.15s;
       position: relative;
     }
-
     .pred-item:hover {
       border-color: var(--rule-strong);
     }
-
     .pred-name {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.78rem;
@@ -465,7 +700,6 @@
       text-overflow: ellipsis;
       padding-right: 18px;
     }
-
     .pred-clear {
       position: absolute;
       top: 8px;
@@ -487,27 +721,22 @@
       padding: 0;
       -webkit-tap-highlight-color: transparent;
     }
-
     .pred-clear:hover {
       background: var(--red-light);
       color: var(--red);
     }
-
     .pred-clear:disabled {
       opacity: 0;
       pointer-events: none;
     }
-
     .pred-clear.hidden {
       display: none;
     }
-
     .pred-score-row {
       display: flex;
       align-items: center;
       gap: 6px;
     }
-
     .pred-input {
       width: 42px;
       height: 40px;
@@ -523,30 +752,25 @@
       transition: border-color 0.15s, background 0.15s;
       -moz-appearance: textfield;
     }
-
     .pred-input::-webkit-outer-spin-button,
     .pred-input::-webkit-inner-spin-button {
       -webkit-appearance: none;
     }
-
     .pred-input:focus {
       border-color: var(--green);
       background: var(--green-light);
     }
-
     .pred-input:disabled {
       opacity: 0.4;
       cursor: not-allowed;
       background: transparent;
       border-color: transparent;
     }
-
     .pred-sep {
       color: var(--ink3);
       font-weight: 600;
       font-size: 0.9rem;
     }
-
     .points-pill {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.75rem;
@@ -557,34 +781,28 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
-
     .points-pill.p3 {
       background: var(--green-light);
       color: var(--green);
     }
-
     .points-pill.p1 {
       background: var(--blue-light);
       color: var(--blue);
     }
-
     .points-pill.p0 {
       background: var(--red-light);
       color: var(--red);
     }
-
     .points-pill.pnd {
       background: var(--paper2);
       color: var(--ink4);
     }
-
     .lb-wrap {
       background: #fff;
       border: 1px solid var(--rule);
       border-radius: var(--radius);
       overflow: hidden;
     }
-
     .lb-title-row {
       padding: 20px 24px 16px;
       border-bottom: 2px solid var(--ink);
@@ -593,7 +811,6 @@
       gap: 12px;
       flex-wrap: wrap;
     }
-
     .lb-title {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 900;
@@ -603,14 +820,12 @@
       color: var(--ink);
       line-height: 1;
     }
-
     .lb-sub {
       font-family: "Instrument Serif", serif;
       font-style: italic;
       font-size: 0.85rem;
       color: var(--ink4);
     }
-
     .lb-header-row {
       display: grid;
       grid-template-columns: 56px 1fr 80px 56px 60px;
@@ -624,11 +839,9 @@
       text-transform: uppercase;
       color: var(--ink3);
     }
-
     .lb-header-row div:not(:first-child):not(:nth-child(2)) {
       text-align: center;
     }
-
     .lb-row {
       display: grid;
       grid-template-columns: 56px 1fr 80px 56px 60px;
@@ -637,62 +850,50 @@
       border-bottom: 1px solid var(--rule);
       transition: background 0.15s;
     }
-
     .lb-row:last-child {
       border-bottom: none;
     }
-
     .lb-row:hover {
       background: var(--paper);
     }
-
     .lb-row.top1 {
       background: var(--gold-light);
     }
-
     .lb-row.top1:hover {
       background: #fdf2d0;
     }
-
     .rank-cell {
       display: flex;
       align-items: center;
       justify-content: center;
     }
-
     .rank-num {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 900;
       font-size: 1.4rem;
       line-height: 1;
     }
-
     .rank-num.r1 {
       color: var(--gold);
       font-size: 1.6rem;
     }
-
     .rank-num.r2 {
       color: var(--ink2);
     }
-
     .rank-num.r3 {
       color: #a0522d;
     }
-
     .rank-num.rn {
       color: var(--ink3);
       font-size: 0.9rem;
       font-weight: 700;
     }
-
     .lb-name-cell {
       display: flex;
       flex-direction: column;
       gap: 1px;
       min-width: 0;
     }
-
     .lb-name {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -704,11 +905,9 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
     .lb-row.top1 .lb-name {
       color: var(--gold);
     }
-
     .lb-pts {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 900;
@@ -717,7 +916,6 @@
       text-align: center;
       line-height: 1;
     }
-
     .lb-num {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 1rem;
@@ -725,24 +923,20 @@
       text-align: center;
       color: var(--ink2);
     }
-
     @keyframes shimmer {
       0% {
         background-position: -1000px 0;
       }
-
       100% {
         background-position: 1000px 0;
       }
     }
-
     .skel {
       background: linear-gradient(90deg, var(--paper2) 25%, var(--paper3) 50%, var(--paper2) 75%);
       background-size: 1000px 100%;
       animation: shimmer 1.8s infinite linear;
       border-radius: 3px;
     }
-
     .skel-card {
       background: #fff;
       border: 1px solid var(--rule);
@@ -755,24 +949,20 @@
       gap: 12px;
       min-height: 72px;
     }
-
     .sk-team {
       height: 16px;
       width: 100px;
     }
-
     .sk-score {
       height: 40px;
       width: 100px;
       border-radius: 3px;
     }
-
     .sk-meta {
       height: 10px;
       width: 70px;
       margin-top: 6px;
     }
-
     .sk-lb-row {
       display: grid;
       grid-template-columns: 56px 1fr 80px 56px 60px;
@@ -781,30 +971,25 @@
       gap: 8px;
       border-bottom: 1px solid var(--rule);
     }
-
     .sk-rank {
       height: 22px;
       width: 28px;
       margin: 0 auto;
     }
-
     .sk-name {
       height: 16px;
       width: 140px;
     }
-
     .sk-pts {
       height: 22px;
       width: 44px;
       margin: 0 auto;
     }
-
     .sk-stat {
       height: 14px;
       width: 28px;
       margin: 0 auto;
     }
-
     .state-msg {
       text-align: center;
       color: var(--ink3);
@@ -813,7 +998,6 @@
       font-style: italic;
       font-size: 1rem;
     }
-
     .toast {
       position: fixed;
       bottom: 28px;
@@ -834,16 +1018,13 @@
       z-index: 999;
       white-space: nowrap;
     }
-
     .toast.error {
       border-left-color: var(--red);
     }
-
     .toast.show {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
-
     .rules-box {
       margin-top: 12px;
       background: #fff;
@@ -851,7 +1032,6 @@
       border-radius: var(--radius);
       padding: 20px 24px 22px;
     }
-
     .rules-title {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
@@ -861,13 +1041,11 @@
       color: var(--ink3);
       margin-bottom: 12px;
     }
-
     .rules-table {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 4px;
     }
-
     .rules-table thead th {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.72rem;
@@ -879,12 +1057,10 @@
       text-align: left;
       border-bottom: 1px solid var(--rule);
     }
-
     .rules-table thead th.pts-col {
       text-align: center;
       width: 64px;
     }
-
     .rules-table tbody td {
       font-family: Barlow, sans-serif;
       font-size: 0.88rem;
@@ -893,43 +1069,36 @@
       padding: 8px 0;
       border-bottom: 1px solid var(--rule);
     }
-
     .rules-table tbody tr:last-child td {
       border-bottom: none;
     }
-
     .pts-col {
       text-align: center;
       width: 64px;
     }
-
     .green-pts {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
       color: var(--green);
       font-size: 1rem;
     }
-
     .blue-pts {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
       color: var(--blue);
       font-size: 1rem;
     }
-
     .grey-pts {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
       color: var(--ink4);
       font-size: 1rem;
     }
-
     .rules-divider {
       height: 1px;
       background: var(--rule);
       margin: 14px 0;
     }
-
     .rules-sub {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -939,53 +1108,44 @@
       color: var(--ink3);
       margin-bottom: 8px;
     }
-
     .rules-list {
       padding-left: 18px;
       display: flex;
       flex-direction: column;
       gap: 5px;
     }
-
     .rules-list li {
       font-family: Barlow, sans-serif;
       font-size: 0.88rem;
       color: var(--ink2);
     }
-
     .rules-list-item {
       font-family: Barlow, sans-serif;
       font-size: 0.88rem;
       color: var(--ink2);
       line-height: 1.5;
     }
-
     .rules-list-item strong {
       font-weight: 600;
       color: var(--ink);
     }
-
     @keyframes slideUp {
       from {
         opacity: 0;
         transform: translateY(14px);
       }
-
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
-
     .match-card.new-card {
       animation: slideUp 0.38s ease both;
       will-change: transform;
     }
-
     .lb-wrap {
       animation: slideUp 0.35s ease both;
     }
-
     /* ── STATS TAB ── */
     .stats-kpi-grid {
       display: grid;
@@ -993,7 +1153,6 @@
       gap: 8px;
       margin-bottom: 24px;
     }
-
     .kpi-card {
       background: #fff;
       border: 1px solid var(--rule);
@@ -1005,7 +1164,6 @@
       position: relative;
       overflow: hidden;
     }
-
     .kpi-card::before {
       content: '';
       position: absolute;
@@ -1015,23 +1173,18 @@
       width: 3px;
       background: var(--accent, var(--green));
     }
-
     .kpi-card.green {
       --accent: var(--green);
     }
-
     .kpi-card.blue {
       --accent: var(--blue);
     }
-
     .kpi-card.gold {
       --accent: var(--gold);
     }
-
     .kpi-card.purple {
       --accent: var(--purple);
     }
-
     .kpi-label {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.7rem;
@@ -1040,7 +1193,6 @@
       text-transform: uppercase;
       color: var(--ink4);
     }
-
     .kpi-value {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 2rem;
@@ -1048,14 +1200,12 @@
       line-height: 1;
       color: var(--ink);
     }
-
     .kpi-sub {
       font-family: Barlow, sans-serif;
       font-size: 0.75rem;
       color: var(--ink4);
       font-weight: 500;
     }
-
     .stats-card {
       background: #fff;
       border: 1px solid var(--rule);
@@ -1064,12 +1214,10 @@
       overflow: hidden;
       animation: slideUp 0.4s ease both;
     }
-
     .stats-card-header {
       padding: 16px 20px 12px;
       border-bottom: 1px solid var(--rule);
     }
-
     .stats-card-title {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -1079,7 +1227,6 @@
       color: var(--ink);
       line-height: 1.1;
     }
-
     .stats-card-sub {
       font-family: "Instrument Serif", serif;
       font-style: italic;
@@ -1087,12 +1234,9 @@
       color: var(--ink4);
       margin-top: 3px;
     }
-
     .stats-card-body {
       padding: 16px 20px 20px;
     }
-
-    /* Horizontal bar chart */
     .hbar-row {
       display: grid;
       grid-template-columns: 90px 1fr 50px;
@@ -1100,7 +1244,6 @@
       gap: 10px;
       padding: 5px 0;
     }
-
     .hbar-name {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -1112,7 +1255,6 @@
       text-overflow: ellipsis;
       letter-spacing: 0.03em;
     }
-
     .hbar-track {
       height: 18px;
       background: var(--paper2);
@@ -1120,7 +1262,6 @@
       overflow: hidden;
       position: relative;
     }
-
     .hbar-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--green), #5ddb7c);
@@ -1129,19 +1270,15 @@
       display: flex;
       align-items: center;
     }
-
     .hbar-fill.blue {
       background: linear-gradient(90deg, var(--blue), #4a7bc8);
     }
-
     .hbar-fill.gold {
       background: linear-gradient(90deg, var(--gold), #e8c25a);
     }
-
     .hbar-fill.purple {
       background: linear-gradient(90deg, var(--purple), #9b6dc7);
     }
-
     .hbar-val {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
@@ -1149,8 +1286,6 @@
       text-align: right;
       color: var(--ink);
     }
-
-    /* Donut chart */
     .donut-wrap {
       display: flex;
       align-items: center;
@@ -1158,33 +1293,28 @@
       flex-wrap: wrap;
       justify-content: center;
     }
-
     .donut-svg {
       width: 160px;
       height: 160px;
       flex-shrink: 0;
     }
-
     .donut-legend {
       display: flex;
       flex-direction: column;
       gap: 8px;
       min-width: 160px;
     }
-
     .donut-legend-row {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
     .donut-dot {
       width: 10px;
       height: 10px;
       border-radius: 2px;
       flex-shrink: 0;
     }
-
     .donut-legend-label {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.85rem;
@@ -1194,47 +1324,37 @@
       color: var(--ink2);
       flex: 1;
     }
-
     .donut-legend-val {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
       font-size: 1rem;
       color: var(--ink);
     }
-
     .donut-legend-pct {
       font-family: Barlow, sans-serif;
       font-size: 0.75rem;
       color: var(--ink4);
       font-weight: 500;
     }
-
-    /* Line chart */
     .line-chart-svg {
       width: 100%;
       height: auto;
       display: block;
       aspect-ratio: 600 / 280;
-      /* optional fallback for older browsers */
     }
-
     .line-legend {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      /* mobile default: 2 cols */
       gap: 8px 14px;
       padding-top: 14px;
       margin-top: 12px;
       border-top: 1px solid var(--rule);
     }
-
     @media (min-width: 561px) {
       .line-legend {
         grid-template-columns: repeat(5, 1fr);
-        /* desktop: 5 cols → 2 rows of 5 for 10 users */
       }
     }
-
     .line-legend-item {
       display: flex;
       align-items: center;
@@ -1247,7 +1367,6 @@
       color: var(--ink2);
       min-width: 0;
     }
-
     .line-legend-swatch {
       width: 14px;
       height: 14px;
@@ -1256,7 +1375,6 @@
       border: 2px solid #fff;
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
     }
-
     .line-legend-name {
       white-space: nowrap;
       overflow: hidden;
@@ -1264,7 +1382,6 @@
       flex: 1;
       min-width: 0;
     }
-
     .line-legend-pts {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
@@ -1272,8 +1389,6 @@
       color: var(--ink);
       flex-shrink: 0;
     }
-
-    /* Stacked bar */
     .stacked-row {
       display: grid;
       grid-template-columns: 90px 1fr 60px;
@@ -1281,7 +1396,6 @@
       gap: 10px;
       padding: 4px 0;
     }
-
     .stacked-track {
       height: 18px;
       background: var(--paper2);
@@ -1289,32 +1403,26 @@
       overflow: hidden;
       display: flex;
     }
-
     .stacked-seg {
       height: 100%;
       transition: width 0.6s ease;
     }
-
     .stacked-legend {
       display: flex;
       gap: 14px;
       flex-wrap: wrap;
       padding: 12px 0 4px;
     }
-
-    /* Scoreline frequency heatmap (1D row) */
     .scoreline-heatmap-wrap {
       display: flex;
       flex-direction: column;
       gap: 18px;
     }
-
     .scoreline-block {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
-
     .scoreline-block-title {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.78rem;
@@ -1325,23 +1433,19 @@
       padding: 5px 8px;
       border-radius: 3px;
     }
-
     .scoreline-block-title.predicted {
       background: var(--blue-light);
       color: var(--blue);
     }
-
     .scoreline-block-title.actual {
       background: var(--green-light);
       color: var(--green);
     }
-
     .scoreline-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
       gap: 4px;
     }
-
     .scoreline-cell {
       display: flex;
       flex-direction: column;
@@ -1355,17 +1459,14 @@
       cursor: default;
       position: relative;
     }
-
     .scoreline-cell:hover {
       transform: scale(1.06);
       z-index: 2;
     }
-
     .scoreline-cell.top {
       outline: 2px solid var(--gold);
       outline-offset: -2px;
     }
-
     .scoreline-label {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
@@ -1373,7 +1474,6 @@
       letter-spacing: 0.02em;
       line-height: 1;
     }
-
     .scoreline-count {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 600;
@@ -1382,7 +1482,6 @@
       opacity: 0.85;
       line-height: 1;
     }
-
     .scoreline-empty {
       font-family: "Instrument Serif", serif;
       font-style: italic;
@@ -1393,7 +1492,6 @@
       background: var(--paper);
       border-radius: 3px;
     }
-
     .scoreline-summary {
       display: flex;
       align-items: center;
@@ -1408,13 +1506,11 @@
       letter-spacing: 0.02em;
       flex-wrap: wrap;
     }
-
     .scoreline-summary strong {
       font-weight: 800;
       color: var(--ink);
       font-size: 0.95rem;
     }
-
     /* ── FILTER FAB ── */
     .filter-fab {
       position: fixed;
@@ -1424,13 +1520,11 @@
       pointer-events: none;
       transition: opacity 0.2s;
     }
-
     .filter-fab.hidden {
       opacity: 0;
       pointer-events: none !important;
       visibility: hidden;
     }
-
     .filter-fab-btn {
       pointer-events: all;
       font-family: "Barlow Condensed", sans-serif;
@@ -1452,20 +1546,17 @@
       overflow: hidden;
       transition: padding 0.35s ease;
     }
-
     .filter-fab-icon {
       flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-
     .filter-fab-icon svg {
       width: 16px;
       height: 16px;
       fill: #5ddb7c;
     }
-
     .filter-fab-label {
       display: inline-block;
       max-width: 200px;
@@ -1475,14 +1566,12 @@
       margin-right: 4px;
       transition: max-width 0.35s ease, opacity 0.2s ease, margin 0.35s ease;
     }
-
     .filter-fab-btn.collapsed .filter-fab-label {
       max-width: 0;
       opacity: 0;
       margin-left: 0;
       margin-right: 0;
     }
-
     .fab-accent {
       color: #5ddb7c;
       font-size: 0.75rem;
@@ -1491,13 +1580,10 @@
       max-width: 20px;
       overflow: hidden;
     }
-
     .filter-fab-btn.collapsed .fab-accent {
       max-width: 0;
       opacity: 0;
     }
-
-
     .filter-sheet-overlay {
       position: fixed;
       inset: 0;
@@ -1508,13 +1594,11 @@
       transition: opacity 0.22s ease;
       visibility: hidden;
     }
-
     .filter-sheet-overlay.open {
       opacity: 1;
       pointer-events: all;
       visibility: visible;
     }
-
     .filter-sheet {
       position: fixed;
       bottom: 0;
@@ -1527,11 +1611,9 @@
       transition: transform 0.28s cubic-bezier(0.34, 1.1, 0.64, 1);
       padding-bottom: env(safe-area-inset-bottom, 12px);
     }
-
     .filter-sheet.open {
       transform: translateY(0);
     }
-
     .sheet-handle {
       width: 36px;
       height: 4px;
@@ -1539,7 +1621,6 @@
       border-radius: 2px;
       margin: 12px auto 16px;
     }
-
     .sheet-title {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.72rem;
@@ -1549,7 +1630,6 @@
       color: var(--ink4);
       padding: 0 20px 10px;
     }
-
     .sheet-item {
       display: flex;
       align-items: center;
@@ -1560,17 +1640,14 @@
       -webkit-tap-highlight-color: transparent;
       transition: background 0.15s;
     }
-
     .sheet-item:active {
       background: var(--paper);
     }
-
     .sheet-item-left {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-
     .sheet-dot {
       width: 7px;
       height: 7px;
@@ -1579,11 +1656,9 @@
       flex-shrink: 0;
       transition: background 0.15s;
     }
-
     .sheet-dot.active {
       background: #5ddb7c;
     }
-
     .sheet-item-name {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -1592,11 +1667,9 @@
       letter-spacing: 0.05em;
       color: var(--ink);
     }
-
     .sheet-item-name.active {
       color: var(--green);
     }
-
     .sheet-check {
       color: #5ddb7c;
       font-size: 1rem;
@@ -1604,146 +1677,148 @@
       opacity: 0;
       transition: opacity 0.15s;
     }
-
     .sheet-check.active {
       opacity: 1;
     }
-
     @keyframes blink-dot {
-
       0%,
       100% {
         opacity: 1;
       }
-
       50% {
         opacity: 0.2;
       }
     }
-
     @media(max-width: 560px) {
       .header-top {
         padding: 0 16px;
         height: 54px;
       }
-
       .logo-main {
         font-size: 1.2rem;
       }
-
       .logo-sub {
         font-size: 0.85rem;
       }
-
+      .tabs-wrapper {
+        padding: 0 16px;
+      }
       .tab {
         padding: 11px 14px 9px;
         font-size: 0.88rem;
       }
-
+      .search-toggle-wrap {
+        padding-left: 8px;
+      }
+      .search-row-wrap {
+        padding: 0 14px;
+      }
+      .search-input {
+        font-size: 0.95rem;
+      }
+      .search-input::placeholder {
+        font-size: 0.9rem;
+      }
+      .search-chip {
+        max-width: 220px;
+      }
       main {
         padding: 24px 14px 100px;
       }
-
       .team-name {
         font-size: 0.9rem;
         max-width: 100%;
       }
-
       .team-cell {
         padding: 12px 12px;
       }
-
       .match-row {
         grid-template-columns: 1fr 106px 1fr;
       }
-
       .centre-block {
         min-width: 0;
         padding: 10px 6px;
       }
-
       .score-display {
         font-size: 1.6rem;
       }
-
       .lb-header-row,
       .lb-row {
         grid-template-columns: 44px 1fr 64px 44px 48px;
         padding: 12px 14px;
       }
-
       .lb-pts {
         font-size: 1.2rem;
       }
-
       .lb-name {
         font-size: 0.9rem;
       }
-
       .sk-lb-row {
         grid-template-columns: 44px 1fr 64px 44px 48px;
         padding: 12px 14px;
       }
-
       .pred-grid {
         grid-template-columns: 1fr 1fr;
       }
-
       .pred-item {
         padding: 10px 10px;
       }
-
       .pred-input {
         width: 36px;
         height: 36px;
       }
-
       .stats-kpi-grid {
         grid-template-columns: repeat(2, 1fr);
       }
-
       .kpi-value {
         font-size: 1.6rem;
       }
-
       .hbar-row {
         grid-template-columns: 70px 1fr 42px;
         gap: 8px;
       }
-
       .hbar-name {
         font-size: 0.78rem;
       }
-
       .stacked-row {
         grid-template-columns: 70px 1fr 50px;
         gap: 8px;
       }
-
       .donut-wrap {
         gap: 16px;
       }
-
       .donut-svg {
         width: 130px;
         height: 130px;
       }
-
       .scoreline-row {
         grid-template-columns: repeat(auto-fit, minmax(42px, 1fr));
       }
-
       .scoreline-label {
         font-size: 0.85rem;
       }
-
       .scoreline-count {
         font-size: 0.65rem;
+      }
+      .search-match-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      .search-match-teams {
+        width: 100%;
+      }
+      .search-match-team-name {
+        font-size: 0.85rem;
+      }
+      .search-match-meta {
+        font-size: 0.7rem;
+        text-align: left;
+        padding-left: 24px;
       }
     }
   </style>
 </head>
-
 <body>
   <div class="sticky-shell">
     <header>
@@ -1757,11 +1832,42 @@
           <span class="btn-label">Refresh Results</span>
         </button>
       </div>
+      <div class="tabs-wrapper">
+        <div class="tabs-list">
+          <div class="tab active" data-tab="predict" onclick="switchTab('predict',this)">Predict</div>
+          <div class="tab" data-tab="leaderboard" onclick="switchTab('leaderboard',this)">Leaderboard</div>
+          <div class="tab" data-tab="stats" onclick="switchTab('stats',this)">Stats</div>
+        </div>
+        <div class="search-toggle-wrap">
+          <button class="search-toggle" id="searchToggle" onclick="toggleSearchRow()" aria-label="Search">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </header>
-    <div class="tabs-wrapper">
-      <div class="tab active" data-tab="predict" onclick="switchTab('predict',this)">Predict</div>
-      <div class="tab" data-tab="leaderboard" onclick="switchTab('leaderboard',this)">Leaderboard</div>
-      <div class="tab" data-tab="stats" onclick="switchTab('stats',this)">Stats</div>
+    <div class="search-row-wrap" id="searchRowWrap">
+      <div class="search-row">
+        <div class="search-input-row" id="searchInputRow">
+          <span class="search-input-icon">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </span>
+          <div class="search-input-wrap">
+            <input type="text" id="searchInput" class="search-input" placeholder="e.g. Brazil, Argentina…"
+              autocomplete="off" spellcheck="false">
+          </div>
+          <div class="search-chip" id="searchChip"></div>
+          <button class="search-close" onclick="closeSearchRow()" aria-label="Close search">×</button>
+        </div>
+        <div class="search-results empty" id="searchResults"></div>
+      </div>
     </div>
   </div>
   <main>
@@ -1800,11 +1906,6 @@
     <div id="sheetItems"></div>
   </div>
   <script>
-    // Sentinel value used to "clear" a prediction since the API has no DELETE.
-    // Any negative pred_home/pred_away is treated as "no prediction" by the UI.
-    // The backend will store -1/-1 with points: null, and calc_points won't match
-    // any real score (since real scores are always >= 0), so it'll stay 0 points
-    // — exactly equivalent to no prediction for scoring.
     const NULL_SENTINEL = -1;
     function isCleared(pred) {
       if (!pred) return true;
@@ -1841,22 +1942,25 @@
       if (!code) return '';
       return `<img src="flags/${code}.png" width="24" height="16" style="border-radius:2px;flex-shrink:0;display:block;border:1px solid rgba(0,0,0,0.1);" alt="${teamName}">`;
     }
+    function flagHtmlSmall(teamName) {
+      if (!teamName) return '';
+      const code = TEAM_FLAG[teamName.trim().toLowerCase()];
+      if (!code) return '';
+      return `<img src="flags/${code}.png" width="18" height="12" style="border-radius:2px;flex-shrink:0;display:block;border:1px solid rgba(0,0,0,0.1);" alt="${teamName}">`;
+    }
+    function flagHtmlMini(teamName) {
+      if (!teamName) return '';
+      const code = TEAM_FLAG[teamName.trim().toLowerCase()];
+      if (!code) return '';
+      return `<img src="flags/${code}.png" width="14" height="10" style="border-radius:2px;flex-shrink:0;display:inline-block;vertical-align:middle;border:1px solid rgba(0,0,0,0.1);" alt="${teamName}">`;
+    }
     const API = 'https://nowhere-admission-draft-adapters.trycloudflare.com';
     const STAGE_LABEL = { group: 'Group Stage', r32: 'Round of 32', r16: 'Round of 16', qf: 'Quarter Finals', sf: 'Semi Finals', third: 'Third Place', final: 'Final' };
-    // 12 modern, distinct, vibrant colors — assigned by users array index (stable across renders)
+    const STAGE_SHORT = { group: 'Group', r32: 'R32', r16: 'R16', qf: 'QF', sf: 'SF', third: '3rd', final: 'Final' };
     const PLAYER_COLORS = [
-      '#10b981', // emerald
-      '#3b82f6', // blue
-      '#f59e0b', // amber
-      '#8b5cf6', // violet
-      '#ef4444', // red
-      '#06b6d4', // cyan
-      '#ec4899', // pink
-      '#84cc16', // lime
-      '#f97316', // orange
-      '#6366f1', // indigo
-      '#14b8a6', // teal
-      '#d946ef'  // fuchsia
+      '#10b981', '#3b82f6', '#f59e0b', '#8b5cf6',
+      '#ef4444', '#06b6d4', '#ec4899', '#84cc16',
+      '#f97316', '#6366f1', '#14b8a6', '#d946ef'
     ];
     const predBuffer = {};
     const timers = {};
@@ -1867,6 +1971,7 @@
     let lastMatchesJson = null;
     let lastUsersJson = null;
     let activeFilter = 'all';
+    let firstRender = true;
     const FILTER_LABELS = { all: 'All Matches', today: "Today's Matches", group: 'Group Stage Matches', r32: 'Round of 32 Matches', r16: 'Round of 16 Matches', qf: 'Quarter Finals', sf: 'Semi Finals', third: 'Third Place', final: 'Final' };
     function getTodayWindow() {
       const now = new Date();
@@ -1926,14 +2031,10 @@
       const label = document.getElementById('fabLabel');
       if (label) label.textContent = FILTER_LABELS[filter] || filter;
       expandFab();
-
       const container = document.getElementById('matchList');
       if (!container) return;
-
       let targetEl = null;
-
       if (filter === 'all') {
-        // Scroll to very top
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       } else if (filter === 'today') {
@@ -1943,12 +2044,9 @@
           targetEl = container.querySelector(`[data-matchid="${targetMatch.match_id}"]`);
         }
       } else {
-        // Stage filter — scroll to the stage header instead of first card
         targetEl = container.querySelector(`.stage-header[data-stage="${filter}"]`);
       }
-
       if (!targetEl) return;
-
       const stickyShell = document.querySelector('.sticky-shell');
       const stickyHeight = stickyShell ? stickyShell.offsetHeight : 0;
       const buffer = 16;
@@ -1986,7 +2084,7 @@
     function setFabVisibility(tabId) {
       const fab = document.getElementById('filterFab');
       if (!fab) return;
-      if (tabId === 'predict') fab.classList.remove('hidden');
+      if (tabId === 'predict' && !activeTeamFilter && !activeMatchFilter) fab.classList.remove('hidden');
       else fab.classList.add('hidden');
     }
     window.addEventListener('scroll', () => {
@@ -2026,6 +2124,244 @@
     }
     setInterval(tickCountdowns, 1000);
     tickCountdowns();
+    // ── SEARCH ──────────────────────────────────────────
+    let activeTeamFilter = null;
+    let activeMatchFilter = null; // match_id of single-match filter
+    let searchRowOpen = false;
+    function getUniqueTeams() {
+      const set = new Set();
+      matches.forEach(m => {
+        if (m.team_home && m.team_home !== 'TBD') set.add(m.team_home);
+        if (m.team_away && m.team_away !== 'TBD') set.add(m.team_away);
+      });
+      return [...set].sort();
+    }
+    function searchTeams(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) return [];
+      const teams = getUniqueTeams();
+      const starts = [], contains = [];
+      teams.forEach(t => {
+        const lc = t.toLowerCase();
+        if (lc.startsWith(q)) starts.push(t);
+        else if (lc.includes(q)) contains.push(t);
+      });
+      return [...starts, ...contains].slice(0, 5);
+    }
+    function searchMatchesByQuery(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) return [];
+      return matches.filter(m => {
+        const h = (m.team_home || '').toLowerCase();
+        const a = (m.team_away || '').toLowerCase();
+        return h.includes(q) || a.includes(q);
+      }).slice(0, 5);
+    }
+    function teamMatchCount(team) {
+      return matches.filter(m => m.team_home === team || m.team_away === team).length;
+    }
+    function fmtShortDate(dt) {
+      if (!dt) return '';
+      const datePart = dt.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
+      const timePart = dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }).toUpperCase();
+      return datePart + ' · ' + timePart;
+    }
+    function buildMatchResultRow(m) {
+      const homeTeam = m.team_home || 'TBD';
+      const awayTeam = m.team_away || 'TBD';
+      const stage = STAGE_SHORT[m.stage] || m.stage;
+      const kickoffDt = parseUTC(m.kickoff);
+      const dateStr = fmtShortDate(kickoffDt);
+      const finished = m.status === 'FINISHED';
+      let scoreOrVs;
+      if (finished && m.score_home !== null && m.score_away !== null && m.score_home !== undefined && m.score_away !== undefined) {
+        scoreOrVs = `<span class="search-match-vs" style="color:var(--green);font-weight:800;">${m.score_home}–${m.score_away}</span>`;
+      } else {
+        scoreOrVs = `<span class="search-match-vs">vs</span>`;
+      }
+      const meta = `${stage}${dateStr ? ' · ' + dateStr : ''}`;
+      return `<div class="search-match-row" onclick="selectMatchFilter('${escHtml(m.match_id)}')">
+        <div class="search-match-teams">
+          <div class="search-match-team">${flagHtmlSmall(homeTeam)}<span class="search-match-team-name">${escHtml(homeTeam)}</span></div>
+          ${scoreOrVs}
+          <div class="search-match-team">${flagHtmlSmall(awayTeam)}<span class="search-match-team-name">${escHtml(awayTeam)}</span></div>
+        </div>
+        <div class="search-match-meta">${meta}</div>
+      </div>`;
+    }
+    function renderSearchResults(query) {
+      const results = document.getElementById('searchResults');
+      if (!results) return;
+      if (!query.trim()) {
+        results.innerHTML = '';
+        results.classList.add('empty');
+        return;
+      }
+      const teamHits = searchTeams(query);
+      const matchHits = searchMatchesByQuery(query);
+      if (!teamHits.length && !matchHits.length) {
+        results.innerHTML = `<div class="search-empty">No teams or matches for "${escHtml(query)}"</div>`;
+        results.classList.remove('empty');
+        return;
+      }
+      let html = '';
+      if (teamHits.length) {
+        html += '<div class="search-section-title">Teams</div>';
+        html += teamHits.map(t => {
+          const count = teamMatchCount(t);
+          const safe = escHtml(t).replace(/'/g, "\\'");
+          return `<div class="search-result" onclick="selectTeamFilter('${safe}')">
+            ${flagHtml(t)}
+            <span class="search-result-team-name">${escHtml(t)}</span>
+            <span class="search-result-meta">${count} match${count !== 1 ? 'es' : ''}</span>
+          </div>`;
+        }).join('');
+      }
+      if (matchHits.length) {
+        html += '<div class="search-section-title">Matches</div>';
+        html += matchHits.map(buildMatchResultRow).join('');
+      }
+      results.innerHTML = html;
+      results.classList.remove('empty');
+    }
+    function toggleSearchRow() {
+      if (searchRowOpen) {
+        closeSearchRow();
+      } else {
+        openSearchRow();
+      }
+    }
+    function openSearchRow() {
+      const wrap = document.getElementById('searchRowWrap');
+      const toggle = document.getElementById('searchToggle');
+      const input = document.getElementById('searchInput');
+      if (!wrap) return;
+      wrap.classList.add('open');
+      if (toggle) toggle.classList.add('active');
+      searchRowOpen = true;
+      setTimeout(() => { if (input) input.focus(); }, 80);
+    }
+    function closeSearchRow() {
+      const wrap = document.getElementById('searchRowWrap');
+      const toggle = document.getElementById('searchToggle');
+      const input = document.getElementById('searchInput');
+      const results = document.getElementById('searchResults');
+      if (!wrap) return;
+      wrap.classList.remove('open');
+      if (toggle) toggle.classList.remove('active');
+      searchRowOpen = false;
+      if (input) input.value = '';
+      if (results) { results.innerHTML = ''; results.classList.add('empty'); }
+      // Also clear filter if active
+      if (activeTeamFilter || activeMatchFilter) {
+        activeTeamFilter = null;
+        activeMatchFilter = null;
+        const inputRow = document.getElementById('searchInputRow');
+        const chip = document.getElementById('searchChip');
+        if (inputRow) inputRow.classList.remove('has-filter');
+        if (chip) chip.innerHTML = '';
+        setFabVisibility(getActiveTabId());
+        buildMatchDOM();
+      }
+    }
+    function selectTeamFilter(team) {
+      activeTeamFilter = team;
+      activeMatchFilter = null;
+      const inputRow = document.getElementById('searchInputRow');
+      const chip = document.getElementById('searchChip');
+      const input = document.getElementById('searchInput');
+      const results = document.getElementById('searchResults');
+      if (input) input.value = '';
+      if (results) { results.innerHTML = ''; results.classList.add('empty'); }
+      if (inputRow) inputRow.classList.add('has-filter');
+      if (chip) {
+        chip.innerHTML = `
+          ${flagHtml(team)}
+          <span class="search-chip-name">${escHtml(team)}</span>
+          <button class="search-chip-clear" onclick="clearTeamFilter(event)" aria-label="Clear filter">×</button>
+        `;
+      }
+      setFabVisibility(getActiveTabId());
+      buildMatchDOM();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function selectMatchFilter(matchId) {
+      const m = matches.find(x => String(x.match_id) === String(matchId));
+      if (!m) return;
+      // Switch to predict tab if not already there
+      const predictTab = document.querySelector('.tab[data-tab="predict"]');
+      if (predictTab && !document.getElementById('predict').classList.contains('active')) {
+        switchTab('predict', predictTab);
+      }
+      activeMatchFilter = String(matchId);
+      activeTeamFilter = null;
+      const inputRow = document.getElementById('searchInputRow');
+      const chip = document.getElementById('searchChip');
+      const input = document.getElementById('searchInput');
+      const results = document.getElementById('searchResults');
+      if (input) input.value = '';
+      if (results) { results.innerHTML = ''; results.classList.add('empty'); }
+      if (inputRow) inputRow.classList.add('has-filter');
+      const homeTeam = m.team_home || 'TBD';
+      const awayTeam = m.team_away || 'TBD';
+      if (chip) {
+        chip.innerHTML = `
+          ${flagHtmlMini(homeTeam)}
+          <span class="search-chip-name">${escHtml(homeTeam)}</span>
+          <span class="search-chip-vs">vs</span>
+          <span class="search-chip-name">${escHtml(awayTeam)}</span>
+          ${flagHtmlMini(awayTeam)}
+          <button class="search-chip-clear" onclick="clearTeamFilter(event)" aria-label="Clear filter">×</button>
+        `;
+      }
+      setFabVisibility(getActiveTabId());
+      buildMatchDOM();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function clearTeamFilter(ev) {
+      if (ev) ev.stopPropagation();
+      activeTeamFilter = null;
+      activeMatchFilter = null;
+      const inputRow = document.getElementById('searchInputRow');
+      const chip = document.getElementById('searchChip');
+      const input = document.getElementById('searchInput');
+      if (inputRow) inputRow.classList.remove('has-filter');
+      if (chip) chip.innerHTML = '';
+      setFabVisibility(getActiveTabId());
+      buildMatchDOM();
+      setTimeout(() => { if (input) input.focus(); }, 60);
+    }
+    function getActiveTabId() {
+      const active = document.querySelector('.tab-content.active');
+      return active ? active.id : 'predict';
+    }
+    function initSearch() {
+      const input = document.getElementById('searchInput');
+      if (!input) return;
+      let debounceTimer;
+      input.addEventListener('input', e => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => renderSearchResults(e.target.value), 80);
+      });
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          closeSearchRow();
+        }
+      });
+      // Close on outside interaction — use mousedown/touchstart so it fires BEFORE
+      // click handlers, and so the target hasn't been removed from the DOM yet
+      function handleOutsideInteraction(e) {
+        if (!searchRowOpen) return;
+        const wrap = document.getElementById('searchRowWrap');
+        const toggle = document.getElementById('searchToggle');
+        if (!wrap) return;
+        if (wrap.contains(e.target)) return;
+        if (toggle && toggle.contains(e.target)) return;
+        closeSearchRow();
+      }
+      document.addEventListener('mousedown', handleOutsideInteraction);
+      document.addEventListener('touchstart', handleOutsideInteraction, { passive: true });
+    }
     async function boot() {
       renderSkeleton();
       try {
@@ -2039,6 +2375,7 @@
         buildMatchDOM();
         autoSelectFilter();
         initFab();
+        initSearch();
       } catch (err) {
         document.getElementById('matchList').innerHTML = '<div class="state-msg">Could not load data. Check your connection.</div>';
         showToast('Failed to load data', true);
@@ -2079,7 +2416,6 @@
       };
     }
     function buildPredItemHTML(u, matchid, pred, finished, locked) {
-      // Treat sentinel/null as "no prediction" — show empty inputs
       const cleared = isCleared(pred);
       var ph = cleared ? '' : pred.pred_home;
       var pa = cleared ? '' : pred.pred_away;
@@ -2094,7 +2430,6 @@
       var dis = locked ? 'disabled' : '';
       var uid = escHtml(u.user_id);
       var mid = escHtml(matchid);
-      // Show clear (×) button only if there IS a prediction and not locked
       const showClear = !cleared && !locked;
       const clearBtnHtml = `<button class="pred-clear ${showClear ? '' : 'hidden'}" data-role="clear" title="Clear prediction" onclick="event.stopPropagation();clearPred('${mid}','${uid}')" ${locked ? 'disabled' : ''}>×</button>`;
       return '<div class="pred-item" data-userid="' + uid + '">' +
@@ -2166,7 +2501,10 @@
       } else {
         predsHtml = '<div style="color:var(--ink4);font-family:Instrument Serif,serif;font-style:italic;font-size:0.9rem">No players added yet.</div>';
       }
-      return '<div class="match-card new-card" data-matchid="' + escHtml(m.match_id) + '" onclick="toggleCard(this)">' +
+      // Auto-open card if it's the single-match filter
+      var isSingleMatch = activeMatchFilter && String(m.match_id) === String(activeMatchFilter);
+      var cardCls = (firstRender ? 'match-card new-card' : 'match-card') + (isSingleMatch ? ' open' : '');
+      return '<div class="' + cardCls + '" data-matchid="' + escHtml(m.match_id) + '" onclick="toggleCard(this)">' +
         '<div class="match-row">' +
         '<div class="team-cell home"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(homeTeam) + '<span class="team-name">' + escHtml(homeTeam) + '</span></div></div>' +
         '<div class="centre-block">' +
@@ -2187,8 +2525,24 @@
     function buildMatchDOM() {
       var container = document.getElementById('matchList');
       if (!matches.length) { container.innerHTML = '<div class="state-msg">No matches yet.</div>'; return; }
+      let visibleMatches = matches;
+      if (activeMatchFilter) {
+        visibleMatches = matches.filter(m => String(m.match_id) === String(activeMatchFilter));
+        if (!visibleMatches.length) {
+          container.innerHTML = `<div class="state-msg">Match not found.</div>`;
+          firstRender = false;
+          return;
+        }
+      } else if (activeTeamFilter) {
+        visibleMatches = matches.filter(m => m.team_home === activeTeamFilter || m.team_away === activeTeamFilter);
+        if (!visibleMatches.length) {
+          container.innerHTML = `<div class="state-msg">No matches found for ${escHtml(activeTeamFilter)}.</div>`;
+          firstRender = false;
+          return;
+        }
+      }
       var html = '', lastStage = null;
-      matches.forEach(function (m) {
+      visibleMatches.forEach(function (m) {
         if (m.stage !== lastStage) {
           html += '<div class="stage-header" data-stage="' + escHtml(m.stage) + '">' +
             '<div class="stage-label">' + (STAGE_LABEL[m.stage] || m.stage) + '</div>' +
@@ -2199,10 +2553,12 @@
       });
       container.innerHTML = html;
       requestAnimationFrame(() => { container.querySelectorAll('.pred-grid').forEach(alignLastPredRow); });
+      firstRender = false;
     }
     function patchMatchDOM(oldMatches, newMatches, newUsers) {
       const container = document.getElementById('matchList');
       if (!container) return;
+      if (activeTeamFilter || activeMatchFilter) { buildMatchDOM(); return; }
       const activeEl = document.activeElement;
       newMatches.forEach(function (nm) {
         const card = container.querySelector('[data-matchid="' + nm.match_id + '"]');
@@ -2230,7 +2586,6 @@
         if (badge) { badge.className = 'badge ' + meta.badgeCls; badge.textContent = meta.badgeTxt; }
         const timeEl = card.querySelector('[data-role="time"]');
         if (timeEl) timeEl.textContent = meta.timeStr;
-        // Always update the "predicted by" sentence
         const sentenceEl = container.querySelector('.pred-sentence[data-matchid="' + nm.match_id + '"]');
         if (sentenceEl) {
           const sentTxt = sentenceEl.querySelector('.pred-sentence-txt');
@@ -2260,7 +2615,6 @@
           }
           const inHome = predItem.querySelector('[data-role="input-home"]');
           const inAway = predItem.querySelector('[data-role="input-away"]');
-          // Update inputs only if not focused (don't disturb someone typing)
           if (inHome && inHome !== activeEl) {
             const newVal = cleared ? '' : String(pred.pred_home);
             if (inHome.value !== newVal) inHome.value = newVal;
@@ -2271,7 +2625,6 @@
           }
           if (inHome) inHome.disabled = meta.locked;
           if (inAway) inAway.disabled = meta.locked;
-          // Toggle clear (×) button visibility
           const clearBtn = predItem.querySelector('[data-role="clear"]');
           if (clearBtn) {
             const showClear = !cleared && !meta.locked;
@@ -2359,7 +2712,6 @@
         '<div class="lb-header-row"><div></div><div>Player</div><div>Pts</div><div>Exact</div><div>Result</div></div>' +
         rows + '</div>';
     }
-    // ── STATS TAB ───────────────────────────────────────────────────────────
     function normalizeScoreline(a, b) {
       const x = +a, y = +b;
       return (x >= y) ? (x + '-' + y) : (y + '-' + x);
@@ -2390,7 +2742,6 @@
         matchTimeline.push({ idx, matchId: m.match_id, label: (m.team_home || '').slice(0, 3).toUpperCase() + ' v ' + (m.team_away || '').slice(0, 3).toUpperCase() });
         users.forEach(u => {
           const pred = m.predictions ? m.predictions[u.user_id] : null;
-          // Cleared predictions don't earn points (and points should be null/0 in DB anyway)
           if (!isCleared(pred) && pred.points !== undefined && pred.points !== null) {
             runningTotals[u.user_id] += pred.points;
           }
@@ -2407,7 +2758,6 @@
         }
         users.forEach(u => {
           const pred = m.predictions ? m.predictions[u.user_id] : null;
-          // Skip cleared predictions entirely from stats
           if (!isCleared(pred)) {
             totalPredictions++;
             totalPredHomeGoals += +pred.pred_home;
@@ -2491,17 +2841,15 @@
       if (!players.length) return '';
       const totalPossible = s.totalMatches;
       if (!totalPossible) return '';
-
       const rows = players.map(p => {
         const partRate = Math.round((p.predictions / totalPossible) * 100);
-        const pct = (p.predictions / totalPossible) * 100;  // bar width = actual %
+        const pct = (p.predictions / totalPossible) * 100;
         return `<div class="hbar-row">
       <div class="hbar-name">${escHtml(p.name)}</div>
       <div class="hbar-track"><div class="hbar-fill blue" style="width:${pct}%"></div></div>
       <div class="hbar-val">${p.predictions} <span style="color:var(--ink4);font-weight:500;font-size:0.75rem">${partRate}%</span></div>
     </div>`;
       }).join('');
-
       return `<div class="stats-card">
     <div class="stats-card-header">
       <div class="stats-card-title">Predictions Submitted</div>
@@ -2597,29 +2945,24 @@
     }
     function renderLineChart(s) {
       const players = Object.values(s.playerStats);
-      // Always render with axes — even when empty — so the user sees the structure
       const W = 600, H = 280;
       const padL = 44, padR = 18, padT = 14, padB = 38;
       const innerW = W - padL - padR;
       const innerH = H - padT - padB;
       const N = s.matchTimeline.length;
-      // Stable color map: assigned by index in users array — never changes
       const colorMap = {};
       users.forEach((u, idx) => { colorMap[u.user_id] = PLAYER_COLORS[idx % PLAYER_COLORS.length]; });
       const orderedUserIds = Object.keys(s.playerStats).sort((a, b) => s.playerStats[b].points - s.playerStats[a].points);
-      // Compute Y axis maximum: at least 10, expanded above the highest point
       let dataMax = 0;
       orderedUserIds.forEach(uid => {
         s.cumulative[uid].forEach(pt => { if (pt.total > dataMax) dataMax = pt.total; });
       });
       const maxY = Math.max(10, Math.ceil(dataMax * 1.15) || 10);
-      // Y ticks: 5 evenly spaced
       const yTickCount = 5;
       const yStep = maxY / yTickCount;
       const xCount = Math.max(N, 1);
       const xAt = i => padL + (xCount <= 1 ? innerW / 2 : (i / (xCount - 1)) * innerW);
       const yAt = v => padT + innerH - (v / maxY) * innerH;
-      // Build axis grid + ticks
       const yGrid = [];
       const yLabels = [];
       for (let i = 0; i <= yTickCount; i++) {
@@ -2628,7 +2971,6 @@
         yGrid.push(`<line x1="${padL}" y1="${y}" x2="${padL + innerW}" y2="${y}" stroke="rgba(14,14,14,0.06)" stroke-width="1"/>`);
         yLabels.push(`<text x="${padL - 8}" y="${y + 3.5}" text-anchor="end" font-family="Barlow Condensed" font-weight="600" font-size="10" fill="#6e6760">${Math.round(yVal)}</text>`);
       }
-      // X axis ticks: show up to 6 labels evenly spaced (M1, M2 …)
       const xTicks = [];
       const xTickLabels = [];
       if (N > 0) {
@@ -2636,28 +2978,24 @@
         const stride = Math.max(1, Math.floor((N - 1) / (maxLabels - 1 || 1)));
         const tickIdxs = new Set();
         for (let i = 0; i < N; i += stride) tickIdxs.add(i);
-        tickIdxs.add(N - 1); // always include last
-        if (N > 1) tickIdxs.add(0); // always include first
+        tickIdxs.add(N - 1);
+        if (N > 1) tickIdxs.add(0);
         [...tickIdxs].sort((a, b) => a - b).forEach(i => {
           const x = xAt(i);
           xTicks.push(`<line x1="${x}" y1="${padT + innerH}" x2="${x}" y2="${padT + innerH + 4}" stroke="rgba(14,14,14,0.25)" stroke-width="1"/>`);
           xTickLabels.push(`<text x="${x}" y="${padT + innerH + 16}" text-anchor="middle" font-family="Barlow Condensed" font-weight="600" font-size="10" fill="#6e6760">M${i + 1}</text>`);
         });
       } else {
-        // Empty chart — show a single "Start" marker
         xTickLabels.push(`<text x="${padL + innerW / 2}" y="${padT + innerH + 16}" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="11" fill="#6e6760">No matches played yet</text>`);
       }
-      // Axis lines
       const axes = `
         <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + innerH}" stroke="rgba(14,14,14,0.45)" stroke-width="1.2"/>
         <line x1="${padL}" y1="${padT + innerH}" x2="${padL + innerW}" y2="${padT + innerH}" stroke="rgba(14,14,14,0.45)" stroke-width="1.2"/>
       `;
-      // Axis titles
       const axisTitles = `
         <text x="${padL - 32}" y="${padT + innerH / 2}" text-anchor="middle" font-family="Barlow Condensed" font-weight="700" font-size="10" fill="#45403a" letter-spacing="1.5" transform="rotate(-90 ${padL - 32} ${padT + innerH / 2})">POINTS</text>
         <text x="${padL + innerW / 2}" y="${H - 6}" text-anchor="middle" font-family="Barlow Condensed" font-weight="700" font-size="10" fill="#45403a" letter-spacing="1.5">MATCHES PLAYED →</text>
       `;
-      // Lines (lowest scoring drawn first, leaders on top)
       const drawOrder = [...orderedUserIds].reverse();
       const linesSvg = drawOrder.map(uid => {
         const color = colorMap[uid];
@@ -2668,7 +3006,6 @@
         const dot = `<circle cx="${xAt(last.idx).toFixed(1)}" cy="${yAt(last.total).toFixed(1)}" r="3.5" fill="${color}" stroke="#fff" stroke-width="1.5"/>`;
         return `<path d="${path}" fill="none" stroke="${color}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" opacity="0.95"/>${dot}`;
       }).join('');
-      // Legend ordered by current standings
       const legend = orderedUserIds.length ? orderedUserIds.map(uid => {
         const color = colorMap[uid];
         const pts = s.playerStats[uid].points;
@@ -2815,25 +3152,19 @@
       container.innerHTML = html;
       statsInitialized = true;
     }
-    // ── Save & clear predictions ────────────────────────────────────────
-    // Apply optimistic update to local state + DOM, no backend call
     function applyLocalPred(matchId, userId, ph, pa) {
       const m = matches.find(x => String(x.match_id) === String(matchId));
       if (!m) return;
       if (!m.predictions) m.predictions = {};
       if (ph === null && pa === null) {
-        // Optimistic clear — remove from local state until server confirms
         delete m.predictions[userId];
       } else {
         if (!m.predictions[userId]) m.predictions[userId] = {};
         m.predictions[userId].pred_home = ph;
         m.predictions[userId].pred_away = pa;
-        // points stays whatever it was (will be recomputed on sync)
       }
-      // Update sentence
       const sentenceEl = document.querySelector(`.pred-sentence[data-matchid="${matchId}"] .pred-sentence-txt`);
       if (sentenceEl) sentenceEl.innerHTML = buildPredSentence(m, users);
-      // Toggle clear button visibility
       const card = document.querySelector(`.match-card[data-matchid="${matchId}"]`);
       if (card) {
         const predItem = card.querySelector(`.pred-item[data-userid="${userId}"]`);
@@ -2850,7 +3181,6 @@
       lastMatchesJson = JSON.stringify(matches);
     }
     function clearPred(matchId, userId) {
-      // Find DOM inputs and clear them visually
       const card = document.querySelector(`.match-card[data-matchid="${matchId}"]`);
       if (!card) return;
       const predItem = card.querySelector(`.pred-item[data-userid="${userId}"]`);
@@ -2859,13 +3189,10 @@
       const inAway = predItem.querySelector('[data-role="input-away"]');
       if (inHome) inHome.value = '';
       if (inAway) inAway.value = '';
-      // Cancel any pending save timer for this key
       const key = matchId + userId;
       if (timers[key]) { clearTimeout(timers[key]); delete timers[key]; }
       delete predBuffer[key];
-      // Optimistic local update
       applyLocalPred(matchId, userId, null, null);
-      // Send sentinel to backend (since there's no DELETE endpoint)
       showToast('Clearing…');
       fetch(API + '/predictions', {
         method: 'POST',
@@ -2892,21 +3219,17 @@
       var val = input.value.trim();
       if (!matchId || !userId || !side) return;
       var key = matchId + userId;
-      // Read both inputs
       var inputs = input.closest('.pred-item').querySelectorAll('.pred-input');
       var hVal = inputs[0].value.trim();
       var aVal = inputs[1].value.trim();
-      // If BOTH are empty, treat as clear
       if (hVal === '' && aVal === '') {
         if (timers[key]) { clearTimeout(timers[key]); delete timers[key]; }
         delete predBuffer[key];
-        // Only fire clear if the previous state had a real prediction
         const m = matches.find(x => String(x.match_id) === String(matchId));
         const prevPred = m && m.predictions ? m.predictions[userId] : null;
         if (!isCleared(prevPred)) clearPred(matchId, userId);
         return;
       }
-      // If only one side filled, do nothing yet (wait for the other)
       if (hVal === '' || aVal === '') return;
       predBuffer[key] = {
         home: parseInt(hVal, 10),
@@ -3001,7 +3324,6 @@
     let fastPoll = null;
     let slowPoll = null;
     let idleTimeout = null;
-    // Active polling: every 20s. Idle (after 5 min no interaction): every 2 min.
     function startFastPoll() { if (fastPoll) return; fastPoll = setInterval(doPoll, 20 * 1000); }
     function switchToSlowPoll() {
       if (fastPoll) { clearInterval(fastPoll); fastPoll = null; }
@@ -3027,5 +3349,4 @@
     document.addEventListener('keydown', resetIdleTimer);
   </script>
 </body>
-
 </html>
