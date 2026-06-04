@@ -2764,9 +2764,35 @@
         '</div>';
     }
 
-    // ── PREDICTION SENTENCE (randomized + inverted when majority predicted) ──
     function buildPredSentence(m, users) {
       if (!users || !users.length) return '<span style="color:var(--ink4)">No players yet</span>';
+
+      // ── post-match: show who got the exact score ──
+      if (m.status === 'FINISHED') {
+        const exacters = [];
+        users.forEach(u => {
+          const pred = m.predictions ? m.predictions[u.user_id] : null;
+          if (!isCleared(pred) && pred.points === 3) {
+            exacters.push((u.display_name || '').split(' ')[0]);
+          }
+        });
+
+        const seed = hashStr(String(m.match_id || ''));
+        const shuffled = seededShuffle(exacters, seed);
+
+        if (shuffled.length === 0) {
+          return '<span style="color:var(--ink4)">Nobody got the exact score</span>';
+        }
+        let nameStr;
+        if (shuffled.length > 3) {
+          nameStr = shuffled.slice(0, 2).join(', ') + ' &amp; ' + (shuffled.length - 2) + ' others';
+        } else {
+          nameStr = shuffled.join(', ');
+        }
+        return '<span style="font-weight:800;color:var(--green)">' + nameStr + '</span> got the exact score 🎯';
+      }
+
+      // ── pre-match: show predicted / not predicted ──
       const predicted = [];
       const notPredicted = [];
       users.forEach(u => {
@@ -2775,15 +2801,16 @@
         if (!isCleared(pred)) predicted.push(firstName);
         else notPredicted.push(firstName);
       });
+
       if (predicted.length === 0) {
         return '<span style="color:var(--ink4)">No predictions yet</span>';
       }
       if (notPredicted.length === 0) {
         return '<span style="font-weight:800;color:var(--green)">Everyone</span> predicted';
       }
-      // Deterministic seed per match so order is randomized but stable across re-renders
+
       const seed = hashStr(String(m.match_id || ''));
-      // If majority have predicted (more predicted than not), invert: show who hasn't picked
+
       if (predicted.length > notPredicted.length) {
         const shuffled = seededShuffle(notPredicted, seed);
         let nameStr;
@@ -2795,7 +2822,7 @@
         return '<span style="font-weight:800;color:var(--red)">' + nameStr + '</span> ' +
           (shuffled.length === 1 ? "hasn't" : "haven't") + ' predicted yet';
       }
-      // Otherwise show who HAS predicted
+
       const shuffled = seededShuffle(predicted, seed);
       let nameStr;
       if (shuffled.length > 3) {
@@ -2805,6 +2832,7 @@
       }
       return '<span style="font-weight:800;color:var(--green)">' + nameStr + '</span> predicted';
     }
+
     function alignLastPredRow(grid) {
       const items = grid.querySelectorAll('.pred-item');
       if (!items.length) return;
