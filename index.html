@@ -240,6 +240,24 @@
       background: rgba(93, 219, 124, 0.12);
     }
 
+    #clearFilterBtn {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      transform: scale(0.8);
+    }
+
+    #clearFilterBtn.visible {
+      opacity: 1;
+      pointer-events: all;
+      transform: scale(1);
+    }
+
+    #clearFilterBtn:hover {
+      color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.12);
+    }
+
     .search-row-wrap {
       max-width: 780px;
       margin: 0 auto;
@@ -1932,6 +1950,418 @@
       opacity: 1;
     }
 
+    .calendar-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+      visibility: hidden;
+    }
+
+    .calendar-modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+      visibility: visible;
+    }
+
+    .calendar-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.95);
+      background: #fff;
+      border-radius: 12px;
+      z-index: 700;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      max-width: 420px;
+      width: calc(100% - 32px);
+      max-height: calc(100vh - 100px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calendar-modal.open {
+      opacity: 1;
+      pointer-events: all;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .calendar-title {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .calendar-close {
+      background: transparent;
+      border: none;
+      color: var(--ink4);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 24px;
+      line-height: 1;
+      padding: 0;
+      transition: background 0.15s, color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .calendar-close:hover {
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .calendar-nav-btn {
+      background: transparent;
+      border: 1px solid var(--rule-strong);
+      color: var(--ink);
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      padding: 0;
+      transition: background 0.15s, border-color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .calendar-nav-btn:hover {
+      background: var(--paper);
+      border-color: var(--ink3);
+    }
+
+    .calendar-nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .calendar-month-year {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .calendar-body {
+      padding: 16px 20px 20px;
+      overflow-y: auto;
+    }
+
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .calendar-weekday {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink4);
+      text-align: center;
+      padding: 8px 4px;
+    }
+
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+      border: 1.5px solid transparent;
+      background: transparent;
+      padding: 4px;
+    }
+
+    .calendar-day:hover:not(.disabled):not(.empty) {
+      background: var(--paper);
+      border-color: var(--rule-strong);
+    }
+
+    .calendar-day.disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+      color: var(--ink4);
+    }
+
+    .calendar-day.empty {
+      cursor: default;
+    }
+
+    .calendar-day.selected {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .calendar-day.selected:hover {
+      background: #156b24;
+      border-color: #156b24;
+    }
+
+    .calendar-day.today:not(.selected) {
+      border-color: var(--green);
+    }
+
+    .calendar-day-num {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--ink);
+      line-height: 1;
+    }
+
+    .calendar-day.selected .calendar-day-num {
+      color: #fff;
+    }
+
+    .calendar-day-count {
+      font-family: "Barlow", sans-serif;
+      font-weight: 600;
+      font-size: 0.65rem;
+      color: var(--green);
+      margin-top: 2px;
+      line-height: 1;
+    }
+
+    .calendar-day.selected .calendar-day-count {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .calendar-day.disabled .calendar-day-count {
+      display: none;
+    }
+
+    .calendar-filter-section {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .calendar-filter-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .calendar-filter-toggle input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--green);
+    }
+
+    .calendar-filter-label {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.03em;
+      color: var(--ink);
+      user-select: none;
+    }
+
+    .calendar-user-selector {
+      display: none;
+      animation: slideDown 0.2s ease;
+    }
+
+    .calendar-user-selector.visible {
+      display: block;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .custom-select {
+      position: relative;
+      width: 100%;
+    }
+
+    .custom-select-trigger {
+      width: 100%;
+      padding: 12px 40px 12px 14px;
+      border: 1.5px solid var(--rule-strong);
+      border-radius: 8px;
+      background: #fff;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.2s;
+      outline: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    .custom-select-trigger:hover {
+      border-color: var(--ink3);
+      background: var(--paper);
+    }
+
+    .custom-select.open .custom-select-trigger {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(26, 92, 42, 0.1);
+    }
+
+    .custom-select-trigger.placeholder {
+      color: var(--ink4);
+    }
+
+    .custom-select-arrow {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      transition: transform 0.2s;
+    }
+
+    .custom-select.open .custom-select-arrow {
+      transform: translateY(-50%) rotate(180deg);
+    }
+
+    .custom-select-arrow svg {
+      display: block;
+      width: 16px;
+      height: 16px;
+      stroke: var(--ink3);
+      stroke-width: 2.5;
+    }
+
+    .custom-select-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1.5px solid var(--rule-strong);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      max-height: 240px;
+      overflow-y: auto;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(-8px);
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .custom-select.open .custom-select-dropdown {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .custom-select-option {
+      padding: 12px 14px;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      cursor: pointer;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    .custom-select-option:hover {
+      background: var(--green-light);
+    }
+
+    .custom-select-option.selected {
+      background: var(--green-light);
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .custom-select-option:first-child {
+      border-radius: 6px 6px 0 0;
+    }
+
+    .custom-select-option:last-child {
+      border-radius: 0 0 6px 6px;
+    }
+
+    .custom-select-option:only-child {
+      border-radius: 6px;
+    }
+
+    .calendar-day-count.unpredicted {
+      color: #ff6b6b;
+    }
+
+    .calendar-day.selected .calendar-day-count.unpredicted {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
     @keyframes blink-dot {
 
       0%,
@@ -2131,6 +2561,23 @@
           <div class="tab" data-tab="stats" onclick="switchTab('stats',this)">Stats</div>
         </div>
         <div class="search-toggle-wrap">
+          <button class="search-toggle" id="clearFilterBtn" onclick="clearAllFilters()" aria-label="Clear filters"
+            title="Clear all filters">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+              <line x1="2" y1="2" x2="22" y2="22"></line>
+            </svg>
+          </button>
+          <button class="search-toggle" id="calendarToggle" onclick="toggleCalendar()" aria-label="Calendar">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </button>
           <button class="search-toggle" id="searchToggle" onclick="toggleSearchRow()" aria-label="Search">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"
               stroke-linecap="round" stroke-linejoin="round">
@@ -2196,6 +2643,51 @@
     <div class="sheet-handle"></div>
     <div class="sheet-title">Show</div>
     <div id="sheetItems"></div>
+  </div>
+  <div class="calendar-modal-overlay" id="calendarOverlay" onclick="closeCalendar()"></div>
+  <div class="calendar-modal" id="calendarModal">
+    <div class="calendar-header">
+      <div class="calendar-title">Match Calendar</div>
+      <button class="calendar-close" onclick="closeCalendar()" aria-label="Close">×</button>
+    </div>
+    <div class="calendar-nav">
+      <button class="calendar-nav-btn" id="calPrevBtn" onclick="changeCalendarMonth(-1)"
+        aria-label="Previous month">‹</button>
+      <div class="calendar-month-year" id="calMonthYear"></div>
+      <button class="calendar-nav-btn" id="calNextBtn" onclick="changeCalendarMonth(1)"
+        aria-label="Next month">›</button>
+    </div>
+    <div class="calendar-filter-section">
+      <label class="calendar-filter-toggle">
+        <input type="checkbox" id="unpredictedToggle" onchange="toggleUnpredictedMode()">
+        <span class="calendar-filter-label">My Pending Picks</span>
+      </label>
+      <div class="calendar-user-selector" id="userSelectorWrap">
+        <div class="custom-select" id="customUserSelect">
+          <div class="custom-select-trigger placeholder" id="userSelectTrigger" onclick="toggleUserDropdown()">
+            <span id="userSelectText">Select your name...</span>
+            <div class="custom-select-arrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div class="custom-select-dropdown" id="userSelectDropdown"></div>
+        </div>
+      </div>
+    </div>
+    <div class="calendar-body">
+      <div class="calendar-weekdays">
+        <div class="calendar-weekday">Sun</div>
+        <div class="calendar-weekday">Mon</div>
+        <div class="calendar-weekday">Tue</div>
+        <div class="calendar-weekday">Wed</div>
+        <div class="calendar-weekday">Thu</div>
+        <div class="calendar-weekday">Fri</div>
+        <div class="calendar-weekday">Sat</div>
+      </div>
+      <div class="calendar-days" id="calendarDays"></div>
+    </div>
   </div>
   <script>
     const NULL_SENTINEL = -1;
@@ -2344,31 +2836,14 @@
     }
     function applyFilter(filter) {
       activeFilter = filter;
+      clearDateFilter();
       closeFilterSheet();
       const label = document.getElementById('fabLabel');
       if (label) label.textContent = FILTER_LABELS[filter] || filter;
+      updateClearButtonVisibility();
       expandFab();
-      const container = document.getElementById('matchList');
-      if (!container) return;
-      let targetEl = null;
-      if (filter === 'all') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
-      } else if (filter === 'today') {
-        const todayMatches = matches.filter(m => matchesFilter(m, 'today'));
-        const targetMatch = todayMatches.length ? todayMatches[0] : getNearestMatch();
-        if (targetMatch) {
-          targetEl = container.querySelector(`[data-matchid="${targetMatch.match_id}"]`);
-        }
-      } else {
-        targetEl = container.querySelector(`.stage-header[data-stage="${filter}"]`);
-      }
-      if (!targetEl) return;
-      const stickyShell = document.querySelector('.sticky-shell');
-      const stickyHeight = stickyShell ? stickyShell.offsetHeight : 0;
-      const buffer = 16;
-      const top = targetEl.getBoundingClientRect().top + window.scrollY - stickyHeight - buffer;
-      window.scrollTo({ top, behavior: 'smooth' });
+      buildMatchDOM();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     function autoSelectFilter() {
       const todayMatches = matches.filter(m => matchesFilter(m, 'today'));
@@ -2401,8 +2876,12 @@
     function setFabVisibility(tabId) {
       const fab = document.getElementById('filterFab');
       if (!fab) return;
-      if (tabId === 'predict' && !activeTeamFilter && !activeMatchFilter) fab.classList.remove('hidden');
-      else fab.classList.add('hidden');
+      if (tabId === 'predict' && !activeTeamFilter && !activeMatchFilter) {
+        fab.classList.remove('hidden');
+        expandFab();
+      } else {
+        fab.classList.add('hidden');
+      }
     }
     window.addEventListener('scroll', () => {
       const activeTab = document.querySelector('.tab-content.active');
@@ -2414,13 +2893,376 @@
     }, { passive: true });
     function initFab() { fabCollapseTimer = setTimeout(collapseFab, 3500); }
 
+    // ── UNPREDICTED FILTER MODE ──
+    function toggleUnpredictedMode() {
+      const toggle = document.getElementById('unpredictedToggle');
+      const userSelectorWrap = document.getElementById('userSelectorWrap');
+
+      unpredictedMode = toggle && toggle.checked;
+
+      if (unpredictedMode) {
+        if (userSelectorWrap) userSelectorWrap.classList.add('visible');
+        populateUserSelector();
+      } else {
+        if (userSelectorWrap) userSelectorWrap.classList.remove('visible');
+        selectedUserId = null;
+        activeUnpredictedFilter = false;
+        const trigger = document.getElementById('userSelectTrigger');
+        const text = document.getElementById('userSelectText');
+        if (trigger) trigger.classList.add('placeholder');
+        if (text) text.textContent = 'Select your name...';
+      }
+
+      renderCalendar();
+    }
+
+    function populateUserSelector() {
+      const dropdown = document.getElementById('userSelectDropdown');
+      if (!dropdown || !users || !users.length) return;
+
+      let html = '';
+      users.forEach(u => {
+        const isSelected = selectedUserId === u.user_id;
+        const selectedClass = isSelected ? ' selected' : '';
+        const displayName = escHtml(u.display_name || 'User ' + u.user_id);
+        html += `<div class="custom-select-option${selectedClass}" data-user-id="${u.user_id}" data-user-name="${displayName}" onclick="selectUserFromDropdown(this)">${displayName}</div>`;
+      });
+
+      dropdown.innerHTML = html;
+    }
+
+    function toggleUserDropdown() {
+      const customSelect = document.getElementById('customUserSelect');
+      if (!customSelect) return;
+
+      const isOpen = customSelect.classList.contains('open');
+
+      if (isOpen) {
+        customSelect.classList.remove('open');
+      } else {
+        populateUserSelector();
+        customSelect.classList.add('open');
+      }
+    }
+
+    function selectUserFromDropdown(element) {
+      const userId = element.getAttribute('data-user-id');
+      const userName = element.getAttribute('data-user-name');
+
+      selectedUserId = userId;
+
+      const trigger = document.getElementById('userSelectTrigger');
+      const text = document.getElementById('userSelectText');
+      const customSelect = document.getElementById('customUserSelect');
+
+      if (trigger) trigger.classList.remove('placeholder');
+      if (text) text.textContent = userName;
+      if (customSelect) customSelect.classList.remove('open');
+
+      renderCalendar();
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function (e) {
+      const customSelect = document.getElementById('customUserSelect');
+      if (!customSelect) return;
+
+      if (!customSelect.contains(e.target)) {
+        customSelect.classList.remove('open');
+      }
+    });
+
+    function getUnpredictedMatchCountsByDate(userId) {
+      if (!userId) return {};
+
+      const counts = {};
+      matches.forEach(m => {
+        const kickoff = parseUTC(m.kickoff);
+        if (!kickoff) return;
+
+        const istDate = new Date(kickoff.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+        const year = istDate.getFullYear();
+        const month = String(istDate.getMonth() + 1).padStart(2, '0');
+        const day = String(istDate.getDate()).padStart(2, '0');
+        const dateKey = `${year}-${month}-${day}`;
+
+        const pred = m.predictions ? m.predictions[userId] : null;
+        const isUnpredicted = isCleared(pred);
+
+        if (isUnpredicted) {
+          counts[dateKey] = (counts[dateKey] || 0) + 1;
+        }
+      });
+
+      return counts;
+    }
+
+    function collapseFab() {
+      const btn = document.getElementById('filterFabBtn');
+      if (!btn) return;
+      btn.classList.add('collapsed');
+      fabExpanded = false;
+    }
+    function onFabClick() {
+      if (!fabExpanded) { expandFab(); return; }
+      openFilterSheet();
+    }
+    function setFabVisibility(tabId) {
+      const fab = document.getElementById('filterFab');
+      if (!fab) return;
+      if (tabId === 'predict' && !activeTeamFilter && !activeMatchFilter) {
+        fab.classList.remove('hidden');
+        expandFab();
+      } else {
+        fab.classList.add('hidden');
+      }
+    }
+    window.addEventListener('scroll', () => {
+      const activeTab = document.querySelector('.tab-content.active');
+      if (activeTab && activeTab.id === 'predict') {
+        expandFab();
+        clearTimeout(fabCollapseTimer);
+        fabCollapseTimer = setTimeout(collapseFab, 1500);
+      }
+    }, { passive: true });
+    function initFab() { fabCollapseTimer = setTimeout(collapseFab, 3500); }
+    // ── CALENDAR FUNCTIONS ──
+    let currentCalendarMonth = new Date();
+    let selectedCalendarDate = null;
+    let activeDateFilter = null;
+    let unpredictedMode = false;
+    let selectedUserId = null;
+    let activeUnpredictedFilter = false;
+
+    function getMatchCountsByDate() {
+      const counts = {};
+      matches.forEach(m => {
+        const kickoff = parseUTC(m.kickoff);
+        if (!kickoff) return;
+        const istDate = new Date(kickoff.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+        const year = istDate.getFullYear();
+        const month = String(istDate.getMonth() + 1).padStart(2, '0');
+        const day = String(istDate.getDate()).padStart(2, '0');
+        const dateKey = `${year}-${month}-${day}`;
+        counts[dateKey] = (counts[dateKey] || 0) + 1;
+      });
+      return counts;
+    }
+
+    function toggleCalendar() {
+      const modal = document.getElementById('calendarModal');
+      const overlay = document.getElementById('calendarOverlay');
+      const toggle = document.getElementById('calendarToggle');
+      if (!modal || !overlay || !toggle) return;
+
+      const isOpen = modal.classList.contains('open');
+      if (isOpen) {
+        closeCalendar();
+      } else {
+        const searchRow = document.getElementById('searchRowWrap');
+        if (searchRow && searchRow.classList.contains('open')) {
+          closeSearchRow();
+        }
+        currentCalendarMonth = new Date();
+        renderCalendar();
+        modal.classList.add('open');
+        overlay.classList.add('open');
+        toggle.classList.add('active');
+      }
+    }
+
+    function closeCalendar() {
+      const modal = document.getElementById('calendarModal');
+      const overlay = document.getElementById('calendarOverlay');
+      const toggle = document.getElementById('calendarToggle');
+      if (modal) modal.classList.remove('open');
+      if (overlay) overlay.classList.remove('open');
+      if (toggle) toggle.classList.remove('active');
+    }
+
+    function changeCalendarMonth(delta) {
+      currentCalendarMonth = new Date(currentCalendarMonth.getFullYear(), currentCalendarMonth.getMonth() + delta, 1);
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const monthYear = document.getElementById('calMonthYear');
+      const daysContainer = document.getElementById('calendarDays');
+      const prevBtn = document.getElementById('calPrevBtn');
+      const nextBtn = document.getElementById('calNextBtn');
+
+      if (!monthYear || !daysContainer) return;
+
+      const year = currentCalendarMonth.getFullYear();
+      const month = currentCalendarMonth.getMonth();
+
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+      monthYear.textContent = `${monthNames[month]} ${year}`;
+
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const startingDayOfWeek = firstDay.getDay();
+      const daysInMonth = lastDay.getDate();
+
+      const isUnpredictedMode = unpredictedMode && selectedUserId;
+      const matchCounts = isUnpredictedMode ? getUnpredictedMatchCountsByDate(selectedUserId) : getMatchCountsByDate();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      let html = '';
+
+      for (let i = 0; i < startingDayOfWeek; i++) {
+        html += '<div class="calendar-day empty"></div>';
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        const year2 = date.getFullYear();
+        const month2 = String(date.getMonth() + 1).padStart(2, '0');
+        const day2 = String(date.getDate()).padStart(2, '0');
+        const dateKey = `${year2}-${month2}-${day2}`;
+        const matchCount = matchCounts[dateKey] || 0;
+
+        // Check if this date has any matches at all (not just filtered matches)
+        const allMatchCounts = getMatchCountsByDate();
+        const hasAnyMatches = (allMatchCounts[dateKey] || 0) > 0;
+
+        const isToday = date.getTime() === today.getTime();
+        const isSelected = selectedCalendarDate === dateKey;
+
+        let classes = 'calendar-day';
+        if (!hasAnyMatches) classes += ' disabled';
+        if (isToday) classes += ' today';
+        if (isSelected) classes += ' selected';
+
+        const onclick = hasAnyMatches ? `onclick="selectCalendarDate('${dateKey}', ${!!isUnpredictedMode}, ${matchCount})"` : '';
+        let countClass = 'calendar-day-count';
+        if (isUnpredictedMode && matchCount > 0) {
+          countClass += ' unpredicted';  // red for pending predictions
+        }
+        // when matchCount === 0 in unpredicted mode, it stays green (default class)
+
+        html += `<button class="${classes}" ${onclick}>
+  <span class="calendar-day-num">${day}</span>
+  ${hasAnyMatches ? `<span class="${countClass}">${matchCount}</span>` : ''}
+</button>`;
+      }
+
+      daysContainer.innerHTML = html;
+
+      const wcStart = new Date(2026, 5, 1);
+      const wcEnd = new Date(2026, 6, 31);
+      const currentMonth = new Date(year, month, 1);
+
+      if (prevBtn) prevBtn.disabled = currentMonth <= wcStart;
+      if (nextBtn) nextBtn.disabled = currentMonth >= wcEnd;
+    }
+
+    function selectCalendarDate(dateKey, isUnpredictedMode, matchCount) {
+      selectedCalendarDate = dateKey;
+      activeDateFilter = dateKey;
+
+      // If in unpredicted mode and matchCount is 0, show full schedule for that date
+      // Otherwise, filter to show only unpredicted matches
+      if (isUnpredictedMode && matchCount === 0) {
+        activeUnpredictedFilter = false;
+      } else {
+        activeUnpredictedFilter = isUnpredictedMode && selectedUserId;
+      }
+
+      closeCalendar();
+
+      const label = document.getElementById('fabLabel');
+      const parts = dateKey.split('-');
+      const year = parseInt(parts[0]);
+      const month = parseInt(parts[1]) - 1;
+      const day = parseInt(parts[2]);
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      let dateStr = `${monthNames[month]} ${day}`;
+
+      if (activeUnpredictedFilter) {
+        const user = users.find(u => u.user_id === selectedUserId);
+        const userName = user ? (user.display_name || 'User') : 'User';
+        dateStr += ` (${userName} - Unpredicted)`;
+      }
+
+      if (label) label.textContent = dateStr;
+
+      updateClearButtonVisibility();
+      expandFab();
+      buildMatchDOM();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function clearDateFilter() {
+      selectedCalendarDate = null;
+      activeDateFilter = null;
+      activeUnpredictedFilter = false;
+      const label = document.getElementById('fabLabel');
+      if (label) {
+        label.textContent = FILTER_LABELS[activeFilter] || 'All Matches';
+      }
+    }
+
+    function clearAllFilters() {
+      activeFilter = 'all';
+      activeTeamFilter = null;
+      activeMatchFilter = null;
+      activeUnpredictedFilter = false;
+      clearDateFilter();
+
+      const unpredictedToggle = document.getElementById('unpredictedToggle');
+      if (unpredictedToggle) unpredictedToggle.checked = false;
+      unpredictedMode = false;
+      selectedUserId = null;
+      const userSelectorWrap = document.getElementById('userSelectorWrap');
+      if (userSelectorWrap) userSelectorWrap.classList.remove('visible');
+
+      const label = document.getElementById('fabLabel');
+      if (label) label.textContent = 'All Matches';
+
+      const inputRow = document.getElementById('searchInputRow');
+      const chip = document.getElementById('searchChip');
+      const input = document.getElementById('searchInput');
+      if (inputRow) inputRow.classList.remove('has-filter');
+      if (chip) chip.innerHTML = '';
+      if (input) input.value = '';
+
+      const searchRow = document.getElementById('searchRowWrap');
+      if (searchRow && searchRow.classList.contains('open')) {
+        closeSearchRow();
+      }
+
+      updateClearButtonVisibility();
+      buildMatchDOM();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateClearButtonVisibility() {
+      const clearBtn = document.getElementById('clearFilterBtn');
+      if (!clearBtn) return;
+
+      const hasFilter = activeDateFilter || activeTeamFilter || activeMatchFilter || (activeFilter && activeFilter !== 'all');
+
+      if (hasFilter) {
+        clearBtn.classList.add('visible');
+      } else {
+        clearBtn.classList.remove('visible');
+      }
+    }
+
+
     // ── COUNTDOWN HELPERS ──
     function computeCountdownHTML(kickoffStr, status) {
       if (status === 'FINISHED') return '';
       const kickoff = parseUTC(kickoffStr);
       if (!kickoff) return '';
       const diff = kickoff.getTime() - new Date().getTime();
-      if (diff <= 0) return '';
+      if (diff <= 0) {
+        if (!status) return '';
+        return `<span class="match-time">${status}</span>`;
+      }
       const totalSec = Math.floor(diff / 1000);
       const d = Math.floor(totalSec / 86400);
       const h = Math.floor((totalSec % 86400) / 3600);
@@ -2600,6 +3442,7 @@
         `;
       }
       setFabVisibility(getActiveTabId());
+      updateClearButtonVisibility();
       buildMatchDOM();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -2632,6 +3475,7 @@
         `;
       }
       setFabVisibility(getActiveTabId());
+      updateClearButtonVisibility();
       buildMatchDOM();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -2639,12 +3483,14 @@
       if (ev) ev.stopPropagation();
       activeTeamFilter = null;
       activeMatchFilter = null;
+      clearDateFilter();
       const inputRow = document.getElementById('searchInputRow');
       const chip = document.getElementById('searchChip');
       const input = document.getElementById('searchInput');
       if (inputRow) inputRow.classList.remove('has-filter');
       if (chip) chip.innerHTML = '';
       setFabVisibility(getActiveTabId());
+      updateClearButtonVisibility();
       buildMatchDOM();
       setTimeout(() => { if (input) input.focus(); }, 60);
     }
@@ -2909,6 +3755,40 @@
         visibleMatches = matches.filter(m => m.team_home === activeTeamFilter || m.team_away === activeTeamFilter);
         if (!visibleMatches.length) {
           container.innerHTML = `<div class="state-msg">No matches found for ${escHtml(activeTeamFilter)}.</div>`;
+          firstRender = false;
+          return;
+        }
+      } else if (activeDateFilter) {
+        visibleMatches = matches.filter(m => {
+          const kickoff = parseUTC(m.kickoff);
+          if (!kickoff) return false;
+          const istDate = new Date(kickoff.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+          const year = istDate.getFullYear();
+          const month = String(istDate.getMonth() + 1).padStart(2, '0');
+          const day = String(istDate.getDate()).padStart(2, '0');
+          const dateKey = `${year}-${month}-${day}`;
+
+          if (dateKey !== activeDateFilter) return false;
+
+          if (activeUnpredictedFilter && selectedUserId) {
+            const pred = m.predictions ? m.predictions[selectedUserId] : null;
+            return isCleared(pred);
+          }
+
+          return true;
+        });
+        if (!visibleMatches.length) {
+          const msg = activeUnpredictedFilter
+            ? 'No unpredicted matches found for selected date.'
+            : 'No matches found for selected date.';
+          container.innerHTML = `<div class="state-msg">${msg}</div>`;
+          firstRender = false;
+          return;
+        }
+      } else if (activeFilter && activeFilter !== 'all') {
+        visibleMatches = matches.filter(m => matchesFilter(m, activeFilter));
+        if (!visibleMatches.length) {
+          container.innerHTML = `<div class="state-msg">No matches found for ${escHtml(FILTER_LABELS[activeFilter] || activeFilter)}.</div>`;
           firstRender = false;
           return;
         }
