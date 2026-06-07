@@ -937,6 +937,10 @@
       overflow: hidden;
     }
 
+    .lb-wrap.animate-in {
+      animation: slideUp 0.35s ease both;
+    }
+
     .lb-title-row {
       padding: 20px 24px 16px;
       border-bottom: 2px solid var(--ink);
@@ -1334,10 +1338,6 @@
       will-change: transform;
     }
 
-    .lb-wrap {
-      animation: slideUp 0.35s ease both;
-    }
-
     .stats-kpi-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -1413,6 +1413,9 @@
       border-radius: var(--radius);
       margin-bottom: 16px;
       overflow: hidden;
+    }
+
+    .stats-card.animate-in {
       animation: slideUp 0.4s ease both;
     }
 
@@ -2374,6 +2377,10 @@
       }
     }
 
+    .hidden-control {
+      display: none !important;
+    }
+
     @media(max-width: 560px) {
       .header-top {
         padding: 0 16px;
@@ -2691,6 +2698,7 @@
   </div>
   <script>
     const NULL_SENTINEL = -1;
+
     function isCleared(pred) {
       if (!pred) return true;
       if (pred.pred_home === undefined || pred.pred_home === null) return true;
@@ -2698,9 +2706,14 @@
       if (pred.pred_home < 0 || pred.pred_away < 0) return true;
       return false;
     }
+
     function preloadFlags() {
-      Object.values(TEAM_FLAG).forEach(code => { const img = new Image(); img.src = 'flags/' + code + '.png'; });
+      Object.values(TEAM_FLAG).forEach(code => {
+        const img = new Image();
+        img.src = 'flags/' + code + '.png';
+      });
     }
+
     const TEAM_FLAG = Object.fromEntries(Object.entries({
       'United States': 'us', 'Canada': 'ca', 'Mexico': 'mx',
       'Argentina': 'ar', 'Brazil': 'br', 'Colombia': 'co',
@@ -2719,7 +2732,9 @@
       'Curaçao': 'cw', 'Haiti': 'ht', 'Panama': 'pa',
       'New Zealand': 'nz', 'Congo DR': 'cd', 'Iraq': 'iq',
     }).map(([k, v]) => [k.toLowerCase(), v]));
+
     preloadFlags();
+
     function flagHtml(teamName) {
       if (!teamName) return '';
       const code = TEAM_FLAG[teamName.trim().toLowerCase()];
@@ -2738,6 +2753,7 @@
       if (!code) return '';
       return `<img src="flags/${code}.png" width="14" height="10" style="border-radius:2px;flex-shrink:0;display:inline-block;vertical-align:middle;border:1px solid rgba(0,0,0,0.1);" alt="${teamName}">`;
     }
+
     const API = 'https://nowhere-admission-draft-adapters.trycloudflare.com';
     const STAGE_LABEL = { group: 'Group Stage', r32: 'Round of 32', r16: 'Round of 16', qf: 'Quarter Finals', sf: 'Semi Finals', third: 'Third Place', final: 'Final' };
     const STAGE_SHORT = { group: 'Group', r32: 'R32', r16: 'R16', qf: 'QF', sf: 'SF', third: '3rd', final: 'Final' };
@@ -2746,6 +2762,7 @@
       '#ef4444', '#06b6d4', '#ec4899', '#84cc16',
       '#f97316', '#6366f1', '#14b8a6', '#d946ef'
     ];
+
     const predBuffer = {};
     const timers = {};
     let matches = [], users = [];
@@ -2754,12 +2771,25 @@
     let lastLBJson = null;
     let lastMatchesJson = null;
     let lastUsersJson = null;
+    let lastStatsHtml = '';
+    let lastLeaderboardHtml = '';
+    let leaderboardFirstRender = true;
+    let statsFirstRender = true;
     let activeFilter = 'all';
     let firstRender = true;
-    const FILTER_LABELS = { all: 'All Matches', today: "Today's Matches", group: 'Group Stage Matches', r32: 'Round of 32 Matches', r16: 'Round of 16 Matches', qf: 'Quarter Finals', sf: 'Semi Finals', third: 'Third Place', final: 'Final' };
 
-    // ── DETERMINISTIC SHUFFLE (per match, stable across renders) ──
-    // Uses match_id as seed so the order is randomized but doesn't keep changing on every poll.
+    const FILTER_LABELS = {
+      all: 'All Matches',
+      today: "Today's Matches",
+      group: 'Group Stage Matches',
+      r32: 'Round of 32 Matches',
+      r16: 'Round of 16 Matches',
+      qf: 'Quarter Finals',
+      sf: 'Semi Finals',
+      third: 'Third Place',
+      final: 'Final'
+    };
+
     function hashStr(str) {
       let h = 2166136261;
       for (let i = 0; i < str.length; i++) {
@@ -2768,11 +2798,11 @@
       }
       return h >>> 0;
     }
+
     function seededShuffle(arr, seed) {
       const a = arr.slice();
       let s = seed >>> 0;
       for (let i = a.length - 1; i > 0; i--) {
-        // xorshift32
         s ^= s << 13; s >>>= 0;
         s ^= s >>> 17; s >>>= 0;
         s ^= s << 5; s >>>= 0;
@@ -2785,11 +2815,15 @@
     function getTodayWindow() {
       const now = new Date();
       const ist = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-      const start = new Date(ist); start.setHours(0, 0, 0, 0);
-      const end = new Date(ist); end.setDate(end.getDate() + 1); end.setHours(23, 59, 59, 999);
+      const start = new Date(ist);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(ist);
+      end.setDate(end.getDate() + 1);
+      end.setHours(23, 59, 59, 999);
       const offset = now.getTime() - ist.getTime();
       return { start: new Date(start.getTime() + offset), end: new Date(end.getTime() + offset) };
     }
+
     function matchesFilter(m, filter) {
       if (filter === 'all') return true;
       if (filter === 'today') {
@@ -2800,16 +2834,12 @@
       }
       return m.stage === filter;
     }
+
     function getAvailableFilters() {
       const stages = [...new Set(matches.map(m => m.stage))];
       return ['all', 'today', ...stages];
     }
-    function getNearestMatch() {
-      const now = new Date();
-      const upcoming = matches.filter(m => { const k = parseUTC(m.kickoff); return k && k > now && m.status !== 'FINISHED'; });
-      if (!upcoming.length) return null;
-      return upcoming.reduce((a, b) => parseUTC(a.kickoff) < parseUTC(b.kickoff) ? a : b);
-    }
+
     function buildSheetItems() {
       const filters = getAvailableFilters();
       const container = document.getElementById('sheetItems');
@@ -2825,15 +2855,18 @@
         </div>`;
       }).join('');
     }
+
     function openFilterSheet() {
       buildSheetItems();
       document.getElementById('sheetOverlay').classList.add('open');
       document.getElementById('filterSheet').classList.add('open');
     }
+
     function closeFilterSheet() {
       document.getElementById('sheetOverlay').classList.remove('open');
       document.getElementById('filterSheet').classList.remove('open');
     }
+
     function applyFilter(filter) {
       activeFilter = filter;
       clearDateFilter();
@@ -2845,6 +2878,7 @@
       buildMatchDOM();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
     function autoSelectFilter() {
       const todayMatches = matches.filter(m => matchesFilter(m, 'today'));
       if (todayMatches.length) {
@@ -2853,8 +2887,10 @@
         if (label) label.textContent = FILTER_LABELS['today'];
       }
     }
+
     let fabCollapseTimer = null;
     let fabExpanded = true;
+
     function expandFab() {
       const btn = document.getElementById('filterFabBtn');
       if (!btn) return;
@@ -2863,16 +2899,22 @@
       clearTimeout(fabCollapseTimer);
       fabCollapseTimer = setTimeout(collapseFab, 3500);
     }
+
     function collapseFab() {
       const btn = document.getElementById('filterFabBtn');
       if (!btn) return;
       btn.classList.add('collapsed');
       fabExpanded = false;
     }
+
     function onFabClick() {
-      if (!fabExpanded) { expandFab(); return; }
+      if (!fabExpanded) {
+        expandFab();
+        return;
+      }
       openFilterSheet();
     }
+
     function setFabVisibility(tabId) {
       const fab = document.getElementById('filterFab');
       if (!fab) return;
@@ -2883,6 +2925,39 @@
         fab.classList.add('hidden');
       }
     }
+
+    function hideSearchUIOnly() {
+      const wrap = document.getElementById('searchRowWrap');
+      const toggle = document.getElementById('searchToggle');
+      const input = document.getElementById('searchInput');
+      const results = document.getElementById('searchResults');
+
+      if (wrap) wrap.classList.remove('open');
+      if (toggle) toggle.classList.remove('active');
+      if (input) input.value = '';
+      if (results) {
+        results.innerHTML = '';
+        results.classList.add('empty');
+      }
+      searchRowOpen = false;
+    }
+
+    function setTopControlsVisibility(tabId) {
+      const calendarToggle = document.getElementById('calendarToggle');
+      const searchToggle = document.getElementById('searchToggle');
+      const shouldShow = tabId === 'predict';
+
+      [calendarToggle, searchToggle].forEach(el => {
+        if (!el) return;
+        el.classList.toggle('hidden-control', !shouldShow);
+      });
+
+      if (!shouldShow) {
+        hideSearchUIOnly();
+        closeCalendar();
+      }
+    }
+
     window.addEventListener('scroll', () => {
       const activeTab = document.querySelector('.tab-content.active');
       if (activeTab && activeTab.id === 'predict') {
@@ -2891,13 +2966,21 @@
         fabCollapseTimer = setTimeout(collapseFab, 1500);
       }
     }, { passive: true });
-    function initFab() { fabCollapseTimer = setTimeout(collapseFab, 3500); }
 
-    // ── UNPREDICTED FILTER MODE ──
+    function initFab() {
+      fabCollapseTimer = setTimeout(collapseFab, 3500);
+    }
+
+    let currentCalendarMonth = new Date();
+    let selectedCalendarDate = null;
+    let activeDateFilter = null;
+    let unpredictedMode = false;
+    let selectedUserId = null;
+    let activeUnpredictedFilter = false;
+
     function toggleUnpredictedMode() {
       const toggle = document.getElementById('unpredictedToggle');
       const userSelectorWrap = document.getElementById('userSelectorWrap');
-
       unpredictedMode = toggle && toggle.checked;
 
       if (unpredictedMode) {
@@ -2912,14 +2995,12 @@
         if (trigger) trigger.classList.add('placeholder');
         if (text) text.textContent = 'Select your name...';
       }
-
       renderCalendar();
     }
 
     function populateUserSelector() {
       const dropdown = document.getElementById('userSelectDropdown');
       if (!dropdown || !users || !users.length) return;
-
       let html = '';
       users.forEach(u => {
         const isSelected = selectedUserId === u.user_id;
@@ -2927,19 +3008,15 @@
         const displayName = escHtml(u.display_name || 'User ' + u.user_id);
         html += `<div class="custom-select-option${selectedClass}" data-user-id="${u.user_id}" data-user-name="${displayName}" onclick="selectUserFromDropdown(this)">${displayName}</div>`;
       });
-
       dropdown.innerHTML = html;
     }
 
     function toggleUserDropdown() {
       const customSelect = document.getElementById('customUserSelect');
       if (!customSelect) return;
-
       const isOpen = customSelect.classList.contains('open');
-
-      if (isOpen) {
-        customSelect.classList.remove('open');
-      } else {
+      if (isOpen) customSelect.classList.remove('open');
+      else {
         populateUserSelector();
         customSelect.classList.add('open');
       }
@@ -2948,91 +3025,39 @@
     function selectUserFromDropdown(element) {
       const userId = element.getAttribute('data-user-id');
       const userName = element.getAttribute('data-user-name');
-
       selectedUserId = userId;
-
       const trigger = document.getElementById('userSelectTrigger');
       const text = document.getElementById('userSelectText');
       const customSelect = document.getElementById('customUserSelect');
-
       if (trigger) trigger.classList.remove('placeholder');
       if (text) text.textContent = userName;
       if (customSelect) customSelect.classList.remove('open');
-
       renderCalendar();
     }
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', function (e) {
       const customSelect = document.getElementById('customUserSelect');
       if (!customSelect) return;
-
-      if (!customSelect.contains(e.target)) {
-        customSelect.classList.remove('open');
-      }
+      if (!customSelect.contains(e.target)) customSelect.classList.remove('open');
     });
 
     function getUnpredictedMatchCountsByDate(userId) {
       if (!userId) return {};
-
       const counts = {};
       matches.forEach(m => {
         const kickoff = parseUTC(m.kickoff);
         if (!kickoff) return;
-
         const istDate = new Date(kickoff.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
         const year = istDate.getFullYear();
         const month = String(istDate.getMonth() + 1).padStart(2, '0');
         const day = String(istDate.getDate()).padStart(2, '0');
         const dateKey = `${year}-${month}-${day}`;
-
         const pred = m.predictions ? m.predictions[userId] : null;
         const isUnpredicted = isCleared(pred);
-
-        if (isUnpredicted) {
-          counts[dateKey] = (counts[dateKey] || 0) + 1;
-        }
+        if (isUnpredicted) counts[dateKey] = (counts[dateKey] || 0) + 1;
       });
-
       return counts;
     }
-
-    function collapseFab() {
-      const btn = document.getElementById('filterFabBtn');
-      if (!btn) return;
-      btn.classList.add('collapsed');
-      fabExpanded = false;
-    }
-    function onFabClick() {
-      if (!fabExpanded) { expandFab(); return; }
-      openFilterSheet();
-    }
-    function setFabVisibility(tabId) {
-      const fab = document.getElementById('filterFab');
-      if (!fab) return;
-      if (tabId === 'predict' && !activeTeamFilter && !activeMatchFilter) {
-        fab.classList.remove('hidden');
-        expandFab();
-      } else {
-        fab.classList.add('hidden');
-      }
-    }
-    window.addEventListener('scroll', () => {
-      const activeTab = document.querySelector('.tab-content.active');
-      if (activeTab && activeTab.id === 'predict') {
-        expandFab();
-        clearTimeout(fabCollapseTimer);
-        fabCollapseTimer = setTimeout(collapseFab, 1500);
-      }
-    }, { passive: true });
-    function initFab() { fabCollapseTimer = setTimeout(collapseFab, 3500); }
-    // ── CALENDAR FUNCTIONS ──
-    let currentCalendarMonth = new Date();
-    let selectedCalendarDate = null;
-    let activeDateFilter = null;
-    let unpredictedMode = false;
-    let selectedUserId = null;
-    let activeUnpredictedFilter = false;
 
     function getMatchCountsByDate() {
       const counts = {};
@@ -3054,16 +3079,13 @@
       const overlay = document.getElementById('calendarOverlay');
       const toggle = document.getElementById('calendarToggle');
       if (!modal || !overlay || !toggle) return;
-
       const isOpen = modal.classList.contains('open');
       if (isOpen) {
         closeCalendar();
       } else {
         const searchRow = document.getElementById('searchRowWrap');
-        if (searchRow && searchRow.classList.contains('open')) {
-          closeSearchRow();
-        }
-        currentCalendarMonth = new Date();
+        if (searchRow && searchRow.classList.contains('open')) closeSearchRow();
+        currentCalendarMonth = new Date(2026, 5, 1);
         renderCalendar();
         modal.classList.add('open');
         overlay.classList.add('open');
@@ -3090,14 +3112,11 @@
       const daysContainer = document.getElementById('calendarDays');
       const prevBtn = document.getElementById('calPrevBtn');
       const nextBtn = document.getElementById('calNextBtn');
-
       if (!monthYear || !daysContainer) return;
 
       const year = currentCalendarMonth.getFullYear();
       const month = currentCalendarMonth.getMonth();
-
-      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'];
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       monthYear.textContent = `${monthNames[month]} ${year}`;
 
       const firstDay = new Date(year, month, 1);
@@ -3111,10 +3130,7 @@
       today.setHours(0, 0, 0, 0);
 
       let html = '';
-
-      for (let i = 0; i < startingDayOfWeek; i++) {
-        html += '<div class="calendar-day empty"></div>';
-      }
+      for (let i = 0; i < startingDayOfWeek; i++) html += '<div class="calendar-day empty"></div>';
 
       for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(year, month, day);
@@ -3123,11 +3139,8 @@
         const day2 = String(date.getDate()).padStart(2, '0');
         const dateKey = `${year2}-${month2}-${day2}`;
         const matchCount = matchCounts[dateKey] || 0;
-
-        // Check if this date has any matches at all (not just filtered matches)
         const allMatchCounts = getMatchCountsByDate();
         const hasAnyMatches = (allMatchCounts[dateKey] || 0) > 0;
-
         const isToday = date.getTime() === today.getTime();
         const isSelected = selectedCalendarDate === dateKey;
 
@@ -3138,46 +3151,43 @@
 
         const onclick = hasAnyMatches ? `onclick="selectCalendarDate('${dateKey}', ${!!isUnpredictedMode}, ${matchCount})"` : '';
         let countClass = 'calendar-day-count';
-        if (isUnpredictedMode && matchCount > 0) {
-          countClass += ' unpredicted';  // red for pending predictions
-        }
-        // when matchCount === 0 in unpredicted mode, it stays green (default class)
+        if (isUnpredictedMode && matchCount > 0) countClass += ' unpredicted';
 
         html += `<button class="${classes}" ${onclick}>
-  <span class="calendar-day-num">${day}</span>
-  ${hasAnyMatches ? `<span class="${countClass}">${matchCount}</span>` : ''}
-</button>`;
+          <span class="calendar-day-num">${day}</span>
+          ${hasAnyMatches ? `<span class="${countClass}">${matchCount}</span>` : ''}
+        </button>`;
       }
 
       daysContainer.innerHTML = html;
 
-      const wcStart = new Date(2026, 5, 1);
-      const wcEnd = new Date(2026, 6, 31);
-      const currentMonth = new Date(year, month, 1);
+      const minYear = 2026;
+      const minMonth = 5; // June
+      const maxYear = 2026;
+      const maxMonth = 6; // July
 
-      if (prevBtn) prevBtn.disabled = currentMonth <= wcStart;
-      if (nextBtn) nextBtn.disabled = currentMonth >= wcEnd;
+      if (prevBtn) {
+        prevBtn.disabled = (year === minYear && month <= minMonth);
+      }
+
+      if (nextBtn) {
+        nextBtn.disabled = (year === maxYear && month >= maxMonth);
+      }
     }
 
     function selectCalendarDate(dateKey, isUnpredictedMode, matchCount) {
       selectedCalendarDate = dateKey;
       activeDateFilter = dateKey;
 
-      // If in unpredicted mode and matchCount is 0, show full schedule for that date
-      // Otherwise, filter to show only unpredicted matches
-      if (isUnpredictedMode && matchCount === 0) {
-        activeUnpredictedFilter = false;
-      } else {
-        activeUnpredictedFilter = isUnpredictedMode && selectedUserId;
-      }
+      if (isUnpredictedMode && matchCount === 0) activeUnpredictedFilter = false;
+      else activeUnpredictedFilter = isUnpredictedMode && selectedUserId;
 
       closeCalendar();
 
       const label = document.getElementById('fabLabel');
       const parts = dateKey.split('-');
-      const year = parseInt(parts[0]);
-      const month = parseInt(parts[1]) - 1;
-      const day = parseInt(parts[2]);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
       const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       let dateStr = `${monthNames[month]} ${day}`;
 
@@ -3188,7 +3198,6 @@
       }
 
       if (label) label.textContent = dateStr;
-
       updateClearButtonVisibility();
       expandFab();
       buildMatchDOM();
@@ -3200,9 +3209,7 @@
       activeDateFilter = null;
       activeUnpredictedFilter = false;
       const label = document.getElementById('fabLabel');
-      if (label) {
-        label.textContent = FILTER_LABELS[activeFilter] || 'All Matches';
-      }
+      if (label) label.textContent = FILTER_LABELS[activeFilter] || 'All Matches';
     }
 
     function clearAllFilters() {
@@ -3216,6 +3223,7 @@
       if (unpredictedToggle) unpredictedToggle.checked = false;
       unpredictedMode = false;
       selectedUserId = null;
+
       const userSelectorWrap = document.getElementById('userSelectorWrap');
       if (userSelectorWrap) userSelectorWrap.classList.remove('visible');
 
@@ -3230,9 +3238,7 @@
       if (input) input.value = '';
 
       const searchRow = document.getElementById('searchRowWrap');
-      if (searchRow && searchRow.classList.contains('open')) {
-        closeSearchRow();
-      }
+      if (searchRow && searchRow.classList.contains('open')) closeSearchRow();
 
       updateClearButtonVisibility();
       buildMatchDOM();
@@ -3242,18 +3248,10 @@
     function updateClearButtonVisibility() {
       const clearBtn = document.getElementById('clearFilterBtn');
       if (!clearBtn) return;
-
       const hasFilter = activeDateFilter || activeTeamFilter || activeMatchFilter || (activeFilter && activeFilter !== 'all');
-
-      if (hasFilter) {
-        clearBtn.classList.add('visible');
-      } else {
-        clearBtn.classList.remove('visible');
-      }
+      clearBtn.classList.toggle('visible', !!hasFilter);
     }
 
-
-    // ── COUNTDOWN HELPERS ──
     function computeCountdownHTML(kickoffStr, status) {
       if (status === 'FINISHED') return '';
       const kickoff = parseUTC(kickoffStr);
@@ -3263,21 +3261,34 @@
         if (!status) return '';
         return `<span class="match-time">${status}</span>`;
       }
+
       const totalSec = Math.floor(diff / 1000);
       const d = Math.floor(totalSec / 86400);
       const h = Math.floor((totalSec % 86400) / 3600);
       const m = Math.floor((totalSec % 3600) / 60);
       const s = totalSec % 60;
+
       let label, dotColor;
-      if (diff >= 86400000) { label = d + 'd ' + h + 'h'; dotColor = '#6e6760'; }
-      else if (diff >= 3600000) { label = h + 'h ' + m + 'm'; dotColor = '#b8860b'; }
-      else if (diff >= 60000) { label = m + 'm ' + s + 's'; dotColor = '#c0392b'; }
-      else { label = s + 's'; dotColor = '#c0392b'; }
+      if (diff >= 86400000) {
+        label = d + 'd ' + h + 'h';
+        dotColor = '#6e6760';
+      } else if (diff >= 3600000) {
+        label = h + 'h ' + m + 'm';
+        dotColor = '#b8860b';
+      } else if (diff >= 60000) {
+        label = m + 'm ' + s + 's';
+        dotColor = '#c0392b';
+      } else {
+        label = s + 's';
+        dotColor = '#c0392b';
+      }
+
       return '<span style="display:inline-flex;align-items:center;gap:5px;background:var(--paper2);border-radius:20px;padding:2px 8px 2px 6px;">' +
         '<span style="width:6px;height:6px;border-radius:50%;background:' + dotColor + ';flex-shrink:0;display:inline-block;animation:blink-dot 1.2s infinite;"></span>' +
         '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.06em;color:' + dotColor + ';">' + label + '</span>' +
         '</span>';
     }
+
     function tickCountdowns() {
       document.querySelectorAll('.match-countdown').forEach(el => {
         el.innerHTML = computeCountdownHTML(el.dataset.kickoff, el.dataset.status);
@@ -3285,10 +3296,10 @@
     }
     setInterval(tickCountdowns, 1000);
 
-    // ── SEARCH ──
     let activeTeamFilter = null;
     let activeMatchFilter = null;
     let searchRowOpen = false;
+
     function getUniqueTeams() {
       const set = new Set();
       matches.forEach(m => {
@@ -3297,6 +3308,7 @@
       });
       return [...set].sort();
     }
+
     function searchTeams(query) {
       const q = query.trim().toLowerCase();
       if (!q) return [];
@@ -3309,6 +3321,7 @@
       });
       return [...starts, ...contains].slice(0, 5);
     }
+
     function searchMatchesByQuery(query) {
       const q = query.trim().toLowerCase();
       if (!q) return [];
@@ -3318,15 +3331,18 @@
         return h.includes(q) || a.includes(q);
       }).slice(0, 5);
     }
+
     function teamMatchCount(team) {
       return matches.filter(m => m.team_home === team || m.team_away === team).length;
     }
+
     function fmtShortDate(dt) {
       if (!dt) return '';
       const datePart = dt.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
       const timePart = dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }).toUpperCase();
       return datePart + ' · ' + timePart;
     }
+
     function buildMatchResultRow(m) {
       const homeTeam = m.team_home || 'TBD';
       const awayTeam = m.team_away || 'TBD';
@@ -3335,12 +3351,15 @@
       const dateStr = fmtShortDate(kickoffDt);
       const finished = m.status === 'FINISHED';
       let scoreOrVs;
+
       if (finished && m.score_home !== null && m.score_away !== null && m.score_home !== undefined && m.score_away !== undefined) {
         scoreOrVs = `<span class="search-match-vs" style="color:var(--green);font-weight:800;">${m.score_home}–${m.score_away}</span>`;
       } else {
         scoreOrVs = `<span class="search-match-vs">vs</span>`;
       }
+
       const meta = `${stage}${dateStr ? ' · ' + dateStr : ''}`;
+
       return `<div class="search-match-row" onclick="selectMatchFilter('${escHtml(m.match_id)}')">
         <div class="search-match-teams">
           <div class="search-match-team">${flagHtmlSmall(homeTeam)}<span class="search-match-team-name">${escHtml(homeTeam)}</span></div>
@@ -3350,21 +3369,26 @@
         <div class="search-match-meta">${meta}</div>
       </div>`;
     }
+
     function renderSearchResults(query) {
       const results = document.getElementById('searchResults');
       if (!results) return;
+
       if (!query.trim()) {
         results.innerHTML = '';
         results.classList.add('empty');
         return;
       }
+
       const teamHits = searchTeams(query);
       const matchHits = searchMatchesByQuery(query);
+
       if (!teamHits.length && !matchHits.length) {
         results.innerHTML = `<div class="search-empty">No teams or matches for "${escHtml(query)}"</div>`;
         results.classList.remove('empty');
         return;
       }
+
       let html = '';
       if (teamHits.length) {
         html += '<div class="search-section-title">Teams</div>';
@@ -3378,20 +3402,21 @@
           </div>`;
         }).join('');
       }
+
       if (matchHits.length) {
         html += '<div class="search-section-title">Matches</div>';
         html += matchHits.map(buildMatchResultRow).join('');
       }
+
       results.innerHTML = html;
       results.classList.remove('empty');
     }
+
     function toggleSearchRow() {
-      if (searchRowOpen) {
-        closeSearchRow();
-      } else {
-        openSearchRow();
-      }
+      if (searchRowOpen) closeSearchRow();
+      else openSearchRow();
     }
+
     function openSearchRow() {
       const wrap = document.getElementById('searchRowWrap');
       const toggle = document.getElementById('searchToggle');
@@ -3402,17 +3427,23 @@
       searchRowOpen = true;
       setTimeout(() => { if (input) input.focus(); }, 80);
     }
+
     function closeSearchRow() {
       const wrap = document.getElementById('searchRowWrap');
       const toggle = document.getElementById('searchToggle');
       const input = document.getElementById('searchInput');
       const results = document.getElementById('searchResults');
       if (!wrap) return;
+
       wrap.classList.remove('open');
       if (toggle) toggle.classList.remove('active');
       searchRowOpen = false;
       if (input) input.value = '';
-      if (results) { results.innerHTML = ''; results.classList.add('empty'); }
+      if (results) {
+        results.innerHTML = '';
+        results.classList.add('empty');
+      }
+
       if (activeTeamFilter || activeMatchFilter) {
         activeTeamFilter = null;
         activeMatchFilter = null;
@@ -3424,15 +3455,21 @@
         buildMatchDOM();
       }
     }
+
     function selectTeamFilter(team) {
       activeTeamFilter = team;
       activeMatchFilter = null;
+
       const inputRow = document.getElementById('searchInputRow');
       const chip = document.getElementById('searchChip');
       const input = document.getElementById('searchInput');
       const results = document.getElementById('searchResults');
+
       if (input) input.value = '';
-      if (results) { results.innerHTML = ''; results.classList.add('empty'); }
+      if (results) {
+        results.innerHTML = '';
+        results.classList.add('empty');
+      }
       if (inputRow) inputRow.classList.add('has-filter');
       if (chip) {
         chip.innerHTML = `
@@ -3441,27 +3478,37 @@
           <button class="search-chip-clear" onclick="clearTeamFilter(event)" aria-label="Clear filter">×</button>
         `;
       }
+
       setFabVisibility(getActiveTabId());
       updateClearButtonVisibility();
       buildMatchDOM();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
     function selectMatchFilter(matchId) {
       const m = matches.find(x => String(x.match_id) === String(matchId));
       if (!m) return;
+
       const predictTab = document.querySelector('.tab[data-tab="predict"]');
       if (predictTab && !document.getElementById('predict').classList.contains('active')) {
         switchTab('predict', predictTab);
       }
+
       activeMatchFilter = String(matchId);
       activeTeamFilter = null;
+
       const inputRow = document.getElementById('searchInputRow');
       const chip = document.getElementById('searchChip');
       const input = document.getElementById('searchInput');
       const results = document.getElementById('searchResults');
+
       if (input) input.value = '';
-      if (results) { results.innerHTML = ''; results.classList.add('empty'); }
+      if (results) {
+        results.innerHTML = '';
+        results.classList.add('empty');
+      }
       if (inputRow) inputRow.classList.add('has-filter');
+
       const homeTeam = m.team_home || 'TBD';
       const awayTeam = m.team_away || 'TBD';
       if (chip) {
@@ -3474,43 +3521,50 @@
           <button class="search-chip-clear" onclick="clearTeamFilter(event)" aria-label="Clear filter">×</button>
         `;
       }
+
       setFabVisibility(getActiveTabId());
       updateClearButtonVisibility();
       buildMatchDOM();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
     function clearTeamFilter(ev) {
       if (ev) ev.stopPropagation();
       activeTeamFilter = null;
       activeMatchFilter = null;
       clearDateFilter();
+
       const inputRow = document.getElementById('searchInputRow');
       const chip = document.getElementById('searchChip');
       const input = document.getElementById('searchInput');
       if (inputRow) inputRow.classList.remove('has-filter');
       if (chip) chip.innerHTML = '';
+
       setFabVisibility(getActiveTabId());
       updateClearButtonVisibility();
       buildMatchDOM();
       setTimeout(() => { if (input) input.focus(); }, 60);
     }
+
     function getActiveTabId() {
       const active = document.querySelector('.tab-content.active');
       return active ? active.id : 'predict';
     }
+
     function initSearch() {
       const input = document.getElementById('searchInput');
       if (!input) return;
+
       let debounceTimer;
       input.addEventListener('input', e => {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => renderSearchResults(e.target.value), 80);
       });
+
       input.addEventListener('keydown', e => {
-        if (e.key === 'Escape') {
-          closeSearchRow();
-        }
+        if (e.key === 'Escape') closeSearchRow();
       });
+
       function handleOutsideInteraction(e) {
         if (!searchRowOpen) return;
         if (activeTeamFilter || activeMatchFilter) return;
@@ -3521,9 +3575,11 @@
         if (toggle && toggle.contains(e.target)) return;
         closeSearchRow();
       }
+
       document.addEventListener('mousedown', handleOutsideInteraction);
       document.addEventListener('touchstart', handleOutsideInteraction, { passive: true });
     }
+
     async function boot() {
       renderSkeleton();
       try {
@@ -3531,69 +3587,98 @@
           fetch(API + '/users').then(r => { if (!r.ok) throw new Error(); return r.json(); }),
           fetch(API + '/matches').then(r => { if (!r.ok) throw new Error(); return r.json(); })
         ]);
-        users = ru; matches = rm; sortUsers();
+
+        users = ru;
+        matches = rm;
+        sortUsers();
         lastUsersJson = JSON.stringify(users);
         lastMatchesJson = JSON.stringify(matches);
+
         buildMatchDOM();
         autoSelectFilter();
         initFab();
         initSearch();
+        setTopControlsVisibility('predict');
       } catch (err) {
         document.getElementById('matchList').innerHTML = '<div class="state-msg">Could not load data. Check your connection.</div>';
         showToast('Failed to load data', true);
       }
     }
+
     function renderSkeleton() {
-      var cards = Array.from({ length: 5 }, function () {
+      const cards = Array.from({ length: 5 }, function () {
         return '<div class="skel-card">' +
           '<div class="skel sk-team"></div>' +
           '<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div class="skel sk-score"></div><div class="skel sk-meta"></div></div>' +
           '<div class="skel sk-team"></div>' +
           '</div>';
       }).join('');
+
       document.getElementById('matchList').innerHTML =
         '<div class="stage-header"><div class="skel" style="height:12px;width:80px"></div><div class="stage-rule"></div></div>' + cards;
     }
-    function sortUsers() { users.sort((a, b) => (a.display_name || '').localeCompare(b.display_name || '')); }
+
+    function sortUsers() {
+      users.sort((a, b) => (a.display_name || '').localeCompare(b.display_name || ''));
+    }
+
     function parseUTC(str) {
       if (!str) return null;
-      var s = str;
+      let s = str;
       if (s.charAt(s.length - 1) !== 'Z' && s.indexOf('+') === -1 && !/\d\d:\d\d:\d\d-\d\d/.test(s)) s += 'Z';
-      var d = new Date(s);
+      const d = new Date(s);
       return isNaN(d.getTime()) ? null : d;
     }
-    function fmtDate(dt) { return dt.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }); }
-    function fmtTime(dt) { return dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }).toUpperCase() + ' IST'; }
-    function escHtml(s) { if (s === undefined || s === null) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    function fmtDate(dt) {
+      return dt.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
+    }
+
+    function fmtTime(dt) {
+      return dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }).toUpperCase() + ' IST';
+    }
+
+    function escHtml(s) {
+      if (s === undefined || s === null) return '';
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
     function getMatchMeta(m) {
-      var finished = m.status === 'FINISHED';
-      var kickoffDt = parseUTC(m.kickoff);
-      var lockTime = kickoffDt ? new Date(kickoffDt.getTime() + 3600000) : null;
-      var locked = finished || (lockTime && new Date() > lockTime);
+      const finished = m.status === 'FINISHED';
+      const kickoffDt = parseUTC(m.kickoff);
+      const lockTime = kickoffDt ? new Date(kickoffDt.getTime() + 3600000) : null;
+      const locked = finished || (lockTime && new Date() > lockTime);
+
       return {
-        finished: finished, kickoffDt: kickoffDt, locked: locked,
+        finished,
+        kickoffDt,
+        locked,
         badgeCls: finished ? 'finished' : 'upcoming',
         badgeTxt: finished ? 'Full Time' : (kickoffDt ? fmtDate(kickoffDt) : ''),
         timeStr: kickoffDt ? fmtTime(kickoffDt) : ''
       };
     }
+
     function buildPredItemHTML(u, matchid, pred, finished, locked) {
       const cleared = isCleared(pred);
-      var ph = cleared ? '' : pred.pred_home;
-      var pa = cleared ? '' : pred.pred_away;
-      var pts = (!cleared && pred) ? pred.points : null;
-      var pillCls = 'pnd', pillTxt = 'Pending';
+      let ph = cleared ? '' : pred.pred_home;
+      let pa = cleared ? '' : pred.pred_away;
+      const pts = (!cleared && pred) ? pred.points : null;
+      let pillCls = 'pnd', pillTxt = 'Pending';
+
       if (finished) {
         if (cleared) { pillCls = 'p0'; pillTxt = 'No pick'; }
         else if (pts === 3) { pillCls = 'p3'; pillTxt = '3 Exact'; }
         else if (pts === 1) { pillCls = 'p1'; pillTxt = '1 Result'; }
         else { pillCls = 'p0'; pillTxt = '0 Miss'; }
       }
-      var dis = locked ? 'disabled' : '';
-      var uid = escHtml(u.user_id);
-      var mid = escHtml(matchid);
+
+      const dis = locked ? 'disabled' : '';
+      const uid = escHtml(u.user_id);
+      const mid = escHtml(matchid);
       const showClear = !cleared && !locked;
       const clearBtnHtml = `<button class="pred-clear ${showClear ? '' : 'hidden'}" data-role="clear" title="Clear prediction" onclick="event.stopPropagation();clearPred('${mid}','${uid}')" ${locked ? 'disabled' : ''}>×</button>`;
+
       return '<div class="pred-item" data-userid="' + uid + '">' +
         '<div class="pred-name">' + escHtml(u.display_name) + '</div>' +
         clearBtnHtml +
@@ -3613,34 +3698,28 @@
     function buildPredSentence(m, users) {
       if (!users || !users.length) return '<span style="color:var(--ink4)">No players yet</span>';
 
-      // ── post-match: show who got the exact score ──
       if (m.status === 'FINISHED') {
         const exacters = [];
         users.forEach(u => {
           const pred = m.predictions ? m.predictions[u.user_id] : null;
-          if (!isCleared(pred) && pred.points === 3) {
-            exacters.push((u.display_name || '').split(' ')[0]);
-          }
+          if (!isCleared(pred) && pred.points === 3) exacters.push((u.display_name || '').split(' ')[0]);
         });
 
         const seed = hashStr(String(m.match_id || ''));
         const shuffled = seededShuffle(exacters, seed);
 
-        if (shuffled.length === 0) {
-          return '<span style="color:var(--ink4)">Nobody got the exact score</span>';
-        }
+        if (shuffled.length === 0) return '<span style="color:var(--ink4)">Nobody got the exact score</span>';
+
         let nameStr;
-        if (shuffled.length > 3) {
-          nameStr = shuffled.slice(0, 2).join(', ') + ' &amp; ' + (shuffled.length - 2) + ' others';
-        } else {
-          nameStr = shuffled.join(', ');
-        }
+        if (shuffled.length > 3) nameStr = shuffled.slice(0, 2).join(', ') + ' &amp; ' + (shuffled.length - 2) + ' others';
+        else nameStr = shuffled.join(', ');
+
         return '<span style="font-weight:800;color:var(--green)">' + nameStr + '</span> got the exact score 🎯';
       }
 
-      // ── pre-match: show predicted / not predicted ──
       const predicted = [];
       const notPredicted = [];
+
       users.forEach(u => {
         const pred = m.predictions ? m.predictions[u.user_id] : null;
         const firstName = (u.display_name || '').split(' ')[0];
@@ -3648,40 +3727,31 @@
         else notPredicted.push(firstName);
       });
 
-      if (predicted.length === 0) {
-        return '<span style="color:var(--ink4)">No predictions yet</span>';
-      }
-      if (notPredicted.length === 0) {
-        return '<span style="font-weight:800;color:var(--green)">Everyone</span> predicted';
-      }
+      if (predicted.length === 0) return '<span style="color:var(--ink4)">No predictions yet</span>';
+      if (notPredicted.length === 0) return '<span style="font-weight:800;color:var(--green)">Everyone</span> predicted';
 
       const seed = hashStr(String(m.match_id || ''));
-
       if (predicted.length > notPredicted.length) {
         const shuffled = seededShuffle(notPredicted, seed);
         let nameStr;
-        if (shuffled.length > 3) {
-          nameStr = shuffled.slice(0, 2).join(', ') + ' &amp; ' + (shuffled.length - 2) + ' others';
-        } else {
-          nameStr = shuffled.join(', ');
-        }
+        if (shuffled.length > 3) nameStr = shuffled.slice(0, 2).join(', ') + ' &amp; ' + (shuffled.length - 2) + ' others';
+        else nameStr = shuffled.join(', ');
         return '<span style="font-weight:800;color:var(--red)">' + nameStr + '</span> ' +
           (shuffled.length === 1 ? "hasn't" : "haven't") + ' predicted yet';
       }
 
       const shuffled = seededShuffle(predicted, seed);
       let nameStr;
-      if (shuffled.length > 3) {
-        nameStr = shuffled.slice(0, 2).join(', ') + ' &amp; ' + (shuffled.length - 2) + ' others';
-      } else {
-        nameStr = shuffled.join(', ');
-      }
+      if (shuffled.length > 3) nameStr = shuffled.slice(0, 2).join(', ') + ' &amp; ' + (shuffled.length - 2) + ' others';
+      else nameStr = shuffled.join(', ');
+
       return '<span style="font-weight:800;color:var(--green)">' + nameStr + '</span> predicted';
     }
 
     function alignLastPredRow(grid) {
       const items = grid.querySelectorAll('.pred-item');
       if (!items.length) return;
+
       const firstTop = items[0].getBoundingClientRect().top;
       let cols = 0;
       for (let i = 0; i < items.length; i++) {
@@ -3689,39 +3759,47 @@
         cols++;
       }
       if (cols < 1) cols = 1;
+
       const remainder = items.length % cols;
       if (remainder === 0) return;
+
       items.forEach(el => el.style.gridColumnStart = '');
       const offset = Math.floor((cols - remainder) / 2) + 1;
       for (let i = items.length - remainder; i < items.length; i++) {
         items[i].style.gridColumnStart = offset + (i - (items.length - remainder));
       }
     }
-    window.addEventListener('resize', () => { document.querySelectorAll('.pred-grid').forEach(alignLastPredRow); });
+
+    window.addEventListener('resize', () => {
+      document.querySelectorAll('.pred-grid').forEach(alignLastPredRow);
+    });
+
     function buildCardHTML(m) {
-      var meta = getMatchMeta(m);
-      var homeTeam = m.team_home || 'TBD';
-      var awayTeam = m.team_away || 'TBD';
-      var sh = meta.finished
+      const meta = getMatchMeta(m);
+      const homeTeam = m.team_home || 'TBD';
+      const awayTeam = m.team_away || 'TBD';
+      const sh = meta.finished
         ? '<span class="score-num final" data-role="sh">' + (m.score_home !== undefined && m.score_home !== null ? m.score_home : '') + '</span>'
         : '<span class="score-num pending" data-role="sh">–</span>';
-      var sa = meta.finished
+      const sa = meta.finished
         ? '<span class="score-num final" data-role="sa">' + (m.score_away !== undefined && m.score_away !== null ? m.score_away : '') + '</span>'
         : '<span class="score-num pending" data-role="sa">–</span>';
-      var predsHtml = '';
+
+      let predsHtml = '';
       if (users.length) {
         predsHtml = '<div class="pred-grid">';
         users.forEach(function (u) {
-          var pred = m.predictions ? m.predictions[u.user_id] : null;
+          const pred = m.predictions ? m.predictions[u.user_id] : null;
           predsHtml += buildPredItemHTML(u, m.match_id, pred, meta.finished, meta.locked);
         });
         predsHtml += '</div>';
       } else {
         predsHtml = '<div style="color:var(--ink4);font-family:Instrument Serif,serif;font-style:italic;font-size:0.9rem">No players added yet.</div>';
       }
-      var cardCls = firstRender ? 'match-card new-card' : 'match-card';
-      // Compute countdown HTML inline so it appears together with predictor names (no flash)
-      var countdownHTML = computeCountdownHTML(m.kickoff, m.status);
+
+      const cardCls = firstRender ? 'match-card new-card' : 'match-card';
+      const countdownHTML = computeCountdownHTML(m.kickoff, m.status);
+
       return '<div class="' + cardCls + '" data-matchid="' + escHtml(m.match_id) + '" onclick="toggleCard(this)">' +
         '<div class="match-row">' +
         '<div class="team-cell home"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(homeTeam) + '<span class="team-name">' + escHtml(homeTeam) + '</span></div></div>' +
@@ -3740,10 +3818,16 @@
         '</div>' +
         '</div>';
     }
+
     function buildMatchDOM() {
-      var container = document.getElementById('matchList');
-      if (!matches.length) { container.innerHTML = '<div class="state-msg">No matches yet.</div>'; return; }
+      const container = document.getElementById('matchList');
+      if (!matches.length) {
+        container.innerHTML = '<div class="state-msg">No matches yet.</div>';
+        return;
+      }
+
       let visibleMatches = matches;
+
       if (activeMatchFilter) {
         visibleMatches = matches.filter(m => String(m.match_id) === String(activeMatchFilter));
         if (!visibleMatches.length) {
@@ -3767,16 +3851,14 @@
           const month = String(istDate.getMonth() + 1).padStart(2, '0');
           const day = String(istDate.getDate()).padStart(2, '0');
           const dateKey = `${year}-${month}-${day}`;
-
           if (dateKey !== activeDateFilter) return false;
-
           if (activeUnpredictedFilter && selectedUserId) {
             const pred = m.predictions ? m.predictions[selectedUserId] : null;
             return isCleared(pred);
           }
-
           return true;
         });
+
         if (!visibleMatches.length) {
           const msg = activeUnpredictedFilter
             ? 'No unpredicted matches found for selected date.'
@@ -3793,7 +3875,8 @@
           return;
         }
       }
-      var html = '', lastStage = null;
+
+      let html = '', lastStage = null;
       visibleMatches.forEach(function (m) {
         if (m.stage !== lastStage) {
           html += '<div class="stage-header" data-stage="' + escHtml(m.stage) + '">' +
@@ -3803,41 +3886,72 @@
         }
         html += buildCardHTML(m);
       });
+
       container.innerHTML = html;
-      requestAnimationFrame(() => { container.querySelectorAll('.pred-grid').forEach(alignLastPredRow); });
+      requestAnimationFrame(() => {
+        container.querySelectorAll('.pred-grid').forEach(alignLastPredRow);
+      });
       firstRender = false;
     }
+
     function patchMatchDOM(oldMatches, newMatches, newUsers) {
       const container = document.getElementById('matchList');
       if (!container) return;
-      if (activeTeamFilter || activeMatchFilter) { buildMatchDOM(); return; }
+      if (activeTeamFilter || activeMatchFilter) {
+        buildMatchDOM();
+        return;
+      }
+
       const activeEl = document.activeElement;
+
       newMatches.forEach(function (nm) {
         const card = container.querySelector('[data-matchid="' + nm.match_id + '"]');
         if (!card) return;
+
         const meta = getMatchMeta(nm);
         const homeCell = card.querySelector('.team-cell.home');
         const awayCell = card.querySelector('.team-cell.away');
+
         if (homeCell) {
           const img = homeCell.querySelector('img');
           const hn = homeCell.querySelector('.team-name');
-          if (img) { const code = TEAM_FLAG[(nm.team_home || '').toLowerCase()]; if (code) img.src = 'flags/' + code + '.png'; }
+          if (img) {
+            const code = TEAM_FLAG[(nm.team_home || '').toLowerCase()];
+            if (code) img.src = 'flags/' + code + '.png';
+          }
           if (hn) hn.textContent = nm.team_home || 'TBD';
         }
+
         if (awayCell) {
           const img = awayCell.querySelector('img');
           const an = awayCell.querySelector('.team-name');
-          if (img) { const code = TEAM_FLAG[(nm.team_away || '').toLowerCase()]; if (code) img.src = 'flags/' + code + '.png'; }
+          if (img) {
+            const code = TEAM_FLAG[(nm.team_away || '').toLowerCase()];
+            if (code) img.src = 'flags/' + code + '.png';
+          }
           if (an) an.textContent = nm.team_away || 'TBD';
         }
+
         const sh = card.querySelector('[data-role="sh"]');
         const sa = card.querySelector('[data-role="sa"]');
-        if (sh && meta.finished) { sh.className = 'score-num final'; sh.textContent = (nm.score_home !== undefined && nm.score_home !== null ? nm.score_home : ''); }
-        if (sa && meta.finished) { sa.className = 'score-num final'; sa.textContent = (nm.score_away !== undefined && nm.score_away !== null ? nm.score_away : ''); }
+        if (sh && meta.finished) {
+          sh.className = 'score-num final';
+          sh.textContent = (nm.score_home !== undefined && nm.score_home !== null ? nm.score_home : '');
+        }
+        if (sa && meta.finished) {
+          sa.className = 'score-num final';
+          sa.textContent = (nm.score_away !== undefined && nm.score_away !== null ? nm.score_away : '');
+        }
+
         const badge = card.querySelector('[data-role="badge"]');
-        if (badge) { badge.className = 'badge ' + meta.badgeCls; badge.textContent = meta.badgeTxt; }
+        if (badge) {
+          badge.className = 'badge ' + meta.badgeCls;
+          badge.textContent = meta.badgeTxt;
+        }
+
         const timeEl = card.querySelector('[data-role="time"]');
         if (timeEl) timeEl.textContent = meta.timeStr;
+
         const sentenceEl = container.querySelector('.pred-sentence[data-matchid="' + nm.match_id + '"]');
         if (sentenceEl) {
           const sentTxt = sentenceEl.querySelector('.pred-sentence-txt');
@@ -3846,17 +3960,19 @@
             if (sentTxt.innerHTML !== newSentenceHTML) sentTxt.innerHTML = newSentenceHTML;
           }
         }
+
         const cd = card.querySelector('.match-countdown');
         if (cd) {
           cd.dataset.status = nm.status || '';
-          // Refresh countdown content immediately on patch (no flash window)
           cd.innerHTML = computeCountdownHTML(cd.dataset.kickoff, cd.dataset.status);
         }
+
         newUsers.forEach(function (u) {
           const pred = nm.predictions ? nm.predictions[u.user_id] : null;
           const cleared = isCleared(pred);
           const predItem = card.querySelector('.pred-item[data-userid="' + u.user_id + '"]');
           if (!predItem) return;
+
           const pill = predItem.querySelector('[data-role="pill"]');
           if (pill) {
             let cls = 'pnd', txt = 'Pending';
@@ -3869,6 +3985,7 @@
             pill.className = 'points-pill ' + cls;
             pill.textContent = txt;
           }
+
           const inHome = predItem.querySelector('[data-role="input-home"]');
           const inAway = predItem.querySelector('[data-role="input-away"]');
           if (inHome && inHome !== activeEl) {
@@ -3879,8 +3996,10 @@
             const newVal = cleared ? '' : String(pred.pred_away);
             if (inAway.value !== newVal) inAway.value = newVal;
           }
+
           if (inHome) inHome.disabled = meta.locked;
           if (inAway) inAway.disabled = meta.locked;
+
           const clearBtn = predItem.querySelector('[data-role="clear"]');
           if (clearBtn) {
             const showClear = !cleared && !meta.locked;
@@ -3889,30 +4008,51 @@
           }
         });
       });
-      requestAnimationFrame(() => { document.querySelectorAll('.pred-grid').forEach(alignLastPredRow); });
+
+      requestAnimationFrame(() => {
+        document.querySelectorAll('.pred-grid').forEach(alignLastPredRow);
+      });
     }
-    function toggleCard(card) { card.classList.toggle('open'); }
+
+    function toggleCard(card) {
+      card.classList.toggle('open');
+    }
+
     function switchTab(id, el) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       el.classList.add('active');
+
       setFabVisibility(id);
+      setTopControlsVisibility(id);
+
       if (id === 'leaderboard') renderLeaderboard();
       if (id === 'stats') renderStats();
     }
+
     function renderLBData(data) {
-      if (!data.length) { document.getElementById('lbList').innerHTML = '<div class="state-msg">No players yet.</div>'; return; }
+      const container = document.getElementById('lbList');
+      if (!container) return;
+
+      if (!data.length) {
+        const emptyHtml = '<div class="state-msg">No players yet.</div>';
+        if (container.innerHTML !== emptyHtml) container.innerHTML = emptyHtml;
+        return;
+      }
+
       data.sort((a, b) => {
         if (b.total_points !== a.total_points) return b.total_points - a.total_points;
         if ((b.exact || 0) !== (a.exact || 0)) return (b.exact || 0) - (a.exact || 0);
         return (a.display_name || '').localeCompare(b.display_name || '');
       });
+
       const medals = ['&#x1F947;', '&#x1F948;', '&#x1F949;'];
-      let html = '<div class="lb-wrap">' +
+      let html = '<div class="lb-wrap' + (leaderboardFirstRender ? ' animate-in' : '') + '">' +
         '<div class="lb-title-row"><div class="lb-title">Standings</div>' +
         '<div class="lb-sub">' + data.length + ' player' + (data.length !== 1 ? 's' : '') + ' competing since 2018</div></div>' +
         '<div class="lb-header-row"><div></div><div>Player</div><div>Pts</div><div>Exact</div><div>Result</div></div>';
+
       data.forEach((u, i) => {
         const rowcls = i === 0 ? 'top1' : '';
         const rcls = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'rn';
@@ -3925,6 +4065,7 @@
           '<div class="lb-num">' + (u.correct || 0) + '</div>' +
           '</div>';
       });
+
       html += '</div>' +
         '<div class="rules-box">' +
         '<div class="rules-title">How It Works</div>' +
@@ -3941,12 +4082,21 @@
         '<div class="rules-list-item">Predictions lock <strong>60 minutes</strong> after kickoff — submit early!</div>' +
         '<div class="rules-list-item">Tap the <strong>×</strong> next to any prediction to clear it before kickoff.</div>' +
         '</div>';
-      document.getElementById('lbList').innerHTML = html;
+
+      if (html === lastLeaderboardHtml) return;
+
+      const scrollY = window.scrollY;
+      container.innerHTML = html;
+      lastLeaderboardHtml = html;
+      leaderboardFirstRender = false;
+      window.scrollTo(0, scrollY);
     }
+
     function renderLeaderboard() {
       if (lbInitialized) return;
       lbInitialized = true;
       renderLBSkeleton();
+
       fetch(API + '/leaderboard')
         .then(res => res.json())
         .then(data => {
@@ -3959,43 +4109,68 @@
           lbInitialized = false;
         });
     }
+
     function renderLBSkeleton() {
-      var rows = Array.from({ length: 7 }, () =>
+      const rows = Array.from({ length: 7 }, () =>
         '<div class="sk-lb-row"><div class="skel sk-rank"></div><div class="skel sk-name"></div><div class="skel sk-pts"></div><div class="skel sk-stat"></div><div class="skel sk-stat"></div></div>'
       ).join('');
+
       document.getElementById('lbList').innerHTML =
-        '<div class="lb-wrap"><div class="lb-title-row"><div class="lb-title">Standings</div></div>' +
+        '<div class="lb-wrap animate-in"><div class="lb-title-row"><div class="lb-title">Standings</div></div>' +
         '<div class="lb-header-row"><div></div><div>Player</div><div>Pts</div><div>Exact</div><div>Result</div></div>' +
         rows + '</div>';
     }
+
     function normalizeScoreline(a, b) {
       const x = +a, y = +b;
       return (x >= y) ? (x + '-' + y) : (y + '-' + x);
     }
+
     function computeStats() {
       const finishedMatches = matches.filter(m => m.status === 'FINISHED');
       const totalMatches = matches.length;
+
       let totalPredictions = 0;
       let exactCount = 0, resultCount = 0, missCount = 0, noPickCount = 0;
       let totalPredHomeGoals = 0, totalPredAwayGoals = 0, totalActualHomeGoals = 0, totalActualAwayGoals = 0;
+
       const predictedScorelineMap = {};
       const actualScorelineMap = {};
       const playerStats = {};
+
       users.forEach(u => {
-        playerStats[u.user_id] = { name: u.display_name, predictions: 0, exact: 0, correct: 0, miss: 0, points: 0, predGoalsTotal: 0 };
+        playerStats[u.user_id] = {
+          name: u.display_name,
+          predictions: 0,
+          exact: 0,
+          correct: 0,
+          miss: 0,
+          points: 0,
+          predGoalsTotal: 0
+        };
       });
+
       const sortedMatches = [...matches].sort((a, b) => {
         const ka = parseUTC(a.kickoff)?.getTime() || 0;
         const kb = parseUTC(b.kickoff)?.getTime() || 0;
         return ka - kb;
       });
+
       const cumulative = {};
       users.forEach(u => { cumulative[u.user_id] = []; });
+
       const matchTimeline = [];
-      let runningTotals = {}; users.forEach(u => runningTotals[u.user_id] = 0);
+      const runningTotals = {};
+      users.forEach(u => runningTotals[u.user_id] = 0);
+
       sortedMatches.forEach((m, idx) => {
         if (m.status !== 'FINISHED') return;
-        matchTimeline.push({ idx, matchId: m.match_id, label: (m.team_home || '').slice(0, 3).toUpperCase() + ' v ' + (m.team_away || '').slice(0, 3).toUpperCase() });
+        matchTimeline.push({
+          idx,
+          matchId: m.match_id,
+          label: (m.team_home || '').slice(0, 3).toUpperCase() + ' v ' + (m.team_away || '').slice(0, 3).toUpperCase()
+        });
+
         users.forEach(u => {
           const pred = m.predictions ? m.predictions[u.user_id] : null;
           if (!isCleared(pred) && pred.points !== undefined && pred.points !== null) {
@@ -4004,14 +4179,17 @@
           cumulative[u.user_id].push({ idx: matchTimeline.length - 1, total: runningTotals[u.user_id] });
         });
       });
+
       matches.forEach(m => {
         const isFinished = m.status === 'FINISHED';
+
         if (isFinished && m.score_home !== undefined && m.score_away !== undefined && m.score_home !== null && m.score_away !== null) {
           totalActualHomeGoals += +m.score_home;
           totalActualAwayGoals += +m.score_away;
           const ak = normalizeScoreline(m.score_home, m.score_away);
           actualScorelineMap[ak] = (actualScorelineMap[ak] || 0) + 1;
         }
+
         users.forEach(u => {
           const pred = m.predictions ? m.predictions[u.user_id] : null;
           if (!isCleared(pred)) {
@@ -4020,8 +4198,10 @@
             totalPredAwayGoals += +pred.pred_away;
             playerStats[u.user_id].predictions++;
             playerStats[u.user_id].predGoalsTotal += (+pred.pred_home + +pred.pred_away);
+
             const key = normalizeScoreline(pred.pred_home, pred.pred_away);
             predictedScorelineMap[key] = (predictedScorelineMap[key] || 0) + 1;
+
             if (isFinished) {
               if (pred.points === 3) { exactCount++; playerStats[u.user_id].exact++; }
               else if (pred.points === 1) { resultCount++; playerStats[u.user_id].correct++; }
@@ -4033,6 +4213,7 @@
           }
         });
       });
+
       return {
         totalPredictions,
         totalMatches,
@@ -4046,6 +4227,7 @@
         matchTimeline
       };
     }
+
     function renderKPIs(s) {
       const totalGoalsPredicted = s.totalPredHomeGoals + s.totalPredAwayGoals;
       const avgGoals = s.totalPredictions ? (totalGoalsPredicted / s.totalPredictions).toFixed(2) : '0.00';
@@ -4072,6 +4254,7 @@
         </div>
       </div>`;
     }
+
     function renderHorizontalBars(s) {
       const players = Object.values(s.playerStats).sort((a, b) => b.points - a.points);
       if (!players.length) return '';
@@ -4084,7 +4267,8 @@
           <div class="hbar-val">${p.points}</div>
         </div>`;
       }).join('');
-      return `<div class="stats-card">
+
+      return `<div class="stats-card${statsFirstRender ? ' animate-in' : ''}">
         <div class="stats-card-header">
           <div class="stats-card-title">Points by Player</div>
           <div class="stats-card-sub">Total points earned this tournament</div>
@@ -4092,40 +4276,47 @@
         <div class="stats-card-body">${rows}</div>
       </div>`;
     }
+
     function renderPredictionsBars(s) {
       const players = Object.values(s.playerStats).sort((a, b) => b.predictions - a.predictions);
       if (!players.length) return '';
       const totalPossible = s.totalMatches;
       if (!totalPossible) return '';
+
       const rows = players.map(p => {
         const partRate = Math.round((p.predictions / totalPossible) * 100);
         const pct = (p.predictions / totalPossible) * 100;
         return `<div class="hbar-row">
-      <div class="hbar-name">${escHtml(p.name)}</div>
-      <div class="hbar-track"><div class="hbar-fill blue" style="width:${pct}%"></div></div>
-      <div class="hbar-val">${p.predictions} <span style="color:var(--ink4);font-weight:500;font-size:0.75rem">${partRate}%</span></div>
-    </div>`;
+          <div class="hbar-name">${escHtml(p.name)}</div>
+          <div class="hbar-track"><div class="hbar-fill blue" style="width:${pct}%"></div></div>
+          <div class="hbar-val">${p.predictions} <span style="color:var(--ink4);font-weight:500;font-size:0.75rem">${partRate}%</span></div>
+        </div>`;
       }).join('');
-      return `<div class="stats-card">
-    <div class="stats-card-header">
-      <div class="stats-card-title">Predictions Submitted</div>
-      <div class="stats-card-sub">Participation level — ${totalPossible} total matches</div>
-    </div>
-    <div class="stats-card-body">${rows}</div>
-  </div>`;
+
+      return `<div class="stats-card${statsFirstRender ? ' animate-in' : ''}">
+        <div class="stats-card-header">
+          <div class="stats-card-title">Predictions Submitted</div>
+          <div class="stats-card-sub">Participation level — ${totalPossible} total matches</div>
+        </div>
+        <div class="stats-card-body">${rows}</div>
+      </div>`;
     }
+
     function renderHitRateDonut(s) {
       const total = s.exactCount + s.resultCount + s.missCount + s.noPickCount;
       if (!total) return '';
+
       const segs = [
         { label: 'Exact (3pt)', val: s.exactCount, color: '#1a5c2a' },
         { label: 'Result (1pt)', val: s.resultCount, color: '#1a3a6b' },
         { label: 'Miss (0pt)', val: s.missCount, color: '#c0392b' },
         { label: 'No pick', val: s.noPickCount, color: '#a8a39a' }
       ];
+
       const r = 60, cx = 80, cy = 80, stroke = 22;
       const C = 2 * Math.PI * r;
       let acc = 0;
+
       const paths = segs.map(seg => {
         const frac = seg.val / total;
         const len = frac * C;
@@ -4134,6 +4325,7 @@
         acc += len;
         return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${stroke}" stroke-dasharray="${dasharray}" stroke-dashoffset="${offset}" transform="rotate(-90 ${cx} ${cy})"></circle>`;
       }).join('');
+
       const legend = segs.map(seg => {
         const pct = total ? Math.round((seg.val / total) * 100) : 0;
         return `<div class="donut-legend-row">
@@ -4143,7 +4335,8 @@
           <div class="donut-legend-pct">${pct}%</div>
         </div>`;
       }).join('');
-      return `<div class="stats-card">
+
+      return `<div class="stats-card${statsFirstRender ? ' animate-in' : ''}">
         <div class="stats-card-header">
           <div class="stats-card-title">Hit Rate Breakdown</div>
           <div class="stats-card-sub">All predictions across finished matches</div>
@@ -4160,10 +4353,12 @@
         </div>
       </div>`;
     }
+
     function renderStackedBars(s) {
       const players = Object.values(s.playerStats).sort((a, b) => b.points - a.points);
       if (!players.length) return '';
       const colors = { exact: '#1a5c2a', correct: '#1a3a6b', miss: '#c0392b' };
+
       const rows = players.map(p => {
         const total = p.exact + p.correct + p.miss;
         if (total === 0) {
@@ -4173,7 +4368,11 @@
             <div class="hbar-val" style="color:var(--ink4);font-weight:500">—</div>
           </div>`;
         }
-        const e = (p.exact / total) * 100, c = (p.correct / total) * 100, m = (p.miss / total) * 100;
+
+        const e = (p.exact / total) * 100;
+        const c = (p.correct / total) * 100;
+        const m = (p.miss / total) * 100;
+
         return `<div class="stacked-row">
           <div class="hbar-name">${escHtml(p.name)}</div>
           <div class="stacked-track">
@@ -4184,7 +4383,8 @@
           <div class="hbar-val">${total}</div>
         </div>`;
       }).join('');
-      return `<div class="stats-card">
+
+      return `<div class="stats-card${statsFirstRender ? ' animate-in' : ''}">
         <div class="stats-card-header">
           <div class="stats-card-title">Per-Player Breakdown</div>
           <div class="stats-card-sub">Exact / Result / Miss across all picks</div>
@@ -4199,26 +4399,30 @@
         </div>
       </div>`;
     }
+
     function renderLineChart(s) {
-      const players = Object.values(s.playerStats);
       const W = 600, H = 280;
       const padL = 44, padR = 18, padT = 14, padB = 38;
       const innerW = W - padL - padR;
       const innerH = H - padT - padB;
       const N = s.matchTimeline.length;
+
       const colorMap = {};
       users.forEach((u, idx) => { colorMap[u.user_id] = PLAYER_COLORS[idx % PLAYER_COLORS.length]; });
+
       const orderedUserIds = Object.keys(s.playerStats).sort((a, b) => s.playerStats[b].points - s.playerStats[a].points);
       let dataMax = 0;
       orderedUserIds.forEach(uid => {
         s.cumulative[uid].forEach(pt => { if (pt.total > dataMax) dataMax = pt.total; });
       });
+
       const maxY = Math.max(10, Math.ceil(dataMax * 1.15) || 10);
       const yTickCount = 5;
       const yStep = maxY / yTickCount;
       const xCount = Math.max(N, 1);
       const xAt = i => padL + (xCount <= 1 ? innerW / 2 : (i / (xCount - 1)) * innerW);
       const yAt = v => padT + innerH - (v / maxY) * innerH;
+
       const yGrid = [];
       const yLabels = [];
       for (let i = 0; i <= yTickCount; i++) {
@@ -4227,6 +4431,7 @@
         yGrid.push(`<line x1="${padL}" y1="${y}" x2="${padL + innerW}" y2="${y}" stroke="rgba(14,14,14,0.06)" stroke-width="1"/>`);
         yLabels.push(`<text x="${padL - 8}" y="${y + 3.5}" text-anchor="end" font-family="Barlow Condensed" font-weight="600" font-size="10" fill="#6e6760">${Math.round(yVal)}</text>`);
       }
+
       const xTicks = [];
       const xTickLabels = [];
       if (N > 0) {
@@ -4236,6 +4441,7 @@
         for (let i = 0; i < N; i += stride) tickIdxs.add(i);
         tickIdxs.add(N - 1);
         if (N > 1) tickIdxs.add(0);
+
         [...tickIdxs].sort((a, b) => a - b).forEach(i => {
           const x = xAt(i);
           xTicks.push(`<line x1="${x}" y1="${padT + innerH}" x2="${x}" y2="${padT + innerH + 4}" stroke="rgba(14,14,14,0.25)" stroke-width="1"/>`);
@@ -4244,6 +4450,7 @@
       } else {
         xTickLabels.push(`<text x="${padL + innerW / 2}" y="${padT + innerH + 16}" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="11" fill="#6e6760">No matches played yet</text>`);
       }
+
       const axes = `
         <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + innerH}" stroke="rgba(14,14,14,0.45)" stroke-width="1.2"/>
         <line x1="${padL}" y1="${padT + innerH}" x2="${padL + innerW}" y2="${padT + innerH}" stroke="rgba(14,14,14,0.45)" stroke-width="1.2"/>
@@ -4252,6 +4459,7 @@
         <text x="${padL - 32}" y="${padT + innerH / 2}" text-anchor="middle" font-family="Barlow Condensed" font-weight="700" font-size="10" fill="#45403a" letter-spacing="1.5" transform="rotate(-90 ${padL - 32} ${padT + innerH / 2})">POINTS</text>
         <text x="${padL + innerW / 2}" y="${H - 6}" text-anchor="middle" font-family="Barlow Condensed" font-weight="700" font-size="10" fill="#45403a" letter-spacing="1.5">MATCHES PLAYED →</text>
       `;
+
       const drawOrder = [...orderedUserIds].reverse();
       const linesSvg = drawOrder.map(uid => {
         const color = colorMap[uid];
@@ -4262,6 +4470,7 @@
         const dot = `<circle cx="${xAt(last.idx).toFixed(1)}" cy="${yAt(last.total).toFixed(1)}" r="3.5" fill="${color}" stroke="#fff" stroke-width="1.5"/>`;
         return `<path d="${path}" fill="none" stroke="${color}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" opacity="0.95"/>${dot}`;
       }).join('');
+
       const legend = orderedUserIds.length ? orderedUserIds.map(uid => {
         const color = colorMap[uid];
         const pts = s.playerStats[uid].points;
@@ -4271,7 +4480,8 @@
           <div class="line-legend-pts">${pts}</div>
         </div>`;
       }).join('') : '<div style="color:var(--ink4);font-family:Instrument Serif,serif;font-style:italic;font-size:0.85rem;padding:4px 0">No players yet.</div>';
-      return `<div class="stats-card">
+
+      return `<div class="stats-card${statsFirstRender ? ' animate-in' : ''}">
         <div class="stats-card-header">
           <div class="stats-card-title">Points Trend</div>
           <div class="stats-card-sub">Cumulative points across completed matches · ranked by current total</div>
@@ -4290,62 +4500,83 @@
         </div>
       </div>`;
     }
+
     function renderScorelineHeatmap(s) {
-      function sortScorelines(keys) {
-        return keys.sort((a, b) => {
+      function sortScorelinesByCount(dataMap) {
+        return Object.keys(dataMap).sort((a, b) => {
+          const diff = dataMap[b] - dataMap[a];
+          if (diff !== 0) return diff;
+
           const [a1, a2] = a.split('-').map(Number);
           const [b1, b2] = b.split('-').map(Number);
-          const totalA = a1 + a2, totalB = b1 + b2;
+
+          const totalA = a1 + a2;
+          const totalB = b1 + b2;
           if (totalA !== totalB) return totalA - totalB;
-          const marginA = a1 - a2, marginB = b1 - b2;
-          return marginA - marginB;
+
+          const marginA = Math.abs(a1 - a2);
+          const marginB = Math.abs(b1 - b2);
+          if (marginA !== marginB) return marginA - marginB;
+
+          return a.localeCompare(b);
         });
       }
-      function colorFor(v, gridMax, baseRGB) {
-        if (!v) return '#f5f0e8';
-        const t = gridMax ? Math.pow(v / gridMax, 0.7) : 0;
-        const r = Math.round(245 + (baseRGB[0] - 245) * t);
-        const g = Math.round(240 + (baseRGB[1] - 240) * t);
-        const b = Math.round(232 + (baseRGB[2] - 232) * t);
+
+      function colorForRank(rank, totalItems, baseRGB) {
+        if (totalItems <= 1) {
+          return `rgb(${baseRGB[0]},${baseRGB[1]},${baseRGB[2]})`;
+        }
+        const t = rank / (totalItems - 1);
+        const lightRGB = [245, 240, 232];
+        const r = Math.round(baseRGB[0] + (lightRGB[0] - baseRGB[0]) * t);
+        const g = Math.round(baseRGB[1] + (lightRGB[1] - baseRGB[1]) * t);
+        const b = Math.round(baseRGB[2] + (lightRGB[2] - baseRGB[2]) * t);
         return `rgb(${r},${g},${b})`;
       }
+
       function buildBlock(label, klass, dataMap, baseRGB) {
-        const keys = Object.keys(dataMap);
-        if (!keys.length) {
+        const sorted = sortScorelinesByCount(dataMap);
+        if (!sorted.length) {
           return `<div class="scoreline-block">
             <div class="scoreline-block-title ${klass}">${label}</div>
             <div class="scoreline-empty">No data yet.</div>
           </div>`;
         }
-        const sorted = sortScorelines([...keys]);
-        const max = Math.max(...keys.map(k => dataMap[k]));
-        const total = keys.reduce((sum, k) => sum + dataMap[k], 0);
-        let topKey = sorted[0], topVal = 0;
-        keys.forEach(k => { if (dataMap[k] > topVal) { topVal = dataMap[k]; topKey = k; } });
-        const cells = sorted.map(k => {
+
+        const total = sorted.reduce((sum, k) => sum + dataMap[k], 0);
+        const topKey = sorted[0];
+        const topVal = dataMap[topKey];
+
+        const cells = sorted.map((k, idx) => {
           const v = dataMap[k];
-          const isTop = k === topKey;
-          const ratio = v / max;
-          const fg = ratio > 0.6 ? '#fff' : 'var(--ink2)';
+          const isTop = idx === 0;
+          const bg = colorForRank(idx, sorted.length, baseRGB);
+          const fg = idx < Math.max(3, Math.ceil(sorted.length * 0.25)) ? '#fff' : 'var(--ink2)';
           const display = k.replace('-', '–');
-          return `<div class="scoreline-cell ${isTop ? 'top' : ''}" style="background:${colorFor(v, max, baseRGB)};color:${fg}" title="${display}: ${v} time${v !== 1 ? 's' : ''}">
+
+          return `<div class="scoreline-cell ${isTop ? 'top' : ''}" style="background:${bg};color:${fg}" title="${display}: ${v} time${v !== 1 ? 's' : ''}">
             <div class="scoreline-label">${display}</div>
             <div class="scoreline-count">×${v}</div>
           </div>`;
         }).join('');
+
         return `<div class="scoreline-block">
           <div class="scoreline-block-title ${klass}">${label}</div>
           <div class="scoreline-row">${cells}</div>
           <div class="scoreline-summary">Most common: <strong>${topKey.replace('-', '–')}</strong> · ${topVal}/${total}</div>
         </div>`;
       }
+
       const predBlock = buildBlock('What players are picking', 'predicted', s.predictedScorelineMap, [26, 58, 107]);
       const actualBlock = buildBlock('What actually happened', 'actual', s.actualScorelineMap, [26, 92, 42]);
+
       const predKeys = Object.keys(s.predictedScorelineMap);
       const actualKeys = Object.keys(s.actualScorelineMap);
+
       let predTop = null, actualTop = null;
       if (predKeys.length) predTop = predKeys.reduce((a, b) => s.predictedScorelineMap[a] >= s.predictedScorelineMap[b] ? a : b);
       if (actualKeys.length) actualTop = actualKeys.reduce((a, b) => s.actualScorelineMap[a] >= s.actualScorelineMap[b] ? a : b);
+
       let insight = '';
       if (predTop && actualTop) {
         if (predTop === actualTop) insight = `Wisdom of the crowd! Most-picked and most-occurring scoreline are both <strong>${predTop.replace('-', '–')}</strong>.`;
@@ -4355,21 +4586,29 @@
       } else {
         insight = 'No predictions or results yet.';
       }
-      return `<div class="stats-card">
+
+      return `<div class="stats-card${statsFirstRender ? ' animate-in' : ''}">
         <div class="stats-card-header">
           <div class="stats-card-title">Predicted vs Actual Scorelines</div>
           <div class="stats-card-sub">${insight}</div>
         </div>
         <div class="stats-card-body">
           <div class="scoreline-heatmap-wrap">${predBlock}${actualBlock}</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;color:var(--ink4);text-align:center;margin-top:12px;letter-spacing:0.05em;">Sorted by total goals · darker = more frequent · gold outline marks the peak · scorelines are venue-neutral (e.g. 2–1 covers both 2:1 and 1:2)</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;color:var(--ink4);text-align:center;margin-top:12px;letter-spacing:0.05em;">
+            Sorted by popularity · darker = more frequent · gold outline marks the top scoreline
+          </div>
         </div>
       </div>`;
     }
+
     function renderGoalsComparison(s) {
-      const players = Object.values(s.playerStats).filter(p => p.predictions > 0).sort((a, b) => (b.predGoalsTotal / Math.max(b.predictions, 1)) - (a.predGoalsTotal / Math.max(a.predictions, 1)));
+      const players = Object.values(s.playerStats)
+        .filter(p => p.predictions > 0)
+        .sort((a, b) => (b.predGoalsTotal / Math.max(b.predictions, 1)) - (a.predGoalsTotal / Math.max(a.predictions, 1)));
+
       if (!players.length) return '';
       const max = Math.max(...players.map(p => p.predGoalsTotal / p.predictions), 1);
+
       const rows = players.map(p => {
         const avg = (p.predGoalsTotal / p.predictions);
         const pct = (avg / max) * 100;
@@ -4379,8 +4618,10 @@
           <div class="hbar-val">${avg.toFixed(2)}</div>
         </div>`;
       }).join('');
+
       const actualAvg = s.finishedMatches ? ((s.totalActualHomeGoals + s.totalActualAwayGoals) / s.finishedMatches).toFixed(2) : 'N/A';
-      return `<div class="stats-card">
+
+      return `<div class="stats-card${statsFirstRender ? ' animate-in' : ''}">
         <div class="stats-card-header">
           <div class="stats-card-title">Goal Optimism</div>
           <div class="stats-card-sub">Avg goals predicted per match · actual avg so far: <strong>${actualAvg}</strong></div>
@@ -4388,13 +4629,17 @@
         <div class="stats-card-body">${rows}</div>
       </div>`;
     }
+
     function renderStats() {
       const container = document.getElementById('statsContent');
       if (!container) return;
+
       if (!users.length) {
-        container.innerHTML = '<div class="state-msg">No data yet. Add players first.</div>';
+        const emptyHtml = '<div class="state-msg">No data yet. Add players first.</div>';
+        if (container.innerHTML !== emptyHtml) container.innerHTML = emptyHtml;
         return;
       }
+
       const s = computeStats();
       let html = '';
       html += renderKPIs(s);
@@ -4405,13 +4650,22 @@
       html += renderPredictionsBars(s);
       html += renderGoalsComparison(s);
       html += renderScorelineHeatmap(s);
+
+      if (html === lastStatsHtml) return;
+
+      const scrollY = window.scrollY;
       container.innerHTML = html;
+      lastStatsHtml = html;
+      statsFirstRender = false;
+      window.scrollTo(0, scrollY);
       statsInitialized = true;
     }
+
     function applyLocalPred(matchId, userId, ph, pa) {
       const m = matches.find(x => String(x.match_id) === String(matchId));
       if (!m) return;
       if (!m.predictions) m.predictions = {};
+
       if (ph === null && pa === null) {
         delete m.predictions[userId];
       } else {
@@ -4419,8 +4673,10 @@
         m.predictions[userId].pred_home = ph;
         m.predictions[userId].pred_away = pa;
       }
+
       const sentenceEl = document.querySelector(`.pred-sentence[data-matchid="${matchId}"] .pred-sentence-txt`);
       if (sentenceEl) sentenceEl.innerHTML = buildPredSentence(m, users);
+
       const card = document.querySelector(`.match-card[data-matchid="${matchId}"]`);
       if (card) {
         const predItem = card.querySelector(`.pred-item[data-userid="${userId}"]`);
@@ -4434,22 +4690,33 @@
           }
         }
       }
+
       lastMatchesJson = JSON.stringify(matches);
+      lastStatsHtml = '';
+      lastLeaderboardHtml = '';
     }
+
     function clearPred(matchId, userId) {
       const card = document.querySelector(`.match-card[data-matchid="${matchId}"]`);
       if (!card) return;
       const predItem = card.querySelector(`.pred-item[data-userid="${userId}"]`);
       if (!predItem) return;
+
       const inHome = predItem.querySelector('[data-role="input-home"]');
       const inAway = predItem.querySelector('[data-role="input-away"]');
       if (inHome) inHome.value = '';
       if (inAway) inAway.value = '';
+
       const key = matchId + userId;
-      if (timers[key]) { clearTimeout(timers[key]); delete timers[key]; }
+      if (timers[key]) {
+        clearTimeout(timers[key]);
+        delete timers[key];
+      }
       delete predBuffer[key];
+
       applyLocalPred(matchId, userId, null, null);
       showToast('Clearing…');
+
       fetch(API + '/predictions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -4468,103 +4735,146 @@
         }
       }).catch(() => showToast('Network error', true));
     }
+
     function savePred(input) {
-      var matchId = input.dataset.matchid;
-      var userId = input.dataset.userid;
-      var side = input.dataset.side;
-      var val = input.value.trim();
+      const matchId = input.dataset.matchid;
+      const userId = input.dataset.userid;
+      const side = input.dataset.side;
+      const val = input.value.trim();
       if (!matchId || !userId || !side) return;
-      var key = matchId + userId;
-      var inputs = input.closest('.pred-item').querySelectorAll('.pred-input');
-      var hVal = inputs[0].value.trim();
-      var aVal = inputs[1].value.trim();
+
+      const key = matchId + userId;
+      const inputs = input.closest('.pred-item').querySelectorAll('.pred-input');
+      const hVal = inputs[0].value.trim();
+      const aVal = inputs[1].value.trim();
+
       if (hVal === '' && aVal === '') {
-        if (timers[key]) { clearTimeout(timers[key]); delete timers[key]; }
+        if (timers[key]) {
+          clearTimeout(timers[key]);
+          delete timers[key];
+        }
         delete predBuffer[key];
         const m = matches.find(x => String(x.match_id) === String(matchId));
         const prevPred = m && m.predictions ? m.predictions[userId] : null;
         if (!isCleared(prevPred)) clearPred(matchId, userId);
         return;
       }
+
       if (hVal === '' || aVal === '') return;
+
       predBuffer[key] = {
         home: parseInt(hVal, 10),
         away: parseInt(aVal, 10)
       };
+
       if (timers[key]) clearTimeout(timers[key]);
       timers[key] = setTimeout(function () {
-        var buf = predBuffer[key];
+        const buf = predBuffer[key];
         if (!buf || buf.home === null || buf.away === null || isNaN(buf.home) || isNaN(buf.away)) return;
+
         showToast('Saving…');
         fetch(API + '/predictions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user_id: userId, match_id: parseInt(matchId, 10), pred_home: buf.home, pred_away: buf.away })
+          body: JSON.stringify({
+            user_id: userId,
+            match_id: parseInt(matchId, 10),
+            pred_home: buf.home,
+            pred_away: buf.away
+          })
         }).then(r => r.json()).then(d => {
           if (d.status === 'saved') {
             showToast('Saved ✓');
             applyLocalPred(matchId, userId, buf.home, buf.away);
             setTimeout(doPoll, 200);
+          } else {
+            showToast(d.error || 'Error saving', true);
           }
-          else showToast(d.error || 'Error saving', true);
         }).catch(() => showToast('Network error', true));
       }, 500);
     }
+
     async function syncAll() {
-      var btn = document.getElementById('syncBtn');
-      var lbl = btn.querySelector('.btn-label');
-      btn.disabled = true; btn.classList.add('spinning');
+      const btn = document.getElementById('syncBtn');
+      const lbl = btn.querySelector('.btn-label');
+      btn.disabled = true;
+      btn.classList.add('spinning');
       if (lbl) lbl.textContent = 'Refreshing…';
+
       try {
-        var data = await fetch(API + '/sync', { method: 'POST' }).then(r => r.json());
+        const data = await fetch(API + '/sync', { method: 'POST' }).then(r => r.json());
         showToast('Synced ' + data.count + ' match' + (data.count !== 1 ? 'es' : ''));
+
         const [mu, mm] = await Promise.all([
           fetch(API + '/users').then(r => r.json()),
           fetch(API + '/matches').then(r => r.json())
         ]);
-        users = mu; matches = mm; sortUsers();
+
+        const oldMatches = matches;
+        users = mu;
+        matches = mm;
+        sortUsers();
         lastUsersJson = JSON.stringify(users);
         lastMatchesJson = JSON.stringify(matches);
-        patchMatchDOM(matches, mm, mu);
-        if (document.getElementById('leaderboard').classList.contains('active')) { lbInitialized = false; renderLeaderboard(); }
+        lastStatsHtml = '';
+        lastLeaderboardHtml = '';
+
+        patchMatchDOM(oldMatches, mm, mu);
+
+        if (document.getElementById('leaderboard').classList.contains('active')) {
+          lbInitialized = false;
+          renderLeaderboard();
+        }
         if (document.getElementById('stats').classList.contains('active')) renderStats();
       } catch (e) {
         console.error('[WC2026] sync failed:', e);
         showToast('Sync failed', true);
       } finally {
-        btn.disabled = false; btn.classList.remove('spinning');
+        btn.disabled = false;
+        btn.classList.remove('spinning');
         if (lbl) lbl.textContent = 'Refresh Results';
       }
     }
+
     function showToast(msg, isError) {
-      var t = document.getElementById('toast');
+      const t = document.getElementById('toast');
       t.textContent = msg;
       t.className = 'toast' + (isError ? ' error' : '') + ' show';
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
     }
+
     async function doPoll() {
       if (document.hidden) return;
+
       try {
         const [mu, mm] = await Promise.all([
           fetch(API + '/users').then(r => r.ok ? r.json() : null).catch(() => null),
           fetch(API + '/matches').then(r => r.ok ? r.json() : null).catch(() => null)
         ]);
+
         if (!mu || !mm || !Array.isArray(mu) || !Array.isArray(mm)) return;
+
         const newUsersJson = JSON.stringify(mu);
         const newMatchesJson = JSON.stringify(mm);
         if (newUsersJson === lastUsersJson && newMatchesJson === lastMatchesJson) return;
+
         const oldUserIds = users.map(u => u.user_id).sort().join(',');
         const newUserIds = mu.map(u => u.user_id).sort().join(',');
         const userListChanged = oldUserIds !== newUserIds;
-        users = mu; matches = mm; sortUsers();
+
+        const oldMatches = matches;
+        users = mu;
+        matches = mm;
+        sortUsers();
         lastUsersJson = newUsersJson;
         lastMatchesJson = newMatchesJson;
-        if (userListChanged) {
-          buildMatchDOM();
-        } else {
-          patchMatchDOM(matches, mm, mu);
-        }
+        lastStatsHtml = '';
+        lastLeaderboardHtml = '';
+
+        if (userListChanged) buildMatchDOM();
+        else patchMatchDOM(oldMatches, mm, mu);
+
         if (document.getElementById('leaderboard').classList.contains('active')) {
           fetch(API + '/leaderboard').then(r => r.json()).then(data => {
             if (!Array.isArray(data)) return;
@@ -4574,24 +4884,44 @@
             renderLBData(data);
           }).catch(() => { });
         }
+
         if (document.getElementById('stats').classList.contains('active')) renderStats();
       } catch (e) { }
     }
+
     let fastPoll = null;
     let slowPoll = null;
     let idleTimeout = null;
-    function startFastPoll() { if (fastPoll) return; fastPoll = setInterval(doPoll, 20 * 1000); }
+
+    function startFastPoll() {
+      if (fastPoll) return;
+      fastPoll = setInterval(doPoll, 20 * 1000);
+    }
+
     function switchToSlowPoll() {
-      if (fastPoll) { clearInterval(fastPoll); fastPoll = null; }
+      if (fastPoll) {
+        clearInterval(fastPoll);
+        fastPoll = null;
+      }
       slowPoll = setInterval(doPoll, 2 * 60 * 1000);
     }
+
     function resetIdleTimer() {
       clearTimeout(idleTimeout);
-      if (slowPoll) { clearInterval(slowPoll); slowPoll = null; startFastPoll(); }
+      if (slowPoll) {
+        clearInterval(slowPoll);
+        slowPoll = null;
+        startFastPoll();
+      }
       idleTimeout = setTimeout(switchToSlowPoll, 5 * 60 * 1000);
     }
+
     boot();
-    setTimeout(() => { startFastPoll(); resetIdleTimer(); }, 5000);
+    setTimeout(() => {
+      startFastPoll();
+      resetIdleTimer();
+    }, 5000);
+
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         clearInterval(fastPoll); fastPoll = null;
@@ -4601,6 +4931,7 @@
         resetIdleTimer();
       }
     });
+
     document.addEventListener('click', resetIdleTimer);
     document.addEventListener('keydown', resetIdleTimer);
   </script>
