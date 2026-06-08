@@ -3513,15 +3513,13 @@
       return dt.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: LOCAL_TZ });
     }
     function fmtTime(dt) {
-      // show the visitor's own timezone abbreviation (e.g. "IST", "GMT+2", "CEST") instead of hardcoded IST
-      let tzAbbr = '';
-      try {
-        const part = new Intl.DateTimeFormat('en-US', { timeZone: LOCAL_TZ, timeZoneName: 'short' })
-          .formatToParts(dt).find(p => p.type === 'timeZoneName');
-        tzAbbr = part ? part.value : '';
-      } catch (e) { tzAbbr = ''; }
-      const timeStr = dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: LOCAL_TZ }).toUpperCase();
-      return timeStr + (tzAbbr ? ' ' + tzAbbr : '');
+      // show the time in the visitor's own timezone, with NO timezone label
+      return dt.toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: LOCAL_TZ
+      }).toUpperCase();
     }
     function escHtml(s) {
       if (s === undefined || s === null) return '';
