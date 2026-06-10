@@ -4319,7 +4319,7 @@
           const display = k.replace('-', '–');
           return `<div class="scoreline-cell ${isTop ? 'top' : ''}" style="background:${bg};color:${fg}" title="${display}: ${v} time${v !== 1 ? 's' : ''}">
           <div class="scoreline-label">${display}</div>
-          <div class="scoreline-count">×${v}</div>
+          <div class="scoreline-count">${Math.round((v / total) * 100)}%</div>
         </div>`;
         }).join('');
         return `<div class="scoreline-block">
