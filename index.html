@@ -4301,7 +4301,7 @@
         return `rgb(${r},${g},${b})`;
       }
       function buildBlock(label, klass, dataMap, baseRGB) {
-        const sorted = sortScorelinesByCount(dataMap);
+        const sorted = sortScorelinesByCount(dataMap).slice(0, 5);
         if (!sorted.length) {
           return `<div class="scoreline-block">
           <div class="scoreline-block-title ${klass}">${label}</div>
@@ -4328,8 +4328,8 @@
         <div class="scoreline-summary">Most common: <strong>${topKey.replace('-', '–')}</strong> · ${topVal}/${total}</div>
       </div>`;
       }
-      const predBlock = buildBlock('What players are picking', 'predicted', s.predictedScorelineMap, [26, 58, 107]);
-      const actualBlock = buildBlock('What actually happened', 'actual', s.actualScorelineMap, [26, 92, 42]);
+      const predBlock = buildBlock('What players are picking  (Top 5)', 'predicted', s.predictedScorelineMap, [26, 58, 107]);
+      const actualBlock = buildBlock('What actually happened  (Top 5)', 'actual', s.actualScorelineMap, [26, 92, 42]);
       const predKeys = Object.keys(s.predictedScorelineMap);
       const actualKeys = Object.keys(s.actualScorelineMap);
       let predTop = null, actualTop = null;
