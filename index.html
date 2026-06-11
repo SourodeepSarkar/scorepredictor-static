@@ -542,15 +542,6 @@
       white-space: nowrap;
     }
 
-    .search-empty {
-      padding: 18px 14px;
-      font-family: "Instrument Serif", serif;
-      font-style: italic;
-      font-size: 0.9rem;
-      color: var(--ink4);
-      text-align: center;
-    }
-
     main {
       max-width: 780px;
       margin: 0 auto;
@@ -804,6 +795,57 @@
     .pred-item:hover {
       border-color: var(--rule-strong);
     }
+
+    /* ── LOCKED PRED ITEM (Option A) ── */
+    .pred-item-locked {
+      background: #fff;
+      border-color: var(--rule);
+    }
+
+    .pred-item-locked:hover {
+      border-color: var(--rule);
+    }
+
+    .pred-item-nopick {
+      opacity: 0.5;
+    }
+
+    .pred-lock-icon {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 0.7rem;
+      line-height: 1;
+      opacity: 0.45;
+    }
+
+    .score-chip {
+      width: 42px;
+      height: 40px;
+      background: var(--paper2);
+      border: 1px solid var(--rule-strong);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .score-chip-val {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 1.2rem;
+      color: var(--ink3);
+      text-align: center;
+      line-height: 1;
+    }
+
+    .score-chip-val.dash {
+      font-size: 1rem;
+      color: var(--ink4);
+    }
+
+    /* ── END LOCKED ── */
 
     .pred-name {
       font-family: "Barlow Condensed", sans-serif;
@@ -2482,6 +2524,11 @@
         height: 36px;
       }
 
+      .score-chip {
+        width: 36px;
+        height: 36px;
+      }
+
       .stats-kpi-grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -2699,7 +2746,6 @@
   <script>
     const NULL_SENTINEL = -1;
 
-    // === TIMEZONE: auto-detect the visitor's local timezone (IST for India, CET/CEST for Denmark, etc.) ===
     const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata';
 
     function isCleared(pred) {
@@ -3113,9 +3159,9 @@
       }
       daysContainer.innerHTML = html;
       const minYear = 2026;
-      const minMonth = 5; // June
+      const minMonth = 5;
       const maxYear = 2026;
-      const maxMonth = 6; // July
+      const maxMonth = 6;
       if (prevBtn) {
         prevBtn.disabled = (year === minYear && month <= minMonth);
       }
@@ -3185,6 +3231,8 @@
       const hasFilter = activeDateFilter || activeTeamFilter || activeMatchFilter || (activeFilter && activeFilter !== 'all');
       clearBtn.classList.toggle('visible', !!hasFilter);
     }
+
+    // FIX 1: PENDING_SCORE and other backend status codes no longer leak into the UI
     function computeCountdownHTML(kickoffStr, status) {
       if (status === 'FINISHED') return '';
       const kickoff = parseUTC(kickoffStr);
@@ -3192,6 +3240,8 @@
       const diff = kickoff.getTime() - new Date().getTime();
       if (diff <= 0) {
         if (!status) return '';
+        const humanStatuses = ['LIVE', 'HT', 'ET', 'PEN', 'AET'];
+        if (!humanStatuses.includes(status.toUpperCase())) return '';
         return `<span class="match-time">${status}</span>`;
       }
       const totalSec = Math.floor(diff / 1000);
@@ -3218,6 +3268,7 @@
         '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.06em;color:' + dotColor + ';">' + label + '</span>' +
         '</span>';
     }
+
     function tickCountdowns() {
       document.querySelectorAll('.match-countdown').forEach(el => {
         el.innerHTML = computeCountdownHTML(el.dataset.kickoff, el.dataset.status);
@@ -3513,7 +3564,6 @@
       return dt.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: LOCAL_TZ });
     }
     function fmtTime(dt) {
-      // show the time in the visitor's own timezone, with NO timezone label
       return dt.toLocaleTimeString('en-IN', {
         hour: '2-digit',
         minute: '2-digit',
@@ -3530,15 +3580,20 @@
       const kickoffDt = parseUTC(m.kickoff);
       const lockTime = kickoffDt ? new Date(kickoffDt.getTime() + 3600000) : null;
       const locked = finished || (lockTime && new Date() > lockTime);
+      const hasScore = finished &&
+        m.score_home != null && m.score_home !== undefined &&
+        m.score_away != null && m.score_away !== undefined;
       return {
         finished,
         kickoffDt,
         locked,
         badgeCls: finished ? 'finished' : 'upcoming',
         badgeTxt: finished ? 'Full Time' : (kickoffDt ? fmtDate(kickoffDt) : ''),
-        timeStr: kickoffDt ? fmtTime(kickoffDt) : ''
+        timeStr: hasScore ? '' : (kickoffDt ? fmtTime(kickoffDt) : '')
       };
     }
+
+    // FIX 2: Option A locked pred item — static score chips instead of disabled inputs
     function buildPredItemHTML(u, matchid, pred, finished, locked) {
       const cleared = isCleared(pred);
       let ph = cleared ? '' : pred.pred_home;
@@ -3551,26 +3606,48 @@
         else if (pts === 1) { pillCls = 'p1'; pillTxt = '1 Result'; }
         else { pillCls = 'p0'; pillTxt = '0 Miss'; }
       }
-      const dis = locked ? 'disabled' : '';
       const uid = escHtml(u.user_id);
       const mid = escHtml(matchid);
-      const showClear = !cleared && !locked;
-      const clearBtnHtml = `<button class="pred-clear ${showClear ? '' : 'hidden'}" data-role="clear" title="Clear prediction" onclick="event.stopPropagation();clearPred('${mid}','${uid}')" ${locked ? 'disabled' : ''}>×</button>`;
+
+      if (locked) {
+        const noPick = cleared;
+        const hDisp = noPick
+          ? '<span class="score-chip-val dash" data-role="input-home">–</span>'
+          : '<span class="score-chip-val" data-role="input-home">' + ph + '</span>';
+        const aDisp = noPick
+          ? '<span class="score-chip-val dash" data-role="input-away">–</span>'
+          : '<span class="score-chip-val" data-role="input-away">' + pa + '</span>';
+        const itemCls = noPick ? 'pred-item pred-item-locked pred-item-nopick' : 'pred-item pred-item-locked';
+        return '<div class="' + itemCls + '" data-userid="' + uid + '">' +
+          '<div class="pred-name">' + escHtml(u.display_name) + '</div>' +
+          '<span class="pred-lock-icon" aria-hidden="true">🔒</span>' +
+          '<div class="pred-score-row">' +
+          '<div class="score-chip" data-role="chip-home">' + hDisp + '</div>' +
+          '<span class="pred-sep">:</span>' +
+          '<div class="score-chip" data-role="chip-away">' + aDisp + '</div>' +
+          '</div>' +
+          '<div class="points-pill ' + pillCls + '" data-role="pill">' + pillTxt + '</div>' +
+          '</div>';
+      }
+
+      const showClear = !cleared;
+      const clearBtnHtml = `<button class="pred-clear ${showClear ? '' : 'hidden'}" data-role="clear" title="Clear prediction" onclick="event.stopPropagation();clearPred('${mid}','${uid}')">×</button>`;
       return '<div class="pred-item" data-userid="' + uid + '">' +
         '<div class="pred-name">' + escHtml(u.display_name) + '</div>' +
         clearBtnHtml +
         '<div class="pred-score-row">' +
-        '<input class="pred-input" type="number" min="0" max="20" placeholder="-" value="' + ph + '" ' + dis +
+        '<input class="pred-input" type="number" min="0" max="20" placeholder="-" value="' + ph + '"' +
         ' data-matchid="' + mid + '" data-userid="' + uid + '" data-side="home"' +
         ' onclick="event.stopPropagation()" onblur="savePred(this)" data-role="input-home">' +
         '<span class="pred-sep">:</span>' +
-        '<input class="pred-input" type="number" min="0" max="20" placeholder="-" value="' + pa + '" ' + dis +
+        '<input class="pred-input" type="number" min="0" max="20" placeholder="-" value="' + pa + '"' +
         ' data-matchid="' + mid + '" data-userid="' + uid + '" data-side="away"' +
         ' onclick="event.stopPropagation()" onblur="savePred(this)" data-role="input-away">' +
         '</div>' +
         '<div class="points-pill ' + pillCls + '" data-role="pill">' + pillTxt + '</div>' +
         '</div>';
     }
+
     function buildPredSentence(m, users) {
       if (!users || !users.length) return '<span style="color:var(--ink4)">No players yet</span>';
       if (m.status === 'FINISHED') {
@@ -3663,7 +3740,7 @@
         '<div class="score-display">' + sh + '<span class="score-dash">·</span>' + sa + '</div>' +
         '<div class="match-status">' +
         '<div class="badge ' + meta.badgeCls + '" data-role="badge">' + meta.badgeTxt + '</div>' +
-        '<div class="match-time" data-role="time">' + meta.timeStr + '</div>' +
+        (meta.timeStr ? '<div class="match-time" data-role="time">' + meta.timeStr + '</div>' : '') +
         '</div></div>' +
         '<div class="team-cell away"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(awayTeam) + '<span class="team-name">' + escHtml(awayTeam) + '</span></div></div>' +
         '</div>' +
@@ -3791,7 +3868,14 @@
           badge.textContent = meta.badgeTxt;
         }
         const timeEl = card.querySelector('[data-role="time"]');
-        if (timeEl) timeEl.textContent = meta.timeStr;
+        if (timeEl) {
+          if (meta.timeStr) {
+            timeEl.textContent = meta.timeStr;
+            timeEl.style.display = '';
+          } else {
+            timeEl.style.display = 'none';
+          }
+        }
         const sentenceEl = container.querySelector('.pred-sentence[data-matchid="' + nm.match_id + '"]');
         if (sentenceEl) {
           const sentTxt = sentenceEl.querySelector('.pred-sentence-txt');
@@ -3810,6 +3894,15 @@
           const cleared = isCleared(pred);
           const predItem = card.querySelector('.pred-item[data-userid="' + u.user_id + '"]');
           if (!predItem) return;
+
+          // If lock state changed, rebuild the item entirely
+          const wasLocked = predItem.classList.contains('pred-item-locked');
+          if (wasLocked !== meta.locked) {
+            const newHtml = buildPredItemHTML(u, nm.match_id, pred, meta.finished, meta.locked);
+            predItem.outerHTML = newHtml;
+            return;
+          }
+
           const pill = predItem.querySelector('[data-role="pill"]');
           if (pill) {
             let cls = 'pnd', txt = 'Pending';
@@ -3822,23 +3915,29 @@
             pill.className = 'points-pill ' + cls;
             pill.textContent = txt;
           }
-          const inHome = predItem.querySelector('[data-role="input-home"]');
-          const inAway = predItem.querySelector('[data-role="input-away"]');
-          if (inHome && inHome !== activeEl) {
-            const newVal = cleared ? '' : String(pred.pred_home);
-            if (inHome.value !== newVal) inHome.value = newVal;
-          }
-          if (inAway && inAway !== activeEl) {
-            const newVal = cleared ? '' : String(pred.pred_away);
-            if (inAway.value !== newVal) inAway.value = newVal;
-          }
-          if (inHome) inHome.disabled = meta.locked;
-          if (inAway) inAway.disabled = meta.locked;
-          const clearBtn = predItem.querySelector('[data-role="clear"]');
-          if (clearBtn) {
-            const showClear = !cleared && !meta.locked;
-            clearBtn.classList.toggle('hidden', !showClear);
-            clearBtn.disabled = meta.locked;
+
+          if (meta.locked) {
+            // Update chip values for locked items
+            const chipHome = predItem.querySelector('[data-role="input-home"]');
+            const chipAway = predItem.querySelector('[data-role="input-away"]');
+            if (chipHome) chipHome.textContent = cleared ? '–' : String(pred.pred_home);
+            if (chipAway) chipAway.textContent = cleared ? '–' : String(pred.pred_away);
+          } else {
+            const inHome = predItem.querySelector('[data-role="input-home"]');
+            const inAway = predItem.querySelector('[data-role="input-away"]');
+            if (inHome && inHome !== activeEl) {
+              const newVal = cleared ? '' : String(pred.pred_home);
+              if (inHome.value !== newVal) inHome.value = newVal;
+            }
+            if (inAway && inAway !== activeEl) {
+              const newVal = cleared ? '' : String(pred.pred_away);
+              if (inAway.value !== newVal) inAway.value = newVal;
+            }
+            const clearBtn = predItem.querySelector('[data-role="clear"]');
+            if (clearBtn) {
+              const showClear = !cleared;
+              clearBtn.classList.toggle('hidden', !showClear);
+            }
           }
         });
       });
@@ -4530,7 +4629,7 @@
       btn.classList.add('spinning');
       if (lbl) lbl.textContent = 'Refreshing…';
       try {
-        const data = await fetch(API + '/sync', { method: 'POST' }).then(r => r.json());
+        const data = await fetch('https://d369cipp2c.execute-api.us-east-1.amazonaws.com/sync', { method: 'POST' }).then(r => r.json());
         showToast('Synced ' + data.count + ' match' + (data.count !== 1 ? 'es' : ''));
         const [mu, mm] = await Promise.all([
           fetch(API + '/users').then(r => r.json()),
