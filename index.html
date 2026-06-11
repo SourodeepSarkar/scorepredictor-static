@@ -4299,7 +4299,8 @@
       const yTickCount = 5;
       const yStep = maxY / yTickCount;
       const xCount = Math.max(N, 1);
-      const xAt = i => padL + (xCount <= 1 ? innerW / 2 : (i / (xCount - 1)) * innerW);
+      const TOTAL_MATCHES = 104;
+      const xAt = i => padL + (TOTAL_MATCHES <= 1 ? 0 : (i / (TOTAL_MATCHES - 1)) * innerW);
       const yAt = v => padT + innerH - (v / maxY) * innerH;
       const yGrid = [];
       const yLabels = [];
