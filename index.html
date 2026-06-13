@@ -2680,6 +2680,41 @@
     .confirm-btn.ok.danger:hover {
       background: #a03228;
     }
+
+    .toast.with-undo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      white-space: normal;
+    }
+
+    .undo-toast-msg {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .undo-toast-btn {
+      background: transparent;
+      border: 1px solid #5ddb7c;
+      color: #5ddb7c;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .undo-toast-btn:hover {
+      background: #5ddb7c;
+      color: var(--ink);
+    }
   </style>
 </head>
 
@@ -4671,34 +4706,21 @@
       }
       if (hVal === '' || aVal === '') return;
 
-      const home = parseInt(hVal, 10);
-      const away = parseInt(aVal, 10);
-      if (isNaN(home) || isNaN(away)) return;
-
-      // Avoid re-confirming the exact same value already saved
+      // Capture the previous value BEFORE saving, so Undo can revert to it
       const m = matches.find(x => String(x.match_id) === String(matchId));
       const prevPred = m && m.predictions ? m.predictions[userId] : null;
-      if (prevPred && !isCleared(prevPred) &&
-        Number(prevPred.pred_home) === home && Number(prevPred.pred_away) === away) {
-        return;
-      }
+      const prevSnapshot = isCleared(prevPred)
+        ? null
+        : { home: Number(prevPred.pred_home), away: Number(prevPred.pred_away) };
 
-      const name = getUserDisplayName(userId);
-      showConfirm(
-        'Save this prediction?',
-        `You are about to save <strong>${escHtml(name)}'s</strong> prediction as <strong>${home}–${away}</strong>.<br><br>Please confirm this is the correct player — people sometimes edit the wrong entry by mistake.`,
-        false
-      ).then(confirmed => {
-        if (!confirmed) {
-          // Revert the inputs back to the stored value
-          const cleared = isCleared(prevPred);
-          inputs[0].value = cleared ? '' : String(prevPred.pred_home);
-          inputs[1].value = cleared ? '' : String(prevPred.pred_away);
-          return;
-        }
-        predBuffer[key] = { home: home, away: away };
-        if (timers[key]) clearTimeout(timers[key]);
+      predBuffer[key] = {
+        home: parseInt(hVal, 10),
+        away: parseInt(aVal, 10)
+      };
+      if (timers[key]) clearTimeout(timers[key]);
+      timers[key] = setTimeout(function () {
         const buf = predBuffer[key];
+        if (!buf || buf.home === null || buf.away === null || isNaN(buf.home) || isNaN(buf.away)) return;
         showToast('Saving…');
         fetch(API + '/predictions', {
           method: 'POST',
@@ -4711,14 +4733,18 @@
           })
         }).then(r => r.json()).then(d => {
           if (d.status === 'saved') {
-            showToast('Saved ✓');
             applyLocalPred(matchId, userId, buf.home, buf.away);
+            const name = getUserDisplayName(userId);
+            showUndoToast(
+              `Saved ${buf.home}–${buf.away} for ${name}`,
+              matchId, userId, prevSnapshot
+            );
             setTimeout(doPoll, 200);
           } else {
             showToast(d.error || 'Error saving', true);
           }
         }).catch(() => showToast('Network error', true));
-      });
+      }, 500);
     }
     async function syncAll() {
       const btn = document.getElementById('syncBtn');
@@ -4762,6 +4788,76 @@
       t.className = 'toast' + (isError ? ' error' : '') + ' show';
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    let undoToastTimer;
+    function showUndoToast(msg, matchId, userId, prevSnapshot) {
+      const t = document.getElementById('toast');
+      if (!t) return;
+      clearTimeout(toastTimer);
+      clearTimeout(undoToastTimer);
+      t.innerHTML = `<span class="undo-toast-msg">${escHtml(msg)}</span><button class="undo-toast-btn" id="undoToastBtn">Undo</button>`;
+      t.className = 'toast show with-undo';
+      const btn = document.getElementById('undoToastBtn');
+      if (btn) {
+        btn.onclick = function (e) {
+          e.stopPropagation();
+          undoPrediction(matchId, userId, prevSnapshot);
+        };
+      }
+      undoToastTimer = setTimeout(() => {
+        t.classList.remove('show');
+        t.classList.remove('with-undo');
+      }, 6000);
+    }
+    function undoPrediction(matchId, userId, prevSnapshot) {
+      const card = document.querySelector(`.match-card[data-matchid="${matchId}"]`);
+      const predItem = card ? card.querySelector(`.pred-item[data-userid="${userId}"]`) : null;
+      const inputs = predItem ? predItem.querySelectorAll('.pred-input') : null;
+      const key = matchId + userId;
+      if (timers[key]) { clearTimeout(timers[key]); delete timers[key]; }
+      delete predBuffer[key];
+
+      if (!prevSnapshot) {
+        // There was no previous prediction → undo means clear it
+        if (inputs) { inputs[0].value = ''; inputs[1].value = ''; }
+        applyLocalPred(matchId, userId, null, null);
+        showToast('Reverting…');
+        fetch(API + '/predictions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: userId,
+            match_id: parseInt(matchId, 10),
+            pred_home: NULL_SENTINEL,
+            pred_away: NULL_SENTINEL
+          })
+        }).then(r => r.json()).then(d => {
+          if (d.status === 'saved') { showToast('Reverted ✓'); setTimeout(doPoll, 200); }
+          else showToast(d.error || 'Error reverting', true);
+        }).catch(() => showToast('Network error', true));
+        return;
+      }
+
+      // Restore previous score
+      if (inputs) {
+        inputs[0].value = String(prevSnapshot.home);
+        inputs[1].value = String(prevSnapshot.away);
+      }
+      applyLocalPred(matchId, userId, prevSnapshot.home, prevSnapshot.away);
+      showToast('Reverting…');
+      fetch(API + '/predictions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          match_id: parseInt(matchId, 10),
+          pred_home: prevSnapshot.home,
+          pred_away: prevSnapshot.away
+        })
+      }).then(r => r.json()).then(d => {
+        if (d.status === 'saved') { showToast(`Reverted to ${prevSnapshot.home}–${prevSnapshot.away} ✓`); setTimeout(doPoll, 200); }
+        else showToast(d.error || 'Error reverting', true);
+      }).catch(() => showToast('Network error', true));
     }
     async function doPoll() {
       if (document.hidden) return;
