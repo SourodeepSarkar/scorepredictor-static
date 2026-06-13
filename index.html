@@ -2574,6 +2574,112 @@
       font-size: 0.85rem;
       line-height: 1;
     }
+
+    .confirm-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      transition: opacity 0.2s ease;
+    }
+
+    .confirm-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+      visibility: visible;
+    }
+
+    .confirm-box {
+      background: #fff;
+      border-radius: 12px;
+      max-width: 380px;
+      width: 100%;
+      padding: 24px 24px 20px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+      transform: scale(0.95);
+      transition: transform 0.2s ease;
+    }
+
+    .confirm-overlay.open .confirm-box {
+      transform: scale(1);
+    }
+
+    .confirm-title {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+
+    .confirm-msg {
+      font-family: Barlow, sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--ink2);
+      margin-bottom: 22px;
+    }
+
+    .confirm-msg strong {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .confirm-btn {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .confirm-btn.cancel {
+      background: var(--paper2);
+      color: var(--ink2);
+      border-color: var(--rule-strong);
+    }
+
+    .confirm-btn.cancel:hover {
+      background: var(--paper3);
+    }
+
+    .confirm-btn.ok {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .confirm-btn.ok:hover {
+      background: #156b24;
+    }
+
+    .confirm-btn.ok.danger {
+      background: var(--red);
+    }
+
+    .confirm-btn.ok.danger:hover {
+      background: #a03228;
+    }
   </style>
 </head>
 
@@ -2663,6 +2769,18 @@
     </div>
   </main>
   <div class="toast" id="toast"></div>
+
+  <!-- Confirmation dialog -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box" id="confirmBox">
+      <div class="confirm-title" id="confirmTitle">Are you sure?</div>
+      <div class="confirm-msg" id="confirmMsg"></div>
+      <div class="confirm-actions">
+        <button class="confirm-btn cancel" id="confirmCancel">Cancel</button>
+        <button class="confirm-btn ok" id="confirmOk">Confirm</button>
+      </div>
+    </div>
+  </div>
   <div class="filter-fab" id="filterFab">
     <button class="filter-fab-btn" id="filterFabBtn" onclick="onFabClick()">
       <span class="filter-fab-icon">
@@ -2727,6 +2845,39 @@
   </div>
   <script>
     const NULL_SENTINEL = -1;
+    // ---- Confirmation dialog helper ----
+    let _confirmResolve = null;
+    function showConfirm(title, messageHtml, danger) {
+      return new Promise(resolve => {
+        const overlay = document.getElementById('confirmOverlay');
+        const titleEl = document.getElementById('confirmTitle');
+        const msgEl = document.getElementById('confirmMsg');
+        const okBtn = document.getElementById('confirmOk');
+        const cancelBtn = document.getElementById('confirmCancel');
+        if (!overlay) { resolve(true); return; }
+        titleEl.textContent = title;
+        msgEl.innerHTML = messageHtml;
+        okBtn.classList.toggle('danger', !!danger);
+        okBtn.textContent = danger ? 'Yes, do it' : 'Confirm';
+        overlay.classList.add('open');
+        _confirmResolve = resolve;
+        function cleanup(result) {
+          overlay.classList.remove('open');
+          okBtn.onclick = null;
+          cancelBtn.onclick = null;
+          overlay.onclick = null;
+          _confirmResolve = null;
+          resolve(result);
+        }
+        okBtn.onclick = () => cleanup(true);
+        cancelBtn.onclick = () => cleanup(false);
+        overlay.onclick = (e) => { if (e.target === overlay) cleanup(false); };
+      });
+    }
+    function getUserDisplayName(userId) {
+      const u = users.find(x => String(x.user_id) === String(userId));
+      return u ? (u.display_name || 'this player') : 'this player';
+    }
     const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata';
     const LOCK_OFFSET_MS = 5 * 60 * 1000; // predictions lock 5 minutes after kickoff
     function isCleared(pred) {
@@ -4280,6 +4431,7 @@
       </div>
     </div>`;
     }
+
     function renderScorelineHeatmap(s) {
       function sortScorelinesByCount(dataMap) {
         return Object.keys(dataMap).sort((a, b) => {
@@ -4301,7 +4453,6 @@
           return [baseRGB[0], baseRGB[1], baseRGB[2]];
         }
         const t = rank / (totalItems - 1);
-        // Fade only partway (max 0.62) toward a soft tint, never to invisible paper
         const fade = t * 0.62;
         const tintRGB = [210, 214, 220];
         const r = Math.round(baseRGB[0] + (tintRGB[0] - baseRGB[0]) * fade);
@@ -4310,34 +4461,37 @@
         return [r, g, b];
       }
       function buildBlock(label, klass, dataMap, baseRGB) {
-        const sorted = sortScorelinesByCount(dataMap).slice(0, 5);
-        if (!sorted.length) {
+        const allSorted = sortScorelinesByCount(dataMap);
+        if (!allSorted.length) {
           return `<div class="scoreline-block">
           <div class="scoreline-block-title ${klass}">${label}</div>
           <div class="scoreline-empty">No data yet.</div>
         </div>`;
         }
-        const total = sorted.reduce((sum, k) => sum + dataMap[k], 0);
-        const topKey = sorted[0];
+        // Grand total across ENTIRE dataset (all submitted), not just top 5
+        const grandTotal = allSorted.reduce((sum, k) => sum + dataMap[k], 0);
+        // Top 5 only for display cells
+        const sorted = allSorted.slice(0, 5);
+        const topKey = allSorted[0];
         const topVal = dataMap[topKey];
         const cells = sorted.map((k, idx) => {
           const v = dataMap[k];
           const isTop = idx === 0;
           const rgb = colorForRank(idx, sorted.length, baseRGB);
           const bg = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
-          // Perceived luminance → pick readable text color
           const lum = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]);
           const fg = lum < 150 ? '#ffffff' : '#1a1a1a';
           const display = k.replace('-', '–');
+          // Percentage now based on grandTotal (entire dataset)
           return `<div class="scoreline-cell ${isTop ? 'top' : ''}" style="background:${bg};color:${fg}" title="${display}: ${v} time${v !== 1 ? 's' : ''}">
           <div class="scoreline-label">${display}</div>
-          <div class="scoreline-count">${Math.round((v / total) * 100)}%</div>
+          <div class="scoreline-count">${Math.round((v / grandTotal) * 100)}%</div>
         </div>`;
         }).join('');
         return `<div class="scoreline-block">
         <div class="scoreline-block-title ${klass}">${label}</div>
         <div class="scoreline-row">${cells}</div>
-        <div class="scoreline-summary">Most common: <strong>${topKey.replace('-', '–')}</strong> · ${topVal}/${total}</div>
+        <div class="scoreline-summary">Most common: <strong>${topKey.replace('-', '–')}</strong> · ${topVal}/${grandTotal}</div>
       </div>`;
       }
       const predBlock = buildBlock('What players are picking  (Top 5)', 'predicted', s.predictedScorelineMap, [26, 58, 107]);
@@ -4364,7 +4518,7 @@
       <div class="stats-card-body">
         <div class="scoreline-heatmap-wrap">${predBlock}${actualBlock}</div>
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;color:var(--ink4);text-align:center;margin-top:12px;letter-spacing:0.05em;">
-          Sorted by popularity · darker = more frequent · gold outline marks the top scoreline
+          Top 5 shown · percentages out of all submitted predictions · gold outline marks the top scoreline
         </div>
       </div>
     </div>`;
@@ -4449,6 +4603,17 @@
       lastLeaderboardHtml = '';
     }
     function clearPred(matchId, userId) {
+      const name = getUserDisplayName(userId);
+      showConfirm(
+        'Clear prediction?',
+        `You are about to <strong>clear ${escHtml(name)}'s</strong> prediction.<br><br>Please make sure this is the correct player — people sometimes edit the wrong entry by mistake.`,
+        true
+      ).then(confirmed => {
+        if (!confirmed) return;
+        doClearPred(matchId, userId);
+      });
+    }
+    function doClearPred(matchId, userId) {
       const card = document.querySelector(`.match-card[data-matchid="${matchId}"]`);
       if (!card) return;
       const predItem = card.querySelector(`.pred-item[data-userid="${userId}"]`);
@@ -4505,14 +4670,35 @@
         return;
       }
       if (hVal === '' || aVal === '') return;
-      predBuffer[key] = {
-        home: parseInt(hVal, 10),
-        away: parseInt(aVal, 10)
-      };
-      if (timers[key]) clearTimeout(timers[key]);
-      timers[key] = setTimeout(function () {
+
+      const home = parseInt(hVal, 10);
+      const away = parseInt(aVal, 10);
+      if (isNaN(home) || isNaN(away)) return;
+
+      // Avoid re-confirming the exact same value already saved
+      const m = matches.find(x => String(x.match_id) === String(matchId));
+      const prevPred = m && m.predictions ? m.predictions[userId] : null;
+      if (prevPred && !isCleared(prevPred) &&
+        Number(prevPred.pred_home) === home && Number(prevPred.pred_away) === away) {
+        return;
+      }
+
+      const name = getUserDisplayName(userId);
+      showConfirm(
+        'Save this prediction?',
+        `You are about to save <strong>${escHtml(name)}'s</strong> prediction as <strong>${home}–${away}</strong>.<br><br>Please confirm this is the correct player — people sometimes edit the wrong entry by mistake.`,
+        false
+      ).then(confirmed => {
+        if (!confirmed) {
+          // Revert the inputs back to the stored value
+          const cleared = isCleared(prevPred);
+          inputs[0].value = cleared ? '' : String(prevPred.pred_home);
+          inputs[1].value = cleared ? '' : String(prevPred.pred_away);
+          return;
+        }
+        predBuffer[key] = { home: home, away: away };
+        if (timers[key]) clearTimeout(timers[key]);
         const buf = predBuffer[key];
-        if (!buf || buf.home === null || buf.away === null || isNaN(buf.home) || isNaN(buf.away)) return;
         showToast('Saving…');
         fetch(API + '/predictions', {
           method: 'POST',
@@ -4532,7 +4718,7 @@
             showToast(d.error || 'Error saving', true);
           }
         }).catch(() => showToast('Network error', true));
-      }, 500);
+      });
     }
     async function syncAll() {
       const btn = document.getElementById('syncBtn');
