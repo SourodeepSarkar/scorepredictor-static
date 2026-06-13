@@ -4606,7 +4606,7 @@
       const name = getUserDisplayName(userId);
       showConfirm(
         'Clear prediction?',
-        `You are about to <strong>clear ${escHtml(name)}'s</strong> prediction.<br><br>Please make sure this is the correct player — people sometimes edit the wrong entry by mistake.`,
+        `You are about to <strong>clear ${escHtml(name)}'s</strong> prediction.<br><br>No editing your friends' picks — we're watching. Sure this one's yours?`,
         true
       ).then(confirmed => {
         if (!confirmed) return;
