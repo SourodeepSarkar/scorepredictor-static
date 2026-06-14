@@ -4119,7 +4119,9 @@
       if (id === 'stats') renderStats();
     }
 
+    let lastLBData = null;
     function renderLBData(data) {
+      lastLBData = data;
       const container = document.getElementById('lbList');
       if (!container) return;
       if (!data.length) {
@@ -4306,6 +4308,16 @@
           }
         });
       });
+      if (lastLBData && Array.isArray(lastLBData)) {
+        lastLBData.forEach(u => {
+          if (playerStats[u.user_id]) {
+            playerStats[u.user_id].points = u.total_points || 0;
+            playerStats[u.user_id].exact = u.exact || 0;
+            playerStats[u.user_id].correct = u.correct || 0;
+          }
+        });
+      }
+
       return {
         totalPredictions,
         totalMatches,
@@ -4603,6 +4615,17 @@
         const emptyHtml = '<div class="state-msg">No data yet. Add players first.</div>';
         if (container.innerHTML !== emptyHtml) container.innerHTML = emptyHtml;
         return;
+      }
+      if (!lastLBData) {
+        fetch(API + '/leaderboard')
+          .then(res => res.json())
+          .then(data => {
+            if (!Array.isArray(data)) return;
+            lastLBData = data;
+            lastStatsHtml = '';
+            renderStats();
+          })
+          .catch(() => { });
       }
       const s = computeStats();
       let html = '';
