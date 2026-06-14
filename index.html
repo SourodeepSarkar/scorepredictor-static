@@ -3975,6 +3975,7 @@
       });
       container.innerHTML = html;
       requestAnimationFrame(() => {
+        if (document.activeElement && document.activeElement.classList.contains('pred-input')) return;
         container.querySelectorAll('.pred-grid').forEach(alignLastPredRow);
       });
       firstRender = false;
@@ -4096,10 +4097,15 @@
         });
       });
       requestAnimationFrame(() => {
-        document.querySelectorAll('.pred-grid').forEach(alignLastPredRow);
+        if (document.activeElement && document.activeElement.classList.contains('pred-input')) return;
+        container.querySelectorAll('.pred-grid').forEach(alignLastPredRow);
       });
     }
     function toggleCard(card) {
+      if (card.dataset.suppressToggle === '1') {
+        delete card.dataset.suppressToggle;
+        return;
+      }
       card.classList.toggle('open');
     }
     function switchTab(id, el) {
@@ -4338,7 +4344,11 @@
     </div>`;
     }
     function renderHorizontalBars(s) {
-      const players = Object.values(s.playerStats).sort((a, b) => b.points - a.points);
+      const players = Object.values(s.playerStats).sort((a, b) => {
+        if (b.points !== a.points) return b.points - a.points;
+        if (b.exact !== a.exact) return b.exact - a.exact;
+        return (a.name || '').localeCompare(b.name || '');
+      });
       if (!players.length) return '';
       const max = Math.max(...players.map(p => p.points), 1);
       const rows = players.map(p => {
@@ -4426,7 +4436,11 @@
     </div>`;
     }
     function renderStackedBars(s) {
-      const players = Object.values(s.playerStats).sort((a, b) => b.points - a.points);
+      const players = Object.values(s.playerStats).sort((a, b) => {
+        if (b.points !== a.points) return b.points - a.points;
+        if (b.exact !== a.exact) return b.exact - a.exact;
+        return (a.name || '').localeCompare(b.name || '');
+      });
       if (!players.length) return '';
       const colors = { exact: '#16a34a', correct: '#2563eb', miss: '#f97316' };
       const rows = players.map(p => {
@@ -4684,6 +4698,8 @@
       }).catch(() => showToast('Network error', true));
     }
     function savePred(input) {
+      const parentCard = input.closest('.match-card');
+      if (parentCard) parentCard.dataset.suppressToggle = '1';
       const matchId = input.dataset.matchid;
       const userId = input.dataset.userid;
       const side = input.dataset.side;
