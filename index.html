@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -43,7 +42,6 @@
       --rule-strong: rgba(14, 14, 14, 0.25);
       --radius: 4px;
     }
-
     html {
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -51,7 +49,6 @@
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
     }
-
     *,
     *::before,
     *::after {
@@ -59,7 +56,6 @@
       margin: 0;
       padding: 0;
     }
-
     body {
       background: var(--paper);
       color: var(--ink);
@@ -69,11 +65,9 @@
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
     }
-
     header {
       background: var(--ink);
     }
-
     .header-top {
       display: flex;
       align-items: center;
@@ -82,13 +76,11 @@
       height: 60px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
-
     .logo {
       display: flex;
       align-items: baseline;
       gap: 10px;
     }
-
     .logo-main {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 900;
@@ -98,11 +90,9 @@
       color: #fff;
       line-height: 1;
     }
-
     .logo-main span {
       color: #5ddb7c;
     }
-
     .logo-sub {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 300;
@@ -112,7 +102,6 @@
       color: rgba(255, 255, 255, 0.5);
       padding-bottom: 2px;
     }
-
     .sync-btn {
       background: transparent;
       color: rgba(255, 255, 255, 0.6);
@@ -130,32 +119,26 @@
       gap: 7px;
       transition: all 0.2s;
     }
-
     .sync-btn:hover {
       border-color: rgba(255, 255, 255, 0.4);
       color: #fff;
     }
-
     .sync-btn:disabled {
       opacity: 0.3;
       cursor: not-allowed;
     }
-
     .sync-icon {
       font-size: 0.85rem;
       display: inline-block;
     }
-
     .sync-btn.spinning .sync-icon {
       animation: spin 0.7s linear infinite;
     }
-
     @keyframes spin {
       to {
         transform: rotate(360deg);
       }
     }
-
     .tabs-wrapper {
       background: var(--ink);
       display: flex;
@@ -163,18 +146,15 @@
       padding: 0 28px;
       position: relative;
     }
-
     .tabs-list {
       display: flex;
       flex: 1;
       overflow-x: auto;
       min-width: 0;
     }
-
     .tabs-list::-webkit-scrollbar {
       display: none;
     }
-
     .sticky-shell {
       position: sticky;
       top: 0;
@@ -182,7 +162,6 @@
       will-change: transform;
       isolation: isolate;
     }
-
     .tab {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -197,23 +176,19 @@
       user-select: none;
       white-space: nowrap;
     }
-
     .tab:hover {
       color: rgba(255, 255, 255, 0.65);
     }
-
     .tab.active {
       color: #5ddb7c;
       border-bottom-color: #5ddb7c;
     }
-
     .search-toggle-wrap {
       display: flex;
       align-items: center;
       flex-shrink: 0;
       padding-left: 12px;
     }
-
     .search-toggle {
       background: transparent;
       border: none;
@@ -229,59 +204,49 @@
       -webkit-tap-highlight-color: transparent;
       padding: 0;
     }
-
     .search-toggle:hover {
       color: #fff;
       background: rgba(255, 255, 255, 0.06);
     }
-
     .search-toggle.active {
       color: #5ddb7c;
       background: rgba(93, 219, 124, 0.12);
     }
-
     #clearFilterBtn {
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s, transform 0.2s;
       transform: scale(0.8);
     }
-
     #clearFilterBtn.visible {
       opacity: 1;
       pointer-events: all;
       transform: scale(1);
     }
-
     #clearFilterBtn:hover {
       color: #ff6b6b;
       background: rgba(255, 107, 107, 0.12);
     }
-
     .search-row-wrap {
       max-width: 780px;
       margin: 0 auto;
       padding: 0 24px;
       display: none;
     }
-
     .search-row-wrap.open {
       display: block;
       animation: searchSlideIn 0.25s ease both;
     }
-
     @keyframes searchSlideIn {
       from {
         opacity: 0;
         transform: translateY(-8px);
       }
-
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
-
     .search-row {
       background: #fff;
       border: 1px solid var(--rule);
@@ -290,32 +255,27 @@
       margin-top: 16px;
       overflow: hidden;
     }
-
     .search-input-row {
       display: flex;
       align-items: center;
       gap: 10px;
       padding: 12px 14px;
     }
-
     .search-input-wrap {
       flex: 1;
       display: flex;
       align-items: center;
       min-width: 0;
     }
-
     .search-input-icon {
       color: var(--ink4);
       display: flex;
       align-items: center;
       flex-shrink: 0;
     }
-
     .search-input-row.has-filter .search-input-icon {
       color: var(--green);
     }
-
     .search-input {
       flex: 1;
       background: transparent;
@@ -330,7 +290,6 @@
       width: 100%;
       min-width: 0;
     }
-
     .search-input::placeholder {
       color: var(--ink4);
       font-family: "Instrument Serif", serif;
@@ -339,7 +298,6 @@
       font-size: 0.95rem;
       letter-spacing: 0;
     }
-
     .search-chip {
       display: none;
       align-items: center;
@@ -351,15 +309,12 @@
       max-width: 280px;
       margin-right: auto;
     }
-
     .search-input-row.has-filter .search-chip {
       display: flex;
     }
-
     .search-input-row.has-filter .search-input-wrap {
       display: none;
     }
-
     .search-chip-name {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -369,7 +324,6 @@
       color: var(--green);
       white-space: nowrap;
     }
-
     .search-chip-vs {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.7rem;
@@ -377,7 +331,6 @@
       opacity: 0.65;
       font-weight: 600;
     }
-
     .search-chip-clear {
       background: rgba(26, 92, 42, 0.15);
       border: none;
@@ -396,11 +349,9 @@
       transition: background 0.15s;
       -webkit-tap-highlight-color: transparent;
     }
-
     .search-chip-clear:hover {
       background: rgba(26, 92, 42, 0.3);
     }
-
     .search-close {
       background: transparent;
       border: none;
@@ -419,23 +370,19 @@
       transition: background 0.15s, color 0.15s;
       -webkit-tap-highlight-color: transparent;
     }
-
     .search-close:hover {
       background: var(--paper);
       color: var(--ink);
     }
-
     .search-results {
       border-top: 1px solid var(--rule);
       max-height: 60vh;
       overflow-y: auto;
       padding: 6px 0;
     }
-
     .search-results.empty {
       display: none;
     }
-
     .search-section-title {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.7rem;
@@ -445,7 +392,6 @@
       color: var(--ink4);
       padding: 8px 14px 4px;
     }
-
     .search-result {
       display: flex;
       align-items: center;
@@ -455,11 +401,9 @@
       transition: background 0.12s;
       -webkit-tap-highlight-color: transparent;
     }
-
     .search-result:hover {
       background: var(--paper);
     }
-
     .search-result-team-name {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -472,7 +416,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
     .search-result-meta {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.72rem;
@@ -481,7 +424,6 @@
       letter-spacing: 0.04em;
       flex-shrink: 0;
     }
-
     .search-match-row {
       display: flex;
       align-items: center;
@@ -491,11 +433,9 @@
       transition: background 0.12s;
       -webkit-tap-highlight-color: transparent;
     }
-
     .search-match-row:hover {
       background: var(--paper);
     }
-
     .search-match-teams {
       display: flex;
       align-items: center;
@@ -503,14 +443,12 @@
       flex: 1;
       min-width: 0;
     }
-
     .search-match-team {
       display: flex;
       align-items: center;
       gap: 5px;
       min-width: 0;
     }
-
     .search-match-team-name {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -522,7 +460,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
     .search-match-vs {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.72rem;
@@ -530,7 +467,6 @@
       font-weight: 600;
       flex-shrink: 0;
     }
-
     .search-match-meta {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.72rem;
@@ -541,32 +477,68 @@
       text-align: right;
       white-space: nowrap;
     }
-
     main {
       max-width: 780px;
       margin: 0 auto;
       padding: 36px 24px 100px;
     }
-
     .tab-content {
       display: none;
     }
-
     .tab-content.active {
       display: block;
     }
-
+    /* ---- New: Hide-past toggle bar ---- */
+    .past-toggle-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 24px;
+      background: var(--paper2);
+      border-bottom: 1px solid var(--rule);
+    }
+    .past-toggle-bar.hidden-control {
+      display: none !important;
+    }
+    .past-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .past-toggle input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--green);
+      cursor: pointer;
+    }
+    .past-toggle-label {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--ink2);
+    }
+    .past-toggle-count {
+      font-family: Barlow, sans-serif;
+      font-size: 0.78rem;
+      color: var(--ink4);
+      font-weight: 500;
+      white-space: nowrap;
+    }
     .stage-header {
       display: flex;
       align-items: center;
       gap: 16px;
       margin: 40px 0 16px;
     }
-
     .stage-header:first-child {
       margin-top: 0;
     }
-
     .stage-label {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
@@ -576,13 +548,11 @@
       color: var(--ink3);
       white-space: nowrap;
     }
-
     .stage-rule {
       flex: 1;
       height: 1px;
       background: var(--rule);
     }
-
     .match-card {
       background: #fff;
       border: 1.5px solid var(--rule);
@@ -594,26 +564,22 @@
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
-
     @media(hover:hover) {
       .match-card:hover {
         border-color: #5ddb7c;
         box-shadow: 0 0 0 3px rgba(93, 219, 124, 0.13), 0 4px 20px rgba(0, 0, 0, 0.06);
       }
     }
-
     .match-card.open {
       border-color: #5ddb7c;
       box-shadow: 0 0 0 3px rgba(93, 219, 124, 0.13), 0 4px 20px rgba(0, 0, 0, 0.06);
     }
-
     .match-row {
       display: grid;
       grid-template-columns: 1fr 130px 1fr;
       align-items: stretch;
       min-height: 72px;
     }
-
     .team-cell {
       display: flex;
       align-items: center;
@@ -621,17 +587,14 @@
       min-width: 0;
       overflow: hidden;
     }
-
     .team-cell.home {
       justify-content: center;
       border-right: 1px solid var(--rule);
     }
-
     .team-cell.away {
       justify-content: center;
       border-left: 1px solid var(--rule);
     }
-
     .team-name {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -646,7 +609,6 @@
       color: var(--ink);
       text-align: center;
     }
-
     .centre-block {
       display: flex;
       flex-direction: column;
@@ -657,11 +619,9 @@
       background: var(--paper);
       transition: background 0.18s;
     }
-
     .match-card.open .centre-block {
       background: var(--green-light);
     }
-
     .score-display {
       display: flex;
       align-items: center;
@@ -672,37 +632,31 @@
       letter-spacing: -0.02em;
       line-height: 1;
     }
-
     .score-num {
       color: var(--ink);
       min-width: 26px;
       text-align: center;
     }
-
     .score-num.final {
       color: var(--green);
     }
-
     .score-num.pending {
       color: var(--ink3);
       font-size: 1.4rem;
       font-weight: 400;
     }
-
     .score-dash {
       color: var(--ink3);
       font-weight: 400;
       font-size: 1.6rem;
       padding: 0 2px;
     }
-
     .match-status {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 2px;
     }
-
     .badge {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.75rem;
@@ -713,35 +667,28 @@
       letter-spacing: 0.1em;
       white-space: nowrap;
     }
-
     .badge.upcoming {
       background: var(--paper3);
       color: var(--ink2);
     }
-
     .badge.finished {
       background: var(--green-light);
       color: var(--green);
     }
-
     .badge.live {
       background: var(--red-light);
       color: var(--red);
       animation: blink 1.4s infinite;
     }
-
     @keyframes blink {
-
       0%,
       100% {
         opacity: 1;
       }
-
       50% {
         opacity: 0.5;
       }
     }
-
     .match-time {
       font-family: Barlow, sans-serif;
       font-size: 0.78rem;
@@ -749,7 +696,6 @@
       color: var(--ink3);
       letter-spacing: 0.03em;
     }
-
     .predictions-panel {
       display: grid;
       grid-template-rows: 0fr;
@@ -757,29 +703,24 @@
       background: var(--paper);
       overflow: hidden;
     }
-
     .predictions-panel-inner {
       overflow: hidden;
       padding: 0 20px;
       transition: padding 0.22s ease;
     }
-
     .match-card.open .predictions-panel {
       grid-template-rows: 1fr;
       border-top: 1px solid var(--rule);
     }
-
     .match-card.open .predictions-panel-inner {
       padding: 14px 20px;
     }
-
     .pred-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 8px;
       justify-items: stretch;
     }
-
     .pred-item {
       background: #fff;
       border: 1px solid var(--rule);
@@ -791,24 +732,19 @@
       transition: border-color 0.15s;
       position: relative;
     }
-
     .pred-item:hover {
       border-color: var(--rule-strong);
     }
-
     .pred-item-locked {
       background: #fff;
       border-color: var(--rule);
     }
-
     .pred-item-locked:hover {
       border-color: var(--rule);
     }
-
     .pred-item-nopick {
       opacity: 0.5;
     }
-
     .pred-lock-icon {
       position: absolute;
       top: 8px;
@@ -817,7 +753,6 @@
       line-height: 1;
       opacity: 0.45;
     }
-
     .score-chip {
       width: 42px;
       height: 40px;
@@ -829,7 +764,6 @@
       justify-content: center;
       flex-shrink: 0;
     }
-
     .score-chip-val {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 900;
@@ -838,12 +772,10 @@
       text-align: center;
       line-height: 1;
     }
-
     .score-chip-val.dash {
       font-size: 1rem;
       color: var(--ink4);
     }
-
     .pred-name {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.78rem;
@@ -856,7 +788,6 @@
       text-overflow: ellipsis;
       padding-right: 18px;
     }
-
     .pred-clear {
       position: absolute;
       top: 8px;
@@ -878,27 +809,22 @@
       padding: 0;
       -webkit-tap-highlight-color: transparent;
     }
-
     .pred-clear:hover {
       background: var(--red-light);
       color: var(--red);
     }
-
     .pred-clear:disabled {
       opacity: 0;
       pointer-events: none;
     }
-
     .pred-clear.hidden {
       display: none;
     }
-
     .pred-score-row {
       display: flex;
       align-items: center;
       gap: 6px;
     }
-
     .pred-input {
       width: 42px;
       height: 40px;
@@ -914,30 +840,25 @@
       transition: border-color 0.15s, background 0.15s;
       -moz-appearance: textfield;
     }
-
     .pred-input::-webkit-outer-spin-button,
     .pred-input::-webkit-inner-spin-button {
       -webkit-appearance: none;
     }
-
     .pred-input:focus {
       border-color: var(--green);
       background: var(--green-light);
     }
-
     .pred-input:disabled {
       opacity: 0.4;
       cursor: not-allowed;
       background: transparent;
       border-color: transparent;
     }
-
     .pred-sep {
       color: var(--ink3);
       font-weight: 600;
       font-size: 0.9rem;
     }
-
     .points-pill {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.75rem;
@@ -948,38 +869,31 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
-
     .points-pill.p3 {
       background: var(--green-light);
       color: var(--green);
     }
-
     .points-pill.p1 {
       background: var(--blue-light);
       color: var(--blue);
     }
-
     .points-pill.p0 {
       background: var(--red-light);
       color: var(--red);
     }
-
     .points-pill.pnd {
       background: var(--paper2);
       color: var(--ink4);
     }
-
     .lb-wrap {
       background: #fff;
       border: 1px solid var(--rule);
       border-radius: var(--radius);
       overflow: hidden;
     }
-
     .lb-wrap.animate-in {
       animation: slideUp 0.35s ease both;
     }
-
     .lb-title-row {
       padding: 20px 24px 16px;
       border-bottom: 2px solid var(--ink);
@@ -988,7 +902,6 @@
       gap: 12px;
       flex-wrap: wrap;
     }
-
     .lb-title {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 900;
@@ -998,14 +911,12 @@
       color: var(--ink);
       line-height: 1;
     }
-
     .lb-sub {
       font-family: "Instrument Serif", serif;
       font-style: italic;
       font-size: 0.85rem;
       color: var(--ink4);
     }
-
     .lb-header-row {
       display: grid;
       grid-template-columns: 36px 56px 1fr 80px 56px 60px;
@@ -1019,11 +930,9 @@
       text-transform: uppercase;
       color: var(--ink3);
     }
-
     .lb-header-row div:not(:first-child):not(:nth-child(2)):not(:nth-child(3)) {
       text-align: center;
     }
-
     .lb-row {
       display: grid;
       grid-template-columns: 36px 56px 1fr 80px 56px 60px;
@@ -1032,62 +941,50 @@
       border-bottom: 1px solid var(--rule);
       transition: background 0.15s;
     }
-
     .lb-row:last-child {
       border-bottom: none;
     }
-
     .lb-row:hover {
       background: var(--paper);
     }
-
     .lb-row.top1 {
       background: var(--gold-light);
     }
-
     .lb-row.top1:hover {
       background: #fdf2d0;
     }
-
     .rank-cell {
       display: flex;
       align-items: center;
       justify-content: center;
     }
-
     .rank-num {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 900;
       font-size: 1.4rem;
       line-height: 1;
     }
-
     .rank-num.r1 {
       color: var(--gold);
       font-size: 1.6rem;
     }
-
     .rank-num.r2 {
       color: var(--ink2);
     }
-
     .rank-num.r3 {
       color: #a0522d;
     }
-
     .rank-num.rn {
       color: var(--ink3);
       font-size: 0.9rem;
       font-weight: 700;
     }
-
     .lb-name-cell {
       display: flex;
       flex-direction: column;
       gap: 1px;
       min-width: 0;
     }
-
     .lb-name {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -1099,11 +996,9 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
     .lb-row.top1 .lb-name {
       color: var(--gold);
     }
-
     .lb-pts {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 900;
@@ -1112,7 +1007,6 @@
       text-align: center;
       line-height: 1;
     }
-
     .lb-num {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 1rem;
@@ -1120,24 +1014,20 @@
       text-align: center;
       color: var(--ink2);
     }
-
     @keyframes shimmer {
       0% {
         background-position: -1000px 0;
       }
-
       100% {
         background-position: 1000px 0;
       }
     }
-
     .skel {
       background: linear-gradient(90deg, var(--paper2) 25%, var(--paper3) 50%, var(--paper2) 75%);
       background-size: 1000px 100%;
       animation: shimmer 1.8s infinite linear;
       border-radius: 3px;
     }
-
     .skel-card {
       background: #fff;
       border: 1px solid var(--rule);
@@ -1150,24 +1040,20 @@
       gap: 12px;
       min-height: 72px;
     }
-
     .sk-team {
       height: 16px;
       width: 100px;
     }
-
     .sk-score {
       height: 40px;
       width: 100px;
       border-radius: 3px;
     }
-
     .sk-meta {
       height: 10px;
       width: 70px;
       margin-top: 6px;
     }
-
     .sk-lb-row {
       display: grid;
       grid-template-columns: 36px 56px 1fr 80px 56px 60px;
@@ -1176,30 +1062,25 @@
       gap: 8px;
       border-bottom: 1px solid var(--rule);
     }
-
     .sk-rank {
       height: 22px;
       width: 28px;
       margin: 0 auto;
     }
-
     .sk-name {
       height: 16px;
       width: 140px;
     }
-
     .sk-pts {
       height: 22px;
       width: 44px;
       margin: 0 auto;
     }
-
     .sk-stat {
       height: 14px;
       width: 28px;
       margin: 0 auto;
     }
-
     .state-msg {
       text-align: center;
       color: var(--ink3);
@@ -1208,7 +1089,6 @@
       font-style: italic;
       font-size: 1rem;
     }
-
     .toast {
       position: fixed;
       bottom: 28px;
@@ -1229,16 +1109,13 @@
       z-index: 999;
       white-space: nowrap;
     }
-
     .toast.error {
       border-left-color: var(--red);
     }
-
     .toast.show {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
-
     .rules-box {
       margin-top: 12px;
       background: #fff;
@@ -1246,7 +1123,6 @@
       border-radius: var(--radius);
       padding: 20px 24px 22px;
     }
-
     .rules-title {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
@@ -1256,13 +1132,11 @@
       color: var(--ink3);
       margin-bottom: 12px;
     }
-
     .rules-table {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 4px;
     }
-
     .rules-table thead th {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.72rem;
@@ -1274,12 +1148,10 @@
       text-align: left;
       border-bottom: 1px solid var(--rule);
     }
-
     .rules-table thead th.pts-col {
       text-align: center;
       width: 64px;
     }
-
     .rules-table tbody td {
       font-family: Barlow, sans-serif;
       font-size: 0.88rem;
@@ -1288,43 +1160,36 @@
       padding: 8px 0;
       border-bottom: 1px solid var(--rule);
     }
-
     .rules-table tbody tr:last-child td {
       border-bottom: none;
     }
-
     .pts-col {
       text-align: center;
       width: 64px;
     }
-
     .green-pts {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
       color: var(--green);
       font-size: 1rem;
     }
-
     .blue-pts {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
       color: var(--blue);
       font-size: 1rem;
     }
-
     .grey-pts {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
       color: var(--ink4);
       font-size: 1rem;
     }
-
     .rules-divider {
       height: 1px;
       background: var(--rule);
       margin: 14px 0;
     }
-
     .rules-sub {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -1334,56 +1199,47 @@
       color: var(--ink3);
       margin-bottom: 8px;
     }
-
     .rules-list {
       padding-left: 18px;
       display: flex;
       flex-direction: column;
       gap: 5px;
     }
-
     .rules-list li {
       font-family: Barlow, sans-serif;
       font-size: 0.88rem;
       color: var(--ink2);
     }
-
     .rules-list-item {
       font-family: Barlow, sans-serif;
       font-size: 0.88rem;
       color: var(--ink2);
       line-height: 1.5;
     }
-
     .rules-list-item strong {
       font-weight: 600;
       color: var(--ink);
     }
-
     @keyframes slideUp {
       from {
         opacity: 0;
         transform: translateY(14px);
       }
-
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
-
     .match-card.new-card {
       animation: slideUp 0.38s ease both;
       will-change: transform;
     }
-
     .stats-kpi-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
       margin-bottom: 24px;
     }
-
     .kpi-card {
       background: #fff;
       border: 1px solid var(--rule);
@@ -1395,7 +1251,6 @@
       position: relative;
       overflow: hidden;
     }
-
     .kpi-card::before {
       content: '';
       position: absolute;
@@ -1405,23 +1260,18 @@
       width: 3px;
       background: var(--accent, var(--green));
     }
-
     .kpi-card.green {
       --accent: var(--green);
     }
-
     .kpi-card.blue {
       --accent: var(--blue);
     }
-
     .kpi-card.gold {
       --accent: var(--gold);
     }
-
     .kpi-card.purple {
       --accent: var(--purple);
     }
-
     .kpi-label {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.7rem;
@@ -1430,7 +1280,6 @@
       text-transform: uppercase;
       color: var(--ink4);
     }
-
     .kpi-value {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 2rem;
@@ -1438,14 +1287,12 @@
       line-height: 1;
       color: var(--ink);
     }
-
     .kpi-sub {
       font-family: Barlow, sans-serif;
       font-size: 0.75rem;
       color: var(--ink4);
       font-weight: 500;
     }
-
     .stats-card {
       background: #fff;
       border: 1px solid var(--rule);
@@ -1453,16 +1300,13 @@
       margin-bottom: 16px;
       overflow: hidden;
     }
-
     .stats-card.animate-in {
       animation: slideUp 0.4s ease both;
     }
-
     .stats-card-header {
       padding: 16px 20px 12px;
       border-bottom: 1px solid var(--rule);
     }
-
     .stats-card-title {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -1472,7 +1316,6 @@
       color: var(--ink);
       line-height: 1.1;
     }
-
     .stats-card-sub {
       font-family: "Instrument Serif", serif;
       font-style: italic;
@@ -1480,11 +1323,9 @@
       color: var(--ink4);
       margin-top: 3px;
     }
-
     .stats-card-body {
       padding: 16px 20px 20px;
     }
-
     .hbar-row {
       display: grid;
       grid-template-columns: 90px 1fr 50px;
@@ -1492,7 +1333,6 @@
       gap: 10px;
       padding: 5px 0;
     }
-
     .hbar-name {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -1504,7 +1344,6 @@
       text-overflow: ellipsis;
       letter-spacing: 0.03em;
     }
-
     .hbar-track {
       height: 18px;
       background: var(--paper2);
@@ -1512,7 +1351,6 @@
       overflow: hidden;
       position: relative;
     }
-
     .hbar-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--green), #5ddb7c);
@@ -1521,19 +1359,15 @@
       display: flex;
       align-items: center;
     }
-
     .hbar-fill.blue {
       background: linear-gradient(90deg, var(--blue), #4a7bc8);
     }
-
     .hbar-fill.gold {
       background: linear-gradient(90deg, var(--gold), #e8c25a);
     }
-
     .hbar-fill.purple {
       background: linear-gradient(90deg, var(--purple), #9b6dc7);
     }
-
     .hbar-val {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
@@ -1541,7 +1375,6 @@
       text-align: right;
       color: var(--ink);
     }
-
     .donut-wrap {
       display: flex;
       align-items: center;
@@ -1549,33 +1382,28 @@
       flex-wrap: wrap;
       justify-content: center;
     }
-
     .donut-svg {
       width: 160px;
       height: 160px;
       flex-shrink: 0;
     }
-
     .donut-legend {
       display: flex;
       flex-direction: column;
       gap: 8px;
       min-width: 160px;
     }
-
     .donut-legend-row {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
     .donut-dot {
       width: 10px;
       height: 10px;
       border-radius: 2px;
       flex-shrink: 0;
     }
-
     .donut-legend-label {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.85rem;
@@ -1585,21 +1413,18 @@
       color: var(--ink2);
       flex: 1;
     }
-
     .donut-legend-val {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
       font-size: 1rem;
       color: var(--ink);
     }
-
     .donut-legend-pct {
       font-family: Barlow, sans-serif;
       font-size: 0.75rem;
       color: var(--ink4);
       font-weight: 500;
     }
-
     .line-legend-item {
       display: flex;
       align-items: center;
@@ -1612,7 +1437,6 @@
       color: var(--ink2);
       min-width: 0;
     }
-
     .stacked-row {
       display: grid;
       grid-template-columns: 90px 1fr 60px;
@@ -1620,7 +1444,6 @@
       gap: 10px;
       padding: 4px 0;
     }
-
     .stacked-track {
       height: 18px;
       background: var(--paper2);
@@ -1628,31 +1451,26 @@
       overflow: hidden;
       display: flex;
     }
-
     .stacked-seg {
       height: 100%;
       transition: width 0.6s ease;
     }
-
     .stacked-legend {
       display: flex;
       gap: 14px;
       flex-wrap: wrap;
       padding: 12px 0 4px;
     }
-
     .scoreline-heatmap-wrap {
       display: flex;
       flex-direction: column;
       gap: 18px;
     }
-
     .scoreline-block {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
-
     .scoreline-block-title {
       font-family: "Barlow Condensed", sans-serif;
       font-size: 0.78rem;
@@ -1663,23 +1481,19 @@
       padding: 5px 8px;
       border-radius: 3px;
     }
-
     .scoreline-block-title.predicted {
       background: var(--blue-light);
       color: var(--blue);
     }
-
     .scoreline-block-title.actual {
       background: var(--green-light);
       color: var(--green);
     }
-
     .scoreline-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
       gap: 4px;
     }
-
     .scoreline-cell {
       display: flex;
       flex-direction: column;
@@ -1694,17 +1508,14 @@
       position: relative;
       border: 1px solid rgba(14, 14, 14, 0.08);
     }
-
     .scoreline-cell:hover {
       transform: scale(1.06);
       z-index: 2;
     }
-
     .scoreline-cell.top {
       outline: 2px solid var(--gold);
       outline-offset: -2px;
     }
-
     .scoreline-label {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
@@ -1712,7 +1523,6 @@
       letter-spacing: 0.02em;
       line-height: 1;
     }
-
     .scoreline-count {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 600;
@@ -1721,7 +1531,6 @@
       opacity: 0.9;
       line-height: 1;
     }
-
     .scoreline-empty {
       font-family: "Instrument Serif", serif;
       font-style: italic;
@@ -1732,7 +1541,6 @@
       background: var(--paper);
       border-radius: 3px;
     }
-
     .scoreline-summary {
       display: flex;
       align-items: center;
@@ -1747,205 +1555,11 @@
       letter-spacing: 0.02em;
       flex-wrap: wrap;
     }
-
     .scoreline-summary strong {
       font-weight: 800;
       color: var(--ink);
       font-size: 0.95rem;
     }
-
-    .filter-fab {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      z-index: 300;
-      pointer-events: none;
-      transition: opacity 0.2s;
-    }
-
-    .filter-fab.hidden {
-      opacity: 0;
-      pointer-events: none !important;
-      visibility: hidden;
-    }
-
-    .filter-fab-btn {
-      pointer-events: all;
-      font-family: "Barlow Condensed", sans-serif;
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: var(--ink);
-      color: #fff;
-      border: none;
-      padding: 10px 14px;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      gap: 0;
-      cursor: pointer;
-      white-space: nowrap;
-      -webkit-tap-highlight-color: transparent;
-      overflow: hidden;
-      transition: padding 0.35s ease;
-    }
-
-    .filter-fab-icon {
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .filter-fab-icon svg {
-      width: 16px;
-      height: 16px;
-      fill: #5ddb7c;
-    }
-
-    .filter-fab-label {
-      display: inline-block;
-      max-width: 200px;
-      overflow: hidden;
-      opacity: 1;
-      margin-left: 8px;
-      margin-right: 4px;
-      transition: max-width 0.35s ease, opacity 0.2s ease, margin 0.35s ease;
-    }
-
-    .filter-fab-btn.collapsed .filter-fab-label {
-      max-width: 0;
-      opacity: 0;
-      margin-left: 0;
-      margin-right: 0;
-    }
-
-    .fab-accent {
-      color: #5ddb7c;
-      font-size: 0.75rem;
-      flex-shrink: 0;
-      transition: max-width 0.35s ease, opacity 0.2s ease;
-      max-width: 20px;
-      overflow: hidden;
-    }
-
-    .filter-fab-btn.collapsed .fab-accent {
-      max-width: 0;
-      opacity: 0;
-    }
-
-    .filter-sheet-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.4);
-      z-index: 400;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.22s ease;
-      visibility: hidden;
-    }
-
-    .filter-sheet-overlay.open {
-      opacity: 1;
-      pointer-events: all;
-      visibility: visible;
-    }
-
-    .filter-sheet {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #fff;
-      border-radius: 16px 16px 0 0;
-      z-index: 500;
-      transform: translateY(100%);
-      transition: transform 0.28s cubic-bezier(0.34, 1.1, 0.64, 1);
-      padding-bottom: env(safe-area-inset-bottom, 12px);
-    }
-
-    .filter-sheet.open {
-      transform: translateY(0);
-    }
-
-    .sheet-handle {
-      width: 36px;
-      height: 4px;
-      background: rgba(0, 0, 0, 0.12);
-      border-radius: 2px;
-      margin: 12px auto 16px;
-    }
-
-    .sheet-title {
-      font-family: "Barlow Condensed", sans-serif;
-      font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--ink4);
-      padding: 0 20px 10px;
-    }
-
-    .sheet-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 13px 20px;
-      border-top: 1px solid var(--rule);
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      transition: background 0.15s;
-    }
-
-    .sheet-item:active {
-      background: var(--paper);
-    }
-
-    .sheet-item-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .sheet-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--rule-strong);
-      flex-shrink: 0;
-      transition: background 0.15s;
-    }
-
-    .sheet-dot.active {
-      background: #5ddb7c;
-    }
-
-    .sheet-item-name {
-      font-family: "Barlow Condensed", sans-serif;
-      font-weight: 700;
-      font-size: 0.95rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--ink);
-    }
-
-    .sheet-item-name.active {
-      color: var(--green);
-    }
-
-    .sheet-check {
-      color: #5ddb7c;
-      font-size: 1rem;
-      font-weight: 700;
-      opacity: 0;
-      transition: opacity 0.15s;
-    }
-
-    .sheet-check.active {
-      opacity: 1;
-    }
-
     .calendar-modal-overlay {
       position: fixed;
       inset: 0;
@@ -1956,13 +1570,11 @@
       transition: opacity 0.22s ease;
       visibility: hidden;
     }
-
     .calendar-modal-overlay.open {
       opacity: 1;
       pointer-events: all;
       visibility: visible;
     }
-
     .calendar-modal {
       position: fixed;
       top: 50%;
@@ -1982,13 +1594,11 @@
       display: flex;
       flex-direction: column;
     }
-
     .calendar-modal.open {
       opacity: 1;
       pointer-events: all;
       transform: translate(-50%, -50%) scale(1);
     }
-
     .calendar-header {
       display: flex;
       align-items: center;
@@ -1996,7 +1606,6 @@
       padding: 20px 20px 16px;
       border-bottom: 1px solid var(--rule);
     }
-
     .calendar-title {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
@@ -2005,7 +1614,6 @@
       text-transform: uppercase;
       color: var(--ink);
     }
-
     .calendar-close {
       background: transparent;
       border: none;
@@ -2023,12 +1631,10 @@
       transition: background 0.15s, color 0.15s;
       -webkit-tap-highlight-color: transparent;
     }
-
     .calendar-close:hover {
       background: var(--paper);
       color: var(--ink);
     }
-
     .calendar-nav {
       display: flex;
       align-items: center;
@@ -2036,7 +1642,6 @@
       padding: 16px 20px;
       border-bottom: 1px solid var(--rule);
     }
-
     .calendar-nav-btn {
       background: transparent;
       border: 1px solid var(--rule-strong);
@@ -2054,17 +1659,14 @@
       transition: background 0.15s, border-color 0.15s;
       -webkit-tap-highlight-color: transparent;
     }
-
     .calendar-nav-btn:hover {
       background: var(--paper);
       border-color: var(--ink3);
     }
-
     .calendar-nav-btn:disabled {
       opacity: 0.3;
       cursor: not-allowed;
     }
-
     .calendar-month-year {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -2073,19 +1675,16 @@
       text-transform: uppercase;
       color: var(--ink);
     }
-
     .calendar-body {
       padding: 16px 20px 20px;
       overflow-y: auto;
     }
-
     .calendar-weekdays {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 4px;
       margin-bottom: 8px;
     }
-
     .calendar-weekday {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -2096,13 +1695,11 @@
       text-align: center;
       padding: 8px 4px;
     }
-
     .calendar-days {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 4px;
     }
-
     .calendar-day {
       aspect-ratio: 1;
       display: flex;
@@ -2118,36 +1715,29 @@
       background: transparent;
       padding: 4px;
     }
-
     .calendar-day:hover:not(.disabled):not(.empty) {
       background: var(--paper);
       border-color: var(--rule-strong);
     }
-
     .calendar-day.disabled {
       opacity: 0.25;
       cursor: not-allowed;
       color: var(--ink4);
     }
-
     .calendar-day.empty {
       cursor: default;
     }
-
     .calendar-day.selected {
       background: var(--green);
       border-color: var(--green);
     }
-
     .calendar-day.selected:hover {
       background: #156b24;
       border-color: #156b24;
     }
-
     .calendar-day.today:not(.selected) {
       border-color: var(--green);
     }
-
     .calendar-day-num {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -2155,11 +1745,9 @@
       color: var(--ink);
       line-height: 1;
     }
-
     .calendar-day.selected .calendar-day-num {
       color: #fff;
     }
-
     .calendar-day-count {
       font-family: "Barlow", sans-serif;
       font-weight: 600;
@@ -2168,15 +1756,12 @@
       margin-top: 2px;
       line-height: 1;
     }
-
     .calendar-day.selected .calendar-day-count {
       color: rgba(255, 255, 255, 0.85);
     }
-
     .calendar-day.disabled .calendar-day-count {
       display: none;
     }
-
     .calendar-filter-section {
       padding: 16px 20px;
       border-bottom: 1px solid var(--rule);
@@ -2184,7 +1769,6 @@
       flex-direction: column;
       gap: 12px;
     }
-
     .calendar-filter-toggle {
       display: flex;
       align-items: center;
@@ -2192,14 +1776,12 @@
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
     }
-
     .calendar-filter-toggle input[type="checkbox"] {
       width: 18px;
       height: 18px;
       cursor: pointer;
       accent-color: var(--green);
     }
-
     .calendar-filter-label {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 600;
@@ -2208,33 +1790,27 @@
       color: var(--ink);
       user-select: none;
     }
-
     .calendar-user-selector {
       display: none;
       animation: slideDown 0.2s ease;
     }
-
     .calendar-user-selector.visible {
       display: block;
     }
-
     @keyframes slideDown {
       from {
         opacity: 0;
         transform: translateY(-8px);
       }
-
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
-
     .custom-select {
       position: relative;
       width: 100%;
     }
-
     .custom-select-trigger {
       width: 100%;
       padding: 12px 40px 12px 14px;
@@ -2255,21 +1831,17 @@
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
-
     .custom-select-trigger:hover {
       border-color: var(--ink3);
       background: var(--paper);
     }
-
     .custom-select.open .custom-select-trigger {
       border-color: var(--green);
       box-shadow: 0 0 0 3px rgba(26, 92, 42, 0.1);
     }
-
     .custom-select-trigger.placeholder {
       color: var(--ink4);
     }
-
     .custom-select-arrow {
       position: absolute;
       right: 14px;
@@ -2278,11 +1850,9 @@
       pointer-events: none;
       transition: transform 0.2s;
     }
-
     .custom-select.open .custom-select-arrow {
       transform: translateY(-50%) rotate(180deg);
     }
-
     .custom-select-arrow svg {
       display: block;
       width: 16px;
@@ -2290,7 +1860,6 @@
       stroke: var(--ink3);
       stroke-width: 2.5;
     }
-
     .custom-select-dropdown {
       position: absolute;
       top: calc(100% + 6px);
@@ -2308,13 +1877,11 @@
       pointer-events: none;
       transition: opacity 0.2s, transform 0.2s;
     }
-
     .custom-select.open .custom-select-dropdown {
       opacity: 1;
       transform: translateY(0);
       pointer-events: all;
     }
-
     .custom-select-option {
       padding: 12px 14px;
       font-family: "Barlow Condensed", sans-serif;
@@ -2327,223 +1894,176 @@
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
-
     .custom-select-option:hover {
       background: var(--green-light);
     }
-
     .custom-select-option.selected {
       background: var(--green-light);
       color: var(--green);
       font-weight: 700;
     }
-
     .custom-select-option:first-child {
       border-radius: 6px 6px 0 0;
     }
-
     .custom-select-option:last-child {
       border-radius: 0 0 6px 6px;
     }
-
     .custom-select-option:only-child {
       border-radius: 6px;
     }
-
     .calendar-day-count.unpredicted {
       color: #ff6b6b;
     }
-
     .calendar-day.selected .calendar-day-count.unpredicted {
       color: rgba(255, 255, 255, 0.9);
     }
-
     @keyframes blink-dot {
-
       0%,
       100% {
         opacity: 1;
       }
-
       50% {
         opacity: 0.2;
       }
     }
-
     .hidden-control {
       display: none !important;
     }
-
     @media(max-width: 560px) {
       .header-top {
         padding: 0 16px;
         height: 54px;
       }
-
       .logo-main {
         font-size: 1.2rem;
       }
-
       .logo-sub {
         font-size: 0.85rem;
       }
-
       .tabs-wrapper {
         padding: 0 16px;
       }
-
       .tab {
         padding: 11px 14px 9px;
         font-size: 0.88rem;
       }
-
       .search-toggle-wrap {
         padding-left: 8px;
       }
-
       .search-row-wrap {
         padding: 0 14px;
       }
-
       .search-input {
         font-size: 0.95rem;
       }
-
       .search-input::placeholder {
         font-size: 0.9rem;
       }
-
       .search-chip {
         max-width: 220px;
       }
-
+      .past-toggle-bar {
+        padding: 7px 14px;
+      }
       main {
         padding: 24px 14px 100px;
       }
-
       .team-name {
         font-size: 0.9rem;
         max-width: 100%;
       }
-
       .team-cell {
         padding: 12px 12px;
       }
-
       .match-row {
         grid-template-columns: 1fr 106px 1fr;
       }
-
       .centre-block {
         min-width: 0;
         padding: 10px 6px;
       }
-
       .score-display {
         font-size: 1.6rem;
       }
-
       .lb-header-row,
       .lb-row {
         grid-template-columns: 30px 44px 1fr 64px 44px 48px;
         padding: 12px 14px;
       }
-
       .lb-pts {
         font-size: 1.2rem;
       }
-
       .lb-name {
         font-size: 0.9rem;
       }
-
       .sk-lb-row {
         grid-template-columns: 30px 44px 1fr 64px 44px 48px;
         padding: 12px 14px;
       }
-
       .pred-grid {
         grid-template-columns: 1fr 1fr;
       }
-
       .pred-item {
         padding: 10px 10px;
       }
-
       .pred-input {
         width: 36px;
         height: 36px;
       }
-
       .score-chip {
         width: 36px;
         height: 36px;
       }
-
       .stats-kpi-grid {
         grid-template-columns: repeat(2, 1fr);
       }
-
       .kpi-value {
         font-size: 1.6rem;
       }
-
       .hbar-row {
         grid-template-columns: 70px 1fr 42px;
         gap: 8px;
       }
-
       .hbar-name {
         font-size: 0.78rem;
       }
-
       .stacked-row {
         grid-template-columns: 70px 1fr 50px;
         gap: 8px;
       }
-
       .donut-wrap {
         gap: 16px;
       }
-
       .donut-svg {
         width: 130px;
         height: 130px;
       }
-
       .scoreline-row {
         grid-template-columns: repeat(auto-fit, minmax(42px, 1fr));
       }
-
       .scoreline-label {
         font-size: 0.85rem;
       }
-
       .scoreline-count {
         font-size: 0.65rem;
       }
-
       .search-match-row {
         flex-direction: column;
         align-items: flex-start;
         gap: 4px;
       }
-
       .search-match-teams {
         width: 100%;
       }
-
       .search-match-team-name {
         font-size: 0.85rem;
       }
-
       .search-match-meta {
         font-size: 0.7rem;
         text-align: left;
         padding-left: 24px;
       }
     }
-
     .pos-badge {
       display: inline-flex;
       align-items: center;
@@ -2557,24 +2077,20 @@
       line-height: 1;
       white-space: nowrap;
     }
-
     .pos-badge.up {
       background: var(--green-light);
       color: var(--green);
     }
-
     .pos-badge.down {
       background: var(--red-light);
       color: var(--red);
     }
-
     .pos-badge.same {
       background: transparent;
       color: var(--ink4);
       font-size: 0.85rem;
       line-height: 1;
     }
-
     .confirm-overlay {
       position: fixed;
       inset: 0;
@@ -2589,13 +2105,11 @@
       visibility: hidden;
       transition: opacity 0.2s ease;
     }
-
     .confirm-overlay.open {
       opacity: 1;
       pointer-events: all;
       visibility: visible;
     }
-
     .confirm-box {
       background: #fff;
       border-radius: 12px;
@@ -2606,11 +2120,9 @@
       transform: scale(0.95);
       transition: transform 0.2s ease;
     }
-
     .confirm-overlay.open .confirm-box {
       transform: scale(1);
     }
-
     .confirm-title {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
@@ -2620,7 +2132,6 @@
       color: var(--ink);
       margin-bottom: 10px;
     }
-
     .confirm-msg {
       font-family: Barlow, sans-serif;
       font-size: 0.95rem;
@@ -2628,18 +2139,15 @@
       color: var(--ink2);
       margin-bottom: 22px;
     }
-
     .confirm-msg strong {
       color: var(--red);
       font-weight: 700;
     }
-
     .confirm-actions {
       display: flex;
       gap: 10px;
       justify-content: flex-end;
     }
-
     .confirm-btn {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -2653,47 +2161,38 @@
       transition: all 0.15s;
       -webkit-tap-highlight-color: transparent;
     }
-
     .confirm-btn.cancel {
       background: var(--paper2);
       color: var(--ink2);
       border-color: var(--rule-strong);
     }
-
     .confirm-btn.cancel:hover {
       background: var(--paper3);
     }
-
     .confirm-btn.ok {
       background: var(--green);
       color: #fff;
     }
-
     .confirm-btn.ok:hover {
       background: #156b24;
     }
-
     .confirm-btn.ok.danger {
       background: var(--red);
     }
-
     .confirm-btn.ok.danger:hover {
       background: #a03228;
     }
-
     .toast.with-undo {
       display: flex;
       align-items: center;
       gap: 14px;
       white-space: normal;
     }
-
     .undo-toast-msg {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
       letter-spacing: 0.04em;
     }
-
     .undo-toast-btn {
       background: transparent;
       border: 1px solid #5ddb7c;
@@ -2710,14 +2209,12 @@
       transition: background 0.15s, color 0.15s;
       -webkit-tap-highlight-color: transparent;
     }
-
     .undo-toast-btn:hover {
       background: #5ddb7c;
       color: var(--ink);
     }
   </style>
 </head>
-
 <body>
   <div class="sticky-shell">
     <header>
@@ -2764,6 +2261,14 @@
           </button>
         </div>
       </div>
+      <!-- New: Hide-past toggle bar -->
+      <div class="past-toggle-bar" id="pastToggleBar">
+        <label class="past-toggle">
+          <input type="checkbox" id="hidePastToggle" checked onchange="onHidePastToggle()">
+          <span class="past-toggle-label">Hide past matches</span>
+        </label>
+        <span class="past-toggle-count" id="pastToggleCount"></span>
+      </div>
     </header>
     <div class="search-row-wrap" id="searchRowWrap">
       <div class="search-row">
@@ -2804,7 +2309,6 @@
     </div>
   </main>
   <div class="toast" id="toast"></div>
-
   <!-- Confirmation dialog -->
   <div class="confirm-overlay" id="confirmOverlay">
     <div class="confirm-box" id="confirmBox">
@@ -2815,23 +2319,6 @@
         <button class="confirm-btn ok" id="confirmOk">Confirm</button>
       </div>
     </div>
-  </div>
-  <div class="filter-fab" id="filterFab">
-    <button class="filter-fab-btn" id="filterFabBtn" onclick="onFabClick()">
-      <span class="filter-fab-icon">
-        <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-          <path d="M1 3h14v1.5l-5 5V14l-4-2V9.5L1 4.5V3z" />
-        </svg>
-      </span>
-      <span class="filter-fab-label" id="fabLabel">All Matches</span>
-      <span class="fab-accent">▾</span>
-    </button>
-  </div>
-  <div class="filter-sheet-overlay" id="sheetOverlay" onclick="closeFilterSheet()"></div>
-  <div class="filter-sheet" id="filterSheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Show</div>
-    <div id="sheetItems"></div>
   </div>
   <div class="calendar-modal-overlay" id="calendarOverlay" onclick="closeCalendar()"></div>
   <div class="calendar-modal" id="calendarModal">
@@ -2985,19 +2472,9 @@
     let lastLeaderboardHtml = '';
     let leaderboardFirstRender = true;
     let statsFirstRender = true;
-    let activeFilter = 'all';
     let firstRender = true;
-    const FILTER_LABELS = {
-      all: 'All Matches',
-      today: "Today's Matches",
-      group: 'Group Stage Matches',
-      r32: 'Round of 32 Matches',
-      r16: 'Round of 16 Matches',
-      qf: 'Quarter Finals',
-      sf: 'Semi Finals',
-      third: 'Third Place',
-      final: 'Final'
-    };
+    // ---- New: hide-past state (default ON) ----
+    let hidePastMatches = true;
     function hashStr(str) {
       let h = 2166136261;
       for (let i = 0; i < str.length; i++) {
@@ -3018,145 +2495,316 @@
       }
       return a;
     }
-    function getTodayWindow() {
+    // ---- New: past-match detection (kickoff before today - 1 day, local midnight) ----
+    function isPastMatch(m) {
+      const kickoff = parseUTC(m.kickoff);
+      if (!kickoff) return false;
       const now = new Date();
-      const ist = new Date(now.toLocaleString('en-US', { timeZone: LOCAL_TZ }));
-      const start = new Date(ist);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(ist);
-      end.setDate(end.getDate() + 1);
-      end.setHours(23, 59, 59, 999);
-      const offset = now.getTime() - ist.getTime();
-      return { start: new Date(start.getTime() + offset), end: new Date(end.getTime() + offset) };
+      const localNow = new Date(now.toLocaleString('en-US', { timeZone: LOCAL_TZ }));
+      const cutoffLocal = new Date(localNow);
+      cutoffLocal.setHours(0, 0, 0, 0);
+      cutoffLocal.setDate(cutoffLocal.getDate() - 1); // today minus 1 day
+      const offset = now.getTime() - localNow.getTime();
+      const cutoffUTC = new Date(cutoffLocal.getTime() + offset);
+      return kickoff < cutoffUTC;
     }
-    function matchesFilter(m, filter) {
-      if (filter === 'all') return true;
-      if (filter === 'today') {
-        const { start, end } = getTodayWindow();
-        const kickoff = parseUTC(m.kickoff);
-        if (!kickoff) return false;
-        return kickoff >= start && kickoff <= end;
-      }
-      return m.stage === filter;
-    }
-    function getAvailableFilters() {
-      const stages = [...new Set(matches.map(m => m.stage))];
-      return ['all', 'today', ...stages];
-    }
-    function buildSheetItems() {
-      const filters = getAvailableFilters();
-      const container = document.getElementById('sheetItems');
-      if (!container) return;
-      container.innerHTML = filters.map(f => {
-        const isActive = f === activeFilter;
-        return `<div class="sheet-item" onclick="applyFilter('${f}')">
-        <div class="sheet-item-left">
-          <div class="sheet-dot ${isActive ? 'active' : ''}"></div>
-          <div class="sheet-item-name ${isActive ? 'active' : ''}">${FILTER_LABELS[f] || f}</div>
-        </div>
-        <div class="sheet-check ${isActive ? 'active' : ''}">✓</div>
-      </div>`;
-      }).join('');
-    }
-    function openFilterSheet() {
-      buildSheetItems();
-      document.getElementById('sheetOverlay').classList.add('open');
-      document.getElementById('filterSheet').classList.add('open');
-    }
-    function closeFilterSheet() {
-      document.getElementById('sheetOverlay').classList.remove('open');
-      document.getElementById('filterSheet').classList.remove('open');
-    }
-    function applyFilter(filter) {
-      activeFilter = filter;
-      clearDateFilter();
-      closeFilterSheet();
-      const label = document.getElementById('fabLabel');
-      if (label) label.textContent = FILTER_LABELS[filter] || filter;
-      updateClearButtonVisibility();
-      expandFab();
+    function onHidePastToggle() {
+      const cb = document.getElementById('hidePastToggle');
+      hidePastMatches = !!(cb && cb.checked);
       buildMatchDOM();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    function autoSelectFilter() {
-      const todayMatches = matches.filter(m => matchesFilter(m, 'today'));
-      if (todayMatches.length) {
-        activeFilter = 'today';
-        const label = document.getElementById('fabLabel');
-        if (label) label.textContent = FILTER_LABELS['today'];
+    function setPastToggleBarVisibility(tabId) {
+      const bar = document.getElementById('pastToggleBar');
+      if (!bar) return;
+      // Only show on the Predict tab and when no explicit search/date filter is active
+      const show = tabId === 'predict' && !activeTeamFilter && !activeMatchFilter && !activeDateFilter;
+      bar.classList.toggle('hidden-control', !show);
+    }
+    function computeCountdownHTML(kickoffStr, status) {
+      if (status === 'FINISHED') return '';
+      const kickoff = parseUTC(kickoffStr);
+      if (!kickoff) return '';
+      const diff = kickoff.getTime() - new Date().getTime();
+      if (diff <= 0) {
+        if (!status) return '';
+        const humanStatuses = ['LIVE', 'HT', 'ET', 'PEN', 'AET'];
+        if (!humanStatuses.includes(status.toUpperCase())) return '';
+        return `<span class="match-time">${status}</span>`;
       }
+      const totalSec = Math.floor(diff / 1000);
+      const d = Math.floor(totalSec / 86400);
+      const h = Math.floor((totalSec % 86400) / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      let label, dotColor;
+      if (diff >= 86400000) {
+        label = d + 'd ' + h + 'h';
+        dotColor = '#6e6760';
+      } else if (diff >= 3600000) {
+        label = h + 'h ' + m + 'm';
+        dotColor = '#b8860b';
+      } else if (diff >= 60000) {
+        label = m + 'm ' + s + 's';
+        dotColor = '#c0392b';
+      } else {
+        label = s + 's';
+        dotColor = '#c0392b';
+      }
+      return '<span style="display:inline-flex;align-items:center;gap:5px;background:var(--paper2);border-radius:20px;padding:2px 8px 2px 6px;">' +
+        '<span style="width:6px;height:6px;border-radius:50%;background:' + dotColor + ';flex-shrink:0;display:inline-block;animation:blink-dot 1.2s infinite;"></span>' +
+        '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.06em;color:' + dotColor + ';">' + label + '</span>' +
+        '</span>';
     }
-    let fabCollapseTimer = null;
-    let fabExpanded = true;
-    function expandFab() {
-      const btn = document.getElementById('filterFabBtn');
-      if (!btn) return;
-      btn.classList.remove('collapsed');
-      fabExpanded = true;
-      clearTimeout(fabCollapseTimer);
-      fabCollapseTimer = setTimeout(collapseFab, 3500);
+    function tickCountdowns() {
+      document.querySelectorAll('.match-countdown').forEach(el => {
+        el.innerHTML = computeCountdownHTML(el.dataset.kickoff, el.dataset.status);
+      });
     }
-    function collapseFab() {
-      const btn = document.getElementById('filterFabBtn');
-      if (!btn) return;
-      btn.classList.add('collapsed');
-      fabExpanded = false;
+    setInterval(tickCountdowns, 1000);
+    let activeTeamFilter = null;
+    let activeMatchFilter = null;
+    let searchRowOpen = false;
+    function getUniqueTeams() {
+      const set = new Set();
+      matches.forEach(m => {
+        if (m.team_home && m.team_home !== 'TBD') set.add(m.team_home);
+        if (m.team_away && m.team_away !== 'TBD') set.add(m.team_away);
+      });
+      return [...set].sort();
     }
-    function onFabClick() {
-      if (!fabExpanded) {
-        expandFab();
+    function searchTeams(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) return [];
+      const teams = getUniqueTeams();
+      const starts = [], contains = [];
+      teams.forEach(t => {
+        const lc = t.toLowerCase();
+        if (lc.startsWith(q)) starts.push(t);
+        else if (lc.includes(q)) contains.push(t);
+      });
+      return [...starts, ...contains].slice(0, 5);
+    }
+    function searchMatchesByQuery(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) return [];
+      return matches.filter(m => {
+        const h = (m.team_home || '').toLowerCase();
+        const a = (m.team_away || '').toLowerCase();
+        return h.includes(q) || a.includes(q);
+      }).slice(0, 5);
+    }
+    function teamMatchCount(team) {
+      return matches.filter(m => m.team_home === team || m.team_away === team).length;
+    }
+    function fmtShortDate(dt) {
+      if (!dt) return '';
+      const datePart = dt.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: LOCAL_TZ });
+      const timePart = dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: LOCAL_TZ }).toUpperCase();
+      return datePart + ' · ' + timePart;
+    }
+    function buildMatchResultRow(m) {
+      const homeTeam = m.team_home || 'TBD';
+      const awayTeam = m.team_away || 'TBD';
+      const stage = STAGE_SHORT[m.stage] || m.stage;
+      const kickoffDt = parseUTC(m.kickoff);
+      const dateStr = fmtShortDate(kickoffDt);
+      const finished = m.status === 'FINISHED';
+      let scoreOrVs;
+      if (finished && m.score_home !== null && m.score_away !== null && m.score_home !== undefined && m.score_away !== undefined) {
+        scoreOrVs = `<span class="search-match-vs" style="color:var(--green);font-weight:800;">${m.score_home}–${m.score_away}</span>`;
+      } else {
+        scoreOrVs = `<span class="search-match-vs">vs</span>`;
+      }
+      const meta = `${stage}${dateStr ? ' · ' + dateStr : ''}`;
+      return `<div class="search-match-row" onclick="selectMatchFilter('${escHtml(m.match_id)}')">
+      <div class="search-match-teams">
+        <div class="search-match-team">${flagHtmlSmall(homeTeam)}<span class="search-match-team-name">${escHtml(homeTeam)}</span></div>
+        ${scoreOrVs}
+        <div class="search-match-team">${flagHtmlSmall(awayTeam)}<span class="search-match-team-name">${escHtml(awayTeam)}</span></div>
+      </div>
+      <div class="search-match-meta">${meta}</div>
+    </div>`;
+    }
+    function renderSearchResults(query) {
+      const results = document.getElementById('searchResults');
+      if (!results) return;
+      if (!query.trim()) {
+        results.innerHTML = '';
+        results.classList.add('empty');
         return;
       }
-      openFilterSheet();
-    }
-    function setFabVisibility(tabId) {
-      const fab = document.getElementById('filterFab');
-      if (!fab) return;
-      if (tabId === 'predict' && !activeTeamFilter && !activeMatchFilter) {
-        fab.classList.remove('hidden');
-        expandFab();
-      } else {
-        fab.classList.add('hidden');
+      const teamHits = searchTeams(query);
+      const matchHits = searchMatchesByQuery(query);
+      if (!teamHits.length && !matchHits.length) {
+        results.innerHTML = `<div class="search-empty">No teams or matches for "${escHtml(query)}"</div>`;
+        results.classList.remove('empty');
+        return;
       }
+      let html = '';
+      if (teamHits.length) {
+        html += '<div class="search-section-title">Teams</div>';
+        html += teamHits.map(t => {
+          const count = teamMatchCount(t);
+          const safe = escHtml(t).replace(/'/g, "\\'");
+          return `<div class="search-result" onclick="selectTeamFilter('${safe}')">
+          ${flagHtml(t)}
+          <span class="search-result-team-name">${escHtml(t)}</span>
+          <span class="search-result-meta">${count} match${count !== 1 ? 'es' : ''}</span>
+        </div>`;
+        }).join('');
+      }
+      if (matchHits.length) {
+        html += '<div class="search-section-title">Matches</div>';
+        html += matchHits.map(buildMatchResultRow).join('');
+      }
+      results.innerHTML = html;
+      results.classList.remove('empty');
     }
-    function hideSearchUIOnly() {
+    function toggleSearchRow() {
+      if (searchRowOpen) closeSearchRow();
+      else openSearchRow();
+    }
+    function openSearchRow() {
+      const wrap = document.getElementById('searchRowWrap');
+      const toggle = document.getElementById('searchToggle');
+      const input = document.getElementById('searchInput');
+      if (!wrap) return;
+      wrap.classList.add('open');
+      if (toggle) toggle.classList.add('active');
+      searchRowOpen = true;
+      setTimeout(() => { if (input) input.focus(); }, 80);
+    }
+    function closeSearchRow() {
       const wrap = document.getElementById('searchRowWrap');
       const toggle = document.getElementById('searchToggle');
       const input = document.getElementById('searchInput');
       const results = document.getElementById('searchResults');
-      if (wrap) wrap.classList.remove('open');
+      if (!wrap) return;
+      wrap.classList.remove('open');
       if (toggle) toggle.classList.remove('active');
+      searchRowOpen = false;
       if (input) input.value = '';
       if (results) {
         results.innerHTML = '';
         results.classList.add('empty');
       }
-      searchRowOpen = false;
+      if (activeTeamFilter || activeMatchFilter) {
+        activeTeamFilter = null;
+        activeMatchFilter = null;
+        const inputRow = document.getElementById('searchInputRow');
+        const chip = document.getElementById('searchChip');
+        if (inputRow) inputRow.classList.remove('has-filter');
+        if (chip) chip.innerHTML = '';
+        setPastToggleBarVisibility(getActiveTabId());
+        buildMatchDOM();
+      }
     }
-    function setTopControlsVisibility(tabId) {
-      const calendarToggle = document.getElementById('calendarToggle');
-      const searchToggle = document.getElementById('searchToggle');
-      const shouldShow = tabId === 'predict';
-      [calendarToggle, searchToggle].forEach(el => {
-        if (!el) return;
-        el.classList.toggle('hidden-control', !shouldShow);
+    function selectTeamFilter(team) {
+      activeTeamFilter = team;
+      activeMatchFilter = null;
+      const inputRow = document.getElementById('searchInputRow');
+      const chip = document.getElementById('searchChip');
+      const input = document.getElementById('searchInput');
+      const results = document.getElementById('searchResults');
+      if (input) input.value = '';
+      if (results) {
+        results.innerHTML = '';
+        results.classList.add('empty');
+      }
+      if (inputRow) inputRow.classList.add('has-filter');
+      if (chip) {
+        chip.innerHTML = `
+        ${flagHtml(team)}
+        <span class="search-chip-name">${escHtml(team)}</span>
+        <button class="search-chip-clear" onclick="clearTeamFilter(event)" aria-label="Clear filter">×</button>
+      `;
+      }
+      setPastToggleBarVisibility(getActiveTabId());
+      updateClearButtonVisibility();
+      buildMatchDOM();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function selectMatchFilter(matchId) {
+      const m = matches.find(x => String(x.match_id) === String(matchId));
+      if (!m) return;
+      const predictTab = document.querySelector('.tab[data-tab="predict"]');
+      if (predictTab && !document.getElementById('predict').classList.contains('active')) {
+        switchTab('predict', predictTab);
+      }
+      activeMatchFilter = String(matchId);
+      activeTeamFilter = null;
+      const inputRow = document.getElementById('searchInputRow');
+      const chip = document.getElementById('searchChip');
+      const input = document.getElementById('searchInput');
+      const results = document.getElementById('searchResults');
+      if (input) input.value = '';
+      if (results) {
+        results.innerHTML = '';
+        results.classList.add('empty');
+      }
+      if (inputRow) inputRow.classList.add('has-filter');
+      const homeTeam = m.team_home || 'TBD';
+      const awayTeam = m.team_away || 'TBD';
+      if (chip) {
+        chip.innerHTML = `
+        ${flagHtmlMini(homeTeam)}
+        <span class="search-chip-name">${escHtml(homeTeam)}</span>
+        <span class="search-chip-vs">vs</span>
+        <span class="search-chip-name">${escHtml(awayTeam)}</span>
+        ${flagHtmlMini(awayTeam)}
+        <button class="search-chip-clear" onclick="clearTeamFilter(event)" aria-label="Clear filter">×</button>
+      `;
+      }
+      setPastToggleBarVisibility(getActiveTabId());
+      updateClearButtonVisibility();
+      buildMatchDOM();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function clearTeamFilter(ev) {
+      if (ev) ev.stopPropagation();
+      activeTeamFilter = null;
+      activeMatchFilter = null;
+      clearDateFilter();
+      const inputRow = document.getElementById('searchInputRow');
+      const chip = document.getElementById('searchChip');
+      const input = document.getElementById('searchInput');
+      if (inputRow) inputRow.classList.remove('has-filter');
+      if (chip) chip.innerHTML = '';
+      setPastToggleBarVisibility(getActiveTabId());
+      updateClearButtonVisibility();
+      buildMatchDOM();
+      setTimeout(() => { if (input) input.focus(); }, 60);
+    }
+    function getActiveTabId() {
+      const active = document.querySelector('.tab-content.active');
+      return active ? active.id : 'predict';
+    }
+    function initSearch() {
+      const input = document.getElementById('searchInput');
+      if (!input) return;
+      let debounceTimer;
+      input.addEventListener('input', e => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => renderSearchResults(e.target.value), 80);
       });
-      if (!shouldShow) {
-        hideSearchUIOnly();
-        closeCalendar();
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeSearchRow();
+      });
+      function handleOutsideInteraction(e) {
+        if (!searchRowOpen) return;
+        if (activeTeamFilter || activeMatchFilter) return;
+        const wrap = document.getElementById('searchRowWrap');
+        const toggle = document.getElementById('searchToggle');
+        if (!wrap) return;
+        if (wrap.contains(e.target)) return;
+        if (toggle && toggle.contains(e.target)) return;
+        closeSearchRow();
       }
+      document.addEventListener('mousedown', handleOutsideInteraction);
+      document.addEventListener('touchstart', handleOutsideInteraction, { passive: true });
     }
-    window.addEventListener('scroll', () => {
-      const activeTab = document.querySelector('.tab-content.active');
-      if (activeTab && activeTab.id === 'predict') {
-        expandFab();
-        clearTimeout(fabCollapseTimer);
-        fabCollapseTimer = setTimeout(collapseFab, 1500);
-      }
-    }, { passive: true });
-    function initFab() {
-      fabCollapseTimer = setTimeout(collapseFab, 3500);
-    }
+    // ---- Calendar ----
     let currentCalendarMonth = new Date();
     let selectedCalendarDate = null;
     let activeDateFilter = null;
@@ -3342,20 +2990,8 @@
       if (isUnpredictedMode && matchCount === 0) activeUnpredictedFilter = false;
       else activeUnpredictedFilter = isUnpredictedMode && selectedUserId;
       closeCalendar();
-      const label = document.getElementById('fabLabel');
-      const parts = dateKey.split('-');
-      const month = parseInt(parts[1], 10) - 1;
-      const day = parseInt(parts[2], 10);
-      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      let dateStr = `${monthNames[month]} ${day}`;
-      if (activeUnpredictedFilter) {
-        const user = users.find(u => u.user_id === selectedUserId);
-        const userName = user ? (user.display_name || 'User') : 'User';
-        dateStr += `(${userName} - Unpredicted)`;
-      }
-      if (label) label.textContent = dateStr;
       updateClearButtonVisibility();
-      expandFab();
+      setPastToggleBarVisibility(getActiveTabId());
       buildMatchDOM();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -3363,11 +2999,8 @@
       selectedCalendarDate = null;
       activeDateFilter = null;
       activeUnpredictedFilter = false;
-      const label = document.getElementById('fabLabel');
-      if (label) label.textContent = FILTER_LABELS[activeFilter] || 'All Matches';
     }
     function clearAllFilters() {
-      activeFilter = 'all';
       activeTeamFilter = null;
       activeMatchFilter = null;
       activeUnpredictedFilter = false;
@@ -3378,8 +3011,6 @@
       selectedUserId = null;
       const userSelectorWrap = document.getElementById('userSelectorWrap');
       if (userSelectorWrap) userSelectorWrap.classList.remove('visible');
-      const label = document.getElementById('fabLabel');
-      if (label) label.textContent = 'All Matches';
       const inputRow = document.getElementById('searchInputRow');
       const chip = document.getElementById('searchChip');
       const input = document.getElementById('searchInput');
@@ -3389,297 +3020,15 @@
       const searchRow = document.getElementById('searchRowWrap');
       if (searchRow && searchRow.classList.contains('open')) closeSearchRow();
       updateClearButtonVisibility();
+      setPastToggleBarVisibility(getActiveTabId());
       buildMatchDOM();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     function updateClearButtonVisibility() {
       const clearBtn = document.getElementById('clearFilterBtn');
       if (!clearBtn) return;
-      const hasFilter = activeDateFilter || activeTeamFilter || activeMatchFilter || (activeFilter && activeFilter !== 'all');
+      const hasFilter = activeDateFilter || activeTeamFilter || activeMatchFilter;
       clearBtn.classList.toggle('visible', !!hasFilter);
-    }
-    function computeCountdownHTML(kickoffStr, status) {
-      if (status === 'FINISHED') return '';
-      const kickoff = parseUTC(kickoffStr);
-      if (!kickoff) return '';
-      const diff = kickoff.getTime() - new Date().getTime();
-      if (diff <= 0) {
-        if (!status) return '';
-        const humanStatuses = ['LIVE', 'HT', 'ET', 'PEN', 'AET'];
-        if (!humanStatuses.includes(status.toUpperCase())) return '';
-        return `<span class="match-time">${status}</span>`;
-      }
-      const totalSec = Math.floor(diff / 1000);
-      const d = Math.floor(totalSec / 86400);
-      const h = Math.floor((totalSec % 86400) / 3600);
-      const m = Math.floor((totalSec % 3600) / 60);
-      const s = totalSec % 60;
-      let label, dotColor;
-      if (diff >= 86400000) {
-        label = d + 'd ' + h + 'h';
-        dotColor = '#6e6760';
-      } else if (diff >= 3600000) {
-        label = h + 'h ' + m + 'm';
-        dotColor = '#b8860b';
-      } else if (diff >= 60000) {
-        label = m + 'm ' + s + 's';
-        dotColor = '#c0392b';
-      } else {
-        label = s + 's';
-        dotColor = '#c0392b';
-      }
-      return '<span style="display:inline-flex;align-items:center;gap:5px;background:var(--paper2);border-radius:20px;padding:2px 8px 2px 6px;">' +
-        '<span style="width:6px;height:6px;border-radius:50%;background:' + dotColor + ';flex-shrink:0;display:inline-block;animation:blink-dot 1.2s infinite;"></span>' +
-        '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.06em;color:' + dotColor + ';">' + label + '</span>' +
-        '</span>';
-    }
-    function tickCountdowns() {
-      document.querySelectorAll('.match-countdown').forEach(el => {
-        el.innerHTML = computeCountdownHTML(el.dataset.kickoff, el.dataset.status);
-      });
-    }
-    setInterval(tickCountdowns, 1000);
-    let activeTeamFilter = null;
-    let activeMatchFilter = null;
-    let searchRowOpen = false;
-    function getUniqueTeams() {
-      const set = new Set();
-      matches.forEach(m => {
-        if (m.team_home && m.team_home !== 'TBD') set.add(m.team_home);
-        if (m.team_away && m.team_away !== 'TBD') set.add(m.team_away);
-      });
-      return [...set].sort();
-    }
-    function searchTeams(query) {
-      const q = query.trim().toLowerCase();
-      if (!q) return [];
-      const teams = getUniqueTeams();
-      const starts = [], contains = [];
-      teams.forEach(t => {
-        const lc = t.toLowerCase();
-        if (lc.startsWith(q)) starts.push(t);
-        else if (lc.includes(q)) contains.push(t);
-      });
-      return [...starts, ...contains].slice(0, 5);
-    }
-    function searchMatchesByQuery(query) {
-      const q = query.trim().toLowerCase();
-      if (!q) return [];
-      return matches.filter(m => {
-        const h = (m.team_home || '').toLowerCase();
-        const a = (m.team_away || '').toLowerCase();
-        return h.includes(q) || a.includes(q);
-      }).slice(0, 5);
-    }
-    function teamMatchCount(team) {
-      return matches.filter(m => m.team_home === team || m.team_away === team).length;
-    }
-    function fmtShortDate(dt) {
-      if (!dt) return '';
-      const datePart = dt.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: LOCAL_TZ });
-      const timePart = dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: LOCAL_TZ }).toUpperCase();
-      return datePart + ' · ' + timePart;
-    }
-    function buildMatchResultRow(m) {
-      const homeTeam = m.team_home || 'TBD';
-      const awayTeam = m.team_away || 'TBD';
-      const stage = STAGE_SHORT[m.stage] || m.stage;
-      const kickoffDt = parseUTC(m.kickoff);
-      const dateStr = fmtShortDate(kickoffDt);
-      const finished = m.status === 'FINISHED';
-      let scoreOrVs;
-      if (finished && m.score_home !== null && m.score_away !== null && m.score_home !== undefined && m.score_away !== undefined) {
-        scoreOrVs = `<span class="search-match-vs" style="color:var(--green);font-weight:800;">${m.score_home}–${m.score_away}</span>`;
-      } else {
-        scoreOrVs = `<span class="search-match-vs">vs</span>`;
-      }
-      const meta = `${stage}${dateStr ? ' · ' + dateStr : ''}`;
-      return `<div class="search-match-row" onclick="selectMatchFilter('${escHtml(m.match_id)}')">
-      <div class="search-match-teams">
-        <div class="search-match-team">${flagHtmlSmall(homeTeam)}<span class="search-match-team-name">${escHtml(homeTeam)}</span></div>
-        ${scoreOrVs}
-        <div class="search-match-team">${flagHtmlSmall(awayTeam)}<span class="search-match-team-name">${escHtml(awayTeam)}</span></div>
-      </div>
-      <div class="search-match-meta">${meta}</div>
-    </div>`;
-    }
-    function renderSearchResults(query) {
-      const results = document.getElementById('searchResults');
-      if (!results) return;
-      if (!query.trim()) {
-        results.innerHTML = '';
-        results.classList.add('empty');
-        return;
-      }
-      const teamHits = searchTeams(query);
-      const matchHits = searchMatchesByQuery(query);
-      if (!teamHits.length && !matchHits.length) {
-        results.innerHTML = `<div class="search-empty">No teams or matches for "${escHtml(query)}"</div>`;
-        results.classList.remove('empty');
-        return;
-      }
-      let html = '';
-      if (teamHits.length) {
-        html += '<div class="search-section-title">Teams</div>';
-        html += teamHits.map(t => {
-          const count = teamMatchCount(t);
-          const safe = escHtml(t).replace(/'/g, "\\'");
-          return `<div class="search-result" onclick="selectTeamFilter('${safe}')">
-          ${flagHtml(t)}
-          <span class="search-result-team-name">${escHtml(t)}</span>
-          <span class="search-result-meta">${count} match${count !== 1 ? 'es' : ''}</span>
-        </div>`;
-        }).join('');
-      }
-      if (matchHits.length) {
-        html += '<div class="search-section-title">Matches</div>';
-        html += matchHits.map(buildMatchResultRow).join('');
-      }
-      results.innerHTML = html;
-      results.classList.remove('empty');
-    }
-    function toggleSearchRow() {
-      if (searchRowOpen) closeSearchRow();
-      else openSearchRow();
-    }
-    function openSearchRow() {
-      const wrap = document.getElementById('searchRowWrap');
-      const toggle = document.getElementById('searchToggle');
-      const input = document.getElementById('searchInput');
-      if (!wrap) return;
-      wrap.classList.add('open');
-      if (toggle) toggle.classList.add('active');
-      searchRowOpen = true;
-      setTimeout(() => { if (input) input.focus(); }, 80);
-    }
-    function closeSearchRow() {
-      const wrap = document.getElementById('searchRowWrap');
-      const toggle = document.getElementById('searchToggle');
-      const input = document.getElementById('searchInput');
-      const results = document.getElementById('searchResults');
-      if (!wrap) return;
-      wrap.classList.remove('open');
-      if (toggle) toggle.classList.remove('active');
-      searchRowOpen = false;
-      if (input) input.value = '';
-      if (results) {
-        results.innerHTML = '';
-        results.classList.add('empty');
-      }
-      if (activeTeamFilter || activeMatchFilter) {
-        activeTeamFilter = null;
-        activeMatchFilter = null;
-        const inputRow = document.getElementById('searchInputRow');
-        const chip = document.getElementById('searchChip');
-        if (inputRow) inputRow.classList.remove('has-filter');
-        if (chip) chip.innerHTML = '';
-        setFabVisibility(getActiveTabId());
-        buildMatchDOM();
-      }
-    }
-    function selectTeamFilter(team) {
-      activeTeamFilter = team;
-      activeMatchFilter = null;
-      const inputRow = document.getElementById('searchInputRow');
-      const chip = document.getElementById('searchChip');
-      const input = document.getElementById('searchInput');
-      const results = document.getElementById('searchResults');
-      if (input) input.value = '';
-      if (results) {
-        results.innerHTML = '';
-        results.classList.add('empty');
-      }
-      if (inputRow) inputRow.classList.add('has-filter');
-      if (chip) {
-        chip.innerHTML = `
-        ${flagHtml(team)}
-        <span class="search-chip-name">${escHtml(team)}</span>
-        <button class="search-chip-clear" onclick="clearTeamFilter(event)" aria-label="Clear filter">×</button>
-      `;
-      }
-      setFabVisibility(getActiveTabId());
-      updateClearButtonVisibility();
-      buildMatchDOM();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    function selectMatchFilter(matchId) {
-      const m = matches.find(x => String(x.match_id) === String(matchId));
-      if (!m) return;
-      const predictTab = document.querySelector('.tab[data-tab="predict"]');
-      if (predictTab && !document.getElementById('predict').classList.contains('active')) {
-        switchTab('predict', predictTab);
-      }
-      activeMatchFilter = String(matchId);
-      activeTeamFilter = null;
-      const inputRow = document.getElementById('searchInputRow');
-      const chip = document.getElementById('searchChip');
-      const input = document.getElementById('searchInput');
-      const results = document.getElementById('searchResults');
-      if (input) input.value = '';
-      if (results) {
-        results.innerHTML = '';
-        results.classList.add('empty');
-      }
-      if (inputRow) inputRow.classList.add('has-filter');
-      const homeTeam = m.team_home || 'TBD';
-      const awayTeam = m.team_away || 'TBD';
-      if (chip) {
-        chip.innerHTML = `
-        ${flagHtmlMini(homeTeam)}
-        <span class="search-chip-name">${escHtml(homeTeam)}</span>
-        <span class="search-chip-vs">vs</span>
-        <span class="search-chip-name">${escHtml(awayTeam)}</span>
-        ${flagHtmlMini(awayTeam)}
-        <button class="search-chip-clear" onclick="clearTeamFilter(event)" aria-label="Clear filter">×</button>
-      `;
-      }
-      setFabVisibility(getActiveTabId());
-      updateClearButtonVisibility();
-      buildMatchDOM();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    function clearTeamFilter(ev) {
-      if (ev) ev.stopPropagation();
-      activeTeamFilter = null;
-      activeMatchFilter = null;
-      clearDateFilter();
-      const inputRow = document.getElementById('searchInputRow');
-      const chip = document.getElementById('searchChip');
-      const input = document.getElementById('searchInput');
-      if (inputRow) inputRow.classList.remove('has-filter');
-      if (chip) chip.innerHTML = '';
-      setFabVisibility(getActiveTabId());
-      updateClearButtonVisibility();
-      buildMatchDOM();
-      setTimeout(() => { if (input) input.focus(); }, 60);
-    }
-    function getActiveTabId() {
-      const active = document.querySelector('.tab-content.active');
-      return active ? active.id : 'predict';
-    }
-    function initSearch() {
-      const input = document.getElementById('searchInput');
-      if (!input) return;
-      let debounceTimer;
-      input.addEventListener('input', e => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => renderSearchResults(e.target.value), 80);
-      });
-      input.addEventListener('keydown', e => {
-        if (e.key === 'Escape') closeSearchRow();
-      });
-      function handleOutsideInteraction(e) {
-        if (!searchRowOpen) return;
-        if (activeTeamFilter || activeMatchFilter) return;
-        const wrap = document.getElementById('searchRowWrap');
-        const toggle = document.getElementById('searchToggle');
-        if (!wrap) return;
-        if (wrap.contains(e.target)) return;
-        if (toggle && toggle.contains(e.target)) return;
-        closeSearchRow();
-      }
-      document.addEventListener('mousedown', handleOutsideInteraction);
-      document.addEventListener('touchstart', handleOutsideInteraction, { passive: true });
     }
     async function boot() {
       renderSkeleton();
@@ -3694,10 +3043,9 @@
         lastUsersJson = JSON.stringify(users);
         lastMatchesJson = JSON.stringify(matches);
         buildMatchDOM();
-        autoSelectFilter();
-        initFab();
         initSearch();
         setTopControlsVisibility('predict');
+        setPastToggleBarVisibility('predict');
       } catch (err) {
         document.getElementById('matchList').innerHTML = '<div class="state-msg">Could not load data. Check your connection.</div>';
         showToast('Failed to load data', true);
@@ -3917,7 +3265,9 @@
         return;
       }
       let visibleMatches = matches;
+      let explicitFilterActive = false;
       if (activeMatchFilter) {
+        explicitFilterActive = true;
         visibleMatches = matches.filter(m => String(m.match_id) === String(activeMatchFilter));
         if (!visibleMatches.length) {
           container.innerHTML = `<div class="state-msg">Match not found.</div>`;
@@ -3925,6 +3275,7 @@
           return;
         }
       } else if (activeTeamFilter) {
+        explicitFilterActive = true;
         visibleMatches = matches.filter(m => m.team_home === activeTeamFilter || m.team_away === activeTeamFilter);
         if (!visibleMatches.length) {
           container.innerHTML = `<div class="state-msg">No matches found for ${escHtml(activeTeamFilter)}.</div>`;
@@ -3932,6 +3283,7 @@
           return;
         }
       } else if (activeDateFilter) {
+        explicitFilterActive = true;
         visibleMatches = matches.filter(m => {
           const kickoff = parseUTC(m.kickoff);
           if (!kickoff) return false;
@@ -3955,13 +3307,21 @@
           firstRender = false;
           return;
         }
-      } else if (activeFilter && activeFilter !== 'all') {
-        visibleMatches = matches.filter(m => matchesFilter(m, activeFilter));
+      }
+      // ---- New: hide-past filter (only applies when no explicit filter is forcing a view) ----
+      const countEl = document.getElementById('pastToggleCount');
+      if (!explicitFilterActive && hidePastMatches) {
+        const filtered = visibleMatches.filter(m => !isPastMatch(m));
+        const hiddenCount = visibleMatches.length - filtered.length;
+        if (countEl) countEl.textContent = hiddenCount ? `· ${hiddenCount} hidden` : '';
+        visibleMatches = filtered;
         if (!visibleMatches.length) {
-          container.innerHTML = `<div class="state-msg">No matches found for ${escHtml(FILTER_LABELS[activeFilter] || activeFilter)}.</div>`;
+          container.innerHTML = `<div class="state-msg">No upcoming matches. Untick “Hide past matches” to see earlier games.</div>`;
           firstRender = false;
           return;
         }
+      } else {
+        if (countEl) countEl.textContent = '';
       }
       let html = '', lastStage = null;
       visibleMatches.forEach(function (m) {
@@ -3983,7 +3343,8 @@
     function patchMatchDOM(oldMatches, newMatches, newUsers) {
       const container = document.getElementById('matchList');
       if (!container) return;
-      if (activeTeamFilter || activeMatchFilter) {
+      // If any filtering view is active, just rebuild to keep things consistent
+      if (activeTeamFilter || activeMatchFilter || activeDateFilter || hidePastMatches) {
         buildMatchDOM();
         return;
       }
@@ -4113,12 +3474,38 @@
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       el.classList.add('active');
-      setFabVisibility(id);
       setTopControlsVisibility(id);
+      setPastToggleBarVisibility(id);
       if (id === 'leaderboard') renderLeaderboard();
       if (id === 'stats') renderStats();
     }
-
+    function hideSearchUIOnly() {
+      const wrap = document.getElementById('searchRowWrap');
+      const toggle = document.getElementById('searchToggle');
+      const input = document.getElementById('searchInput');
+      const results = document.getElementById('searchResults');
+      if (wrap) wrap.classList.remove('open');
+      if (toggle) toggle.classList.remove('active');
+      if (input) input.value = '';
+      if (results) {
+        results.innerHTML = '';
+        results.classList.add('empty');
+      }
+      searchRowOpen = false;
+    }
+    function setTopControlsVisibility(tabId) {
+      const calendarToggle = document.getElementById('calendarToggle');
+      const searchToggle = document.getElementById('searchToggle');
+      const shouldShow = tabId === 'predict';
+      [calendarToggle, searchToggle].forEach(el => {
+        if (!el) return;
+        el.classList.toggle('hidden-control', !shouldShow);
+      });
+      if (!shouldShow) {
+        hideSearchUIOnly();
+        closeCalendar();
+      }
+    }
     let lastLBData = null;
     function renderLBData(data) {
       lastLBData = data;
@@ -4129,7 +3516,6 @@
         if (container.innerHTML !== emptyHtml) container.innerHTML = emptyHtml;
         return;
       }
-
       function sortRank(arr) {
         return arr.slice().sort((a, b) => {
           if (b.pts !== a.pts) return b.pts - a.pts;
@@ -4137,8 +3523,6 @@
           return (a.name || '').localeCompare(b.name || '');
         });
       }
-
-      // Build current standings from leaderboard data
       const current = data.map(u => ({
         user_id: u.user_id,
         name: u.display_name || '',
@@ -4146,13 +3530,9 @@
         exact: u.exact || 0,
         correct: u.correct || 0,
       }));
-
-      // Find the last finished match from global matches array
       const finishedMatches = matches
         .filter(m => m.status === 'FINISHED' && m.kickoff)
         .sort((a, b) => parseUTC(b.kickoff) - parseUTC(a.kickoff));
-
-      // Compute previous standings by stripping out the last finished match's points
       let prevRankMap = {};
       if (finishedMatches.length > 0) {
         const lastMatch = finishedMatches[0];
@@ -4168,7 +3548,6 @@
         });
         sortRank(previous).forEach((u, i) => { prevRankMap[u.user_id] = i + 1; });
       }
-
       function posChangeBadge(userId, currentRank) {
         const prev = prevRankMap[userId];
         if (!prev || prev === currentRank)
@@ -4178,19 +3557,16 @@
           return `<span class="pos-badge up" title="Up ${delta}">↑ ${delta}</span>`;
         return `<span class="pos-badge down" title="Down ${Math.abs(delta)}">↓ ${Math.abs(delta)}</span>`;
       }
-
       data.sort((a, b) => {
         if (b.total_points !== a.total_points) return b.total_points - a.total_points;
         if ((b.exact || 0) !== (a.exact || 0)) return (b.exact || 0) - (a.exact || 0);
         return (a.display_name || '').localeCompare(b.display_name || '');
       });
-
       const medals = ['&#x1F947;', '&#x1F948;', '&#x1F949;'];
       let html = '<div class="lb-wrap' + (leaderboardFirstRender ? ' animate-in' : '') + '">' +
         '<div class="lb-title-row"><div class="lb-title">Standings</div>' +
         '<div class="lb-sub">' + data.length + ' player' + (data.length !== 1 ? 's' : '') + ' competing since 2018</div></div>' +
         '<div class="lb-header-row"><div></div><div></div><div>Player</div><div>Pts</div><div>Exact</div><div>Result</div></div>';
-
       data.forEach((u, i) => {
         const rowcls = i === 0 ? 'top1' : '';
         const rcls = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'rn';
@@ -4204,7 +3580,6 @@
           '<div class="lb-num">' + (u.correct || 0) + '</div>' +
           '</div>';
       });
-
       html += '</div>' +
         '<div class="rules-box">' +
         '<div class="rules-title">How It Works</div>' +
@@ -4221,7 +3596,6 @@
         '<div class="rules-list-item">Predictions lock <strong>5 minutes</strong> after kickoff — submit early!</div>' +
         '<div class="rules-list-item">Tap the <strong>×</strong> next to any prediction to clear it before kickoff.</div>' +
         '</div>';
-
       if (html === lastLeaderboardHtml) return;
       const scrollY = window.scrollY;
       container.innerHTML = html;
@@ -4229,7 +3603,6 @@
       leaderboardFirstRender = false;
       window.scrollTo(0, scrollY);
     }
-
     function renderLeaderboard() {
       if (lbInitialized) return;
       lbInitialized = true;
@@ -4317,7 +3690,6 @@
           }
         });
       }
-
       return {
         totalPredictions,
         totalMatches,
@@ -4492,7 +3864,6 @@
       </div>
     </div>`;
     }
-
     function renderScorelineHeatmap(s) {
       function sortScorelinesByCount(dataMap) {
         return Object.keys(dataMap).sort((a, b) => {
@@ -4529,9 +3900,7 @@
           <div class="scoreline-empty">No data yet.</div>
         </div>`;
         }
-        // Grand total across ENTIRE dataset (all submitted), not just top 5
         const grandTotal = allSorted.reduce((sum, k) => sum + dataMap[k], 0);
-        // Top 5 only for display cells
         const sorted = allSorted.slice(0, 5);
         const topKey = allSorted[0];
         const topVal = dataMap[topKey];
@@ -4543,7 +3912,6 @@
           const lum = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]);
           const fg = lum < 150 ? '#ffffff' : '#1a1a1a';
           const display = k.replace('-', '–');
-          // Percentage now based on grandTotal (entire dataset)
           return `<div class="scoreline-cell ${isTop ? 'top' : ''}" style="background:${bg};color:${fg}" title="${display}: ${v} time${v !== 1 ? 's' : ''}">
           <div class="scoreline-label">${display}</div>
           <div class="scoreline-count">${Math.round((v / grandTotal) * 100)}%</div>
@@ -4744,14 +4112,11 @@
         return;
       }
       if (hVal === '' || aVal === '') return;
-
-      // Capture the previous value BEFORE saving, so Undo can revert to it
       const m = matches.find(x => String(x.match_id) === String(matchId));
       const prevPred = m && m.predictions ? m.predictions[userId] : null;
       const prevSnapshot = isCleared(prevPred)
         ? null
         : { home: Number(prevPred.pred_home), away: Number(prevPred.pred_away) };
-
       predBuffer[key] = {
         home: parseInt(hVal, 10),
         away: parseInt(aVal, 10)
@@ -4760,7 +4125,7 @@
       timers[key] = setTimeout(function () {
         const buf = predBuffer[key];
         if (!buf || buf.home === null || buf.away === null || isNaN(buf.home) || isNaN(buf.away)) return;
-        showToast('Saving…');
+        // NOTE: no "Saving…" toast here — only one final toast is shown (fixes double pop-up)
         fetch(API + '/predictions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -4821,14 +4186,17 @@
         if (lbl) lbl.textContent = 'Refresh Results';
       }
     }
+    let undoToastTimer;
     function showToast(msg, isError) {
       const t = document.getElementById('toast');
+      // Ensure any pending undo-toast hide/layout is cleared so toasts don't appear back-to-back
+      clearTimeout(undoToastTimer);
+      t.classList.remove('with-undo');
       t.textContent = msg;
       t.className = 'toast' + (isError ? ' error' : '') + ' show';
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
     }
-    let undoToastTimer;
     function showUndoToast(msg, matchId, userId, prevSnapshot) {
       const t = document.getElementById('toast');
       if (!t) return;
@@ -4855,9 +4223,7 @@
       const key = matchId + userId;
       if (timers[key]) { clearTimeout(timers[key]); delete timers[key]; }
       delete predBuffer[key];
-
       if (!prevSnapshot) {
-        // There was no previous prediction → undo means clear it
         if (inputs) { inputs[0].value = ''; inputs[1].value = ''; }
         applyLocalPred(matchId, userId, null, null);
         showToast('Reverting…');
@@ -4876,8 +4242,6 @@
         }).catch(() => showToast('Network error', true));
         return;
       }
-
-      // Restore previous score
       if (inputs) {
         inputs[0].value = String(prevSnapshot.home);
         inputs[1].value = String(prevSnapshot.away);
@@ -4975,5 +4339,4 @@
     document.addEventListener('keydown', resetIdleTimer);
   </script>
 </body>
-
 </html>
