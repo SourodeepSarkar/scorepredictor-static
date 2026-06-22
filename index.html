@@ -3570,6 +3570,7 @@
       }
     }
     window.addEventListener('resize', () => {
+      if ('ontouchstart' in window) return;
       document.querySelectorAll('.pred-grid').forEach(alignLastPredRow);
     });
     function buildCardHTML(m) {
@@ -3704,10 +3705,12 @@
         html += buildCardHTML(m);
       });
       container.innerHTML = html;
-      requestAnimationFrame(() => {
-        if (document.activeElement && document.activeElement.classList.contains('pred-input')) return;
-        container.querySelectorAll('.pred-grid').forEach(alignLastPredRow);
-      });
+      if (!('ontouchstart' in window)) {
+        requestAnimationFrame(() => {
+          if (document.activeElement && document.activeElement.classList.contains('pred-input')) return;
+          container.querySelectorAll('.pred-grid').forEach(alignLastPredRow);
+        });
+      }
       firstRender = false;
     }
     function patchMatchDOM(oldMatches, newMatches, newUsers) {
@@ -4465,7 +4468,7 @@
     function savePred(input) {
       const parentCard = input.closest('.match-card');
       if (parentCard) parentCard.dataset.suppressToggle = '1';
-      const savedScrollY = window.scrollY;
+      const _savedScroll = window.scrollY;
       const matchId = input.dataset.matchid;
       const userId = input.dataset.userid;
       const side = input.dataset.side;
@@ -4513,7 +4516,7 @@
         }).then(r => r.json()).then(d => {
           if (d.status === 'saved') {
             applyLocalPred(matchId, userId, buf.home, buf.away);
-            window.scrollTo({ top: savedScrollY, behavior: 'instant' });
+            requestAnimationFrame(() => window.scrollTo(0, _savedScroll));
             const name = getUserDisplayName(userId);
             showUndoToast(
               `Saved ${buf.home}–${buf.away} for ${name}`,
