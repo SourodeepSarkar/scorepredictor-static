@@ -3840,10 +3840,6 @@
         delete card.dataset.suppressToggle;
         return;
       }
-      // If the card is already open and user tapped inside it, don't close it
-      if (card.classList.contains('open')) {
-        return;
-      }
       card.classList.toggle('open');
     }
     function switchTab(id, el) {
