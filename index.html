@@ -3837,6 +3837,10 @@
         delete card.dataset.suppressToggle;
         return;
       }
+      // If the card is already open and user tapped inside it, don't close it
+      if (card.classList.contains('open')) {
+        return;
+      }
       card.classList.toggle('open');
     }
     function switchTab(id, el) {
@@ -4461,6 +4465,7 @@
     function savePred(input) {
       const parentCard = input.closest('.match-card');
       if (parentCard) parentCard.dataset.suppressToggle = '1';
+      const savedScrollY = window.scrollY;
       const matchId = input.dataset.matchid;
       const userId = input.dataset.userid;
       const side = input.dataset.side;
@@ -4508,6 +4513,7 @@
         }).then(r => r.json()).then(d => {
           if (d.status === 'saved') {
             applyLocalPred(matchId, userId, buf.home, buf.away);
+            window.scrollTo({ top: savedScrollY, behavior: 'instant' });
             const name = getUserDisplayName(userId);
             showUndoToast(
               `Saved ${buf.home}–${buf.away} for ${name}`,
