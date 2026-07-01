@@ -640,17 +640,54 @@
       color:var(--green);
     }
 
-    @media(max-width:700px){
+    @media (max-width:700px){
 
       .tournament-progress{
-        padding:12px 18px;
+        padding:10px 16px;
       }
 
-      .tp-row,
+      .tp-row{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:12px;
+      }
+
+      .tp-heading{
+        font-size:.72rem;
+        letter-spacing:.14em;
+      }
+
+      .tp-stage{
+        font-size:.68rem;
+        letter-spacing:.10em;
+        text-align:right;
+      }
+
+      .tp-progress-wrap{
+        margin:9px 0;
+      }
+
+      .tp-progress-track{
+        height:4px;
+      }
+
       .tp-footer{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:6px;
+        display:block;
+        font-size:.68rem;
+        letter-spacing:.08em;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+      }
+
+      .tp-footer span + span::before{
+        content:" • ";
+        color:var(--rule-strong);
+      }
+
+      .tp-footer span{
+        display:inline;
       }
 
     }
