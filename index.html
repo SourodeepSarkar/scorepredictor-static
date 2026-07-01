@@ -556,6 +556,105 @@
       display: block;
     }
 
+    /* ----------------------------------------------------
+      Tournament Progress
+    ---------------------------------------------------- */
+
+    .tournament-progress{
+      background:#fff;
+      border-bottom:1px solid var(--rule);
+      padding:14px 28px 13px;
+    }
+
+    .tp-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:20px;
+    }
+
+    .tp-heading{
+      display:flex;
+      align-items:center;
+      gap:10px;
+
+      font-family:"Barlow Condensed",sans-serif;
+      font-weight:800;
+      font-size:.82rem;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--ink3);
+    }
+
+    .tp-dot{
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:#5ddb7c;
+      flex-shrink:0;
+    }
+
+    .tp-stage{
+      font-family:"Barlow Condensed",sans-serif;
+      font-weight:700;
+      font-size:.8rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--ink4);
+      white-space:nowrap;
+    }
+
+    .tp-progress-wrap{
+      margin:12px 0 10px;
+    }
+
+    .tp-progress-track{
+      height:5px;
+      width:100%;
+      background:var(--paper3);
+      overflow:hidden;
+    }
+
+    .tp-progress-fill{
+      width:0%;
+      height:100%;
+      background:#5ddb7c;
+      transition:width .7s cubic-bezier(.22,.61,.36,1);
+    }
+
+    .tp-footer{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:.76rem;
+      font-weight:600;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--ink4);
+    }
+
+    .tp-live-active{
+      color:var(--green);
+    }
+
+    @media(max-width:700px){
+
+      .tournament-progress{
+        padding:12px 18px;
+      }
+
+      .tp-row,
+      .tp-footer{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:6px;
+      }
+
+    }
+
     /* ---- New: Hide-past toggle bar ---- */
     .past-toggle-bar {
       display: flex;
@@ -2624,6 +2723,36 @@
           </button>
         </div>
       </div>
+
+      <div class="tournament-progress" id="tournamentProgress">
+        <div class="tp-row">
+          <div class="tp-heading">
+            <span class="tp-dot"></span>
+            FIFA WORLD CUP 2026
+          </div>
+
+          <div class="tp-stage" id="tpStage">
+            LOADING...
+          </div>
+        </div>
+
+        <div class="tp-progress-wrap">
+          <div class="tp-progress-track">
+            <div class="tp-progress-fill" id="tpFill"></div>
+          </div>
+        </div>
+
+        <div class="tp-footer">
+          <span id="tpSummary">
+            0 / 0 MATCHES COMPLETE
+          </span>
+
+          <span id="tpLiveSummary">
+            0 LIVE • 0 TO PLAY
+          </span>
+        </div>
+      </div>
+
       <!-- New: Hide-past toggle bar -->
       <div class="past-toggle-bar" id="pastToggleBar">
         <label class="past-toggle">
@@ -2815,6 +2944,69 @@
       if (!code) return '';
       return `<img src="flags/${code}.png" width="14" height="10" style="border-radius:2px;flex-shrink:0;display:inline-block;vertical-align:middle;border:1px solid rgba(0,0,0,0.1);" alt="${teamName}">`;
     }
+
+    function kickoffTime(match) {
+        const s = match.kickoff;
+
+        return s.endsWith("Z")
+            ? new Date(s).getTime()
+            : new Date(s + "Z").getTime();
+    }
+
+    function isMatchLive(match) {
+
+      if (match.status === "FINISHED") return false;
+
+      // backend already has final score
+      if (match.score_home != null && match.score_away != null)
+        return false;
+
+      return Date.now() >= kickoffTime(match);
+    }
+
+    function updateTournamentProgress() {
+
+      if (!matches?.length) return;
+
+      const total = matches.length;
+
+      const finished = matches.filter(m =>
+        m.score_home != null &&
+        m.score_away != null
+      ).length;
+
+      const live = matches.filter(isMatchLive).length;
+
+      const remaining = total - finished - live;
+
+      const percent = total ? finished / total * 100 : 0;
+
+      document.getElementById("tpFill").style.width = percent + "%";
+
+      document.getElementById("tpSummary").textContent =
+        `${finished} / ${total} MATCHES COMPLETE`;
+
+      const liveSummary = document.getElementById("tpLiveSummary");
+
+      liveSummary.textContent =
+        `${live} LIVE • ${remaining} TO PLAY`;
+
+      liveSummary.classList.toggle("tp-live-active", live > 0);
+
+      const stage = document.getElementById("tpStage");
+
+      if (finished === total) {
+        stage.textContent = "TOURNAMENT COMPLETE";
+      } else if (live > 0) {
+        stage.textContent =
+          live === 1
+            ? "MATCH IN PROGRESS"
+            : `${live} MATCHES IN PROGRESS`;
+      } else {
+        stage.textContent = `${Math.round(percent)}% COMPLETE`;
+      }
+    }
+
     const API = 'https://wc-predictor-backend-production-3bce.up.railway.app';
     const STAGE_LABEL = { group: 'Group Stage', r32: 'Round of 32', r16: 'Round of 16', qf: 'Quarter Finals', sf: 'Semi Finals', third: 'Third Place', final: 'Final' };
     const STAGE_SHORT = { group: 'Group', r32: 'R32', r16: 'R16', qf: 'QF', sf: 'SF', third: '3rd', final: 'Final' };
@@ -3394,6 +3586,7 @@
         ]);
         users = ru;
         matches = rm;
+        updateTournamentProgress()
         sortUsers();
         lastUsersJson = JSON.stringify(users);
         lastMatchesJson = JSON.stringify(matches);
@@ -4541,6 +4734,7 @@
         const oldMatches = matches;
         users = mu;
         matches = mm;
+        updateTournamentProgress();
         sortUsers();
         lastUsersJson = JSON.stringify(users);
         lastMatchesJson = JSON.stringify(matches);
@@ -4654,6 +4848,7 @@
         const oldMatches = matches;
         users = mu;
         matches = mm;
+        updateTournamentProgress();
         sortUsers();
         lastUsersJson = newUsersJson;
         lastMatchesJson = newMatchesJson;
@@ -4697,6 +4892,7 @@
       idleTimeout = setTimeout(switchToSlowPoll, 5 * 60 * 1000);
     }
     boot();
+    setInterval(updateTournamentProgress, 60 * 1000);
     setTimeout(() => {
       startFastPoll();
       resetIdleTimer();
