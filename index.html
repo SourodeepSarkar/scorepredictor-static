@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <link rel="preconnect" href="https://d369cipp2c.execute-api.us-east-1.amazonaws.com" crossorigin>
+  <link rel="preconnect" href="https://wc-predictor-backend-production-3bce.up.railway.app" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -2815,7 +2815,7 @@
       if (!code) return '';
       return `<img src="flags/${code}.png" width="14" height="10" style="border-radius:2px;flex-shrink:0;display:inline-block;vertical-align:middle;border:1px solid rgba(0,0,0,0.1);" alt="${teamName}">`;
     }
-    const API = 'https://nowhere-admission-draft-adapters.trycloudflare.com';
+    const API = 'https://wc-predictor-backend-production-3bce.up.railway.app';
     const STAGE_LABEL = { group: 'Group Stage', r32: 'Round of 32', r16: 'Round of 16', qf: 'Quarter Finals', sf: 'Semi Finals', third: 'Third Place', final: 'Final' };
     const STAGE_SHORT = { group: 'Group', r32: 'R32', r16: 'R16', qf: 'QF', sf: 'SF', third: '3rd', final: 'Final' };
     const PLAYER_COLORS = [
@@ -4532,7 +4532,7 @@
       btn.classList.add('spinning');
       if (lbl) lbl.textContent = 'Refreshing…';
       try {
-        const data = await fetch('https://d369cipp2c.execute-api.us-east-1.amazonaws.com/sync', { method: 'POST' }).then(r => r.json());
+        const data = await fetch(API + '/sync', { method: 'POST' }).then(r => r.json());
         showToast('Synced ' + data.count + ' match' + (data.count !== 1 ? 'es' : ''));
         const [mu, mm] = await Promise.all([
           fetch(API + '/users').then(r => r.json()),
