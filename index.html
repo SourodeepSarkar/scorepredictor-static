@@ -2230,6 +2230,146 @@
       display: none !important;
     }
 
+    /* ---- New: Tournament progress widget ---- */
+    .progress-widget {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 16px 18px 18px;
+      margin-bottom: 16px;
+    }
+
+    .progress-widget-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 26px;
+    }
+
+    .progress-widget-icon {
+      font-size: 1rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .progress-widget-title {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      flex: 1;
+    }
+
+    .progress-widget-badge {
+      background: var(--green-light);
+      color: var(--green);
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--radius);
+      white-space: nowrap;
+    }
+
+    .progress-track-wrap {
+      position: relative;
+      height: 4px;
+      border-radius: 2px;
+      margin: 0 8px;
+      background-image: repeating-linear-gradient(90deg, var(--rule-strong) 0 3px, transparent 3px 6px);
+    }
+
+    .progress-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: var(--green);
+      border-radius: 2px;
+    }
+
+    .progress-dot {
+      position: absolute;
+      top: 50%;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .progress-dot.done {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+    }
+
+    .progress-dot.current {
+      width: 11px;
+      height: 11px;
+      background: #fff;
+      border: 2px solid var(--green);
+    }
+
+    .progress-dot.upcoming {
+      width: 8px;
+      height: 8px;
+      background: var(--paper2);
+      border: 1px solid var(--rule-strong);
+    }
+
+    .progress-labels {
+      position: relative;
+      height: 30px;
+      margin: 8px 0 0;
+    }
+
+    .progress-label {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .progress-label-stage {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--ink4);
+      white-space: nowrap;
+    }
+
+    .progress-label-stage.active {
+      color: var(--ink2);
+      font-weight: 700;
+    }
+
+    .progress-label-date {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.62rem;
+      color: var(--ink4);
+      white-space: nowrap;
+    }
+
+    .progress-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .progress-footer span {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.72rem;
+      color: var(--ink4);
+    }
+
+    .progress-footer .progress-pct {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
     @media(max-width: 560px) {
       .header-top {
         padding: 0 16px;
@@ -2656,6 +2796,21 @@
   </div>
   <main>
     <div id="predict" class="tab-content active">
+      <!-- New: Tournament progress widget -->
+      <div class="progress-widget" id="progressWidget" style="display:none;">
+        <div class="progress-widget-header">
+          <span class="progress-widget-icon">&#9917;</span>
+          <span class="progress-widget-title">World Cup 2026</span>
+          <span class="progress-widget-badge" id="progressBadge"></span>
+        </div>
+        <div class="progress-track-wrap" id="progressTrack"></div>
+        <div class="progress-labels" id="progressLabels"></div>
+        <div class="progress-footer">
+          <span id="progressPlayed"></span>
+          <span class="progress-pct" id="progressPct"></span>
+          <span id="progressLeft"></span>
+        </div>
+      </div>
       <div id="matchList">
         <div class="state-msg">Loading matches…</div>
       </div>
@@ -3398,6 +3553,7 @@
         lastUsersJson = JSON.stringify(users);
         lastMatchesJson = JSON.stringify(matches);
         buildMatchDOM();
+        renderTournamentProgress();
         initSearch();
         setTopControlsVisibility('predict');
         setPastToggleBarVisibility('predict');
@@ -3441,6 +3597,147 @@
     function escHtml(s) {
       if (s === undefined || s === null) return '';
       return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    // ---- New: Tournament progress widget logic ----
+    // Stages used for CALCULATION (third place counts toward totals/percentages)
+    const PROGRESS_CALC_ORDER = ['group', 'r32', 'r16', 'qf', 'sf', 'third', 'final'];
+    // Stages shown as MILESTONES on the bar (third place hidden from labels/dots)
+    const PROGRESS_STAGE_ORDER = ['group', 'r32', 'r16', 'qf', 'sf', 'final'];
+    const PROGRESS_STAGE_POS = { group: 0, r32: 46, r16: 60, qf: 74, sf: 87, final: 100 };
+    const PROGRESS_MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    function fmtProgressDate(d) {
+      if (!d) return '';
+      return d.getDate() + ' ' + PROGRESS_MONTHS[d.getMonth()];
+    }
+    function renderTournamentProgress() {
+      const widget = document.getElementById('progressWidget');
+      if (!widget) return;
+
+      // --- CALCULATION uses PROGRESS_CALC_ORDER (includes 'third') ---
+      const relevant = matches.filter(m => PROGRESS_CALC_ORDER.includes(m.stage));
+      if (!relevant.length) {
+        widget.style.display = 'none';
+        return;
+      }
+      const total = relevant.length;
+      const finishedCount = relevant.filter(m => m.status === 'FINISHED').length;
+
+      // --- Determine current stage from LIVE data, not just finished count ---
+      // Pick the latest calc-stage that has any match already started (live or past kickoff).
+      const now = Date.now();
+      const LIVE_STATES = ['LIVE', 'HT', 'ET', 'PEN', 'AET', 'IN_PLAY', 'PAUSED'];
+      let liveStage = null;
+      PROGRESS_CALC_ORDER.forEach(s => {
+        const started = matches.some(m => {
+          if (m.stage !== s) return false;
+          if (m.status && LIVE_STATES.includes(String(m.status).toUpperCase())) return true;
+          const k = parseUTC(m.kickoff);
+          return k && k.getTime() <= now && m.status !== 'FINISHED';
+        });
+        if (started) liveStage = s;
+      });
+
+      // Fallback: first stage that isn't fully finished (old behaviour).
+      const stageCounts = {}, stageFirstDate = {}, cumEnd = {};
+      let cum = 0;
+      PROGRESS_CALC_ORDER.forEach(s => {
+        const ms = relevant.filter(m => m.stage === s);
+        stageCounts[s] = ms.length;
+        let minDate = null;
+        ms.forEach(m => {
+          const d = parseUTC(m.kickoff);
+          if (d && (!minDate || d < minDate)) minDate = d;
+        });
+        stageFirstDate[s] = minDate;
+        cum += ms.length;
+        cumEnd[s] = cum;
+      });
+
+      let currentCalcStage = PROGRESS_CALC_ORDER[PROGRESS_CALC_ORDER.length - 1];
+      if (liveStage) {
+        currentCalcStage = liveStage;
+      } else {
+        for (const s of PROGRESS_CALC_ORDER) {
+          if (finishedCount < cumEnd[s]) { currentCalcStage = s; break; }
+        }
+      }
+
+      // Map the (possibly 'third') calc stage onto a DISPLAYED milestone stage.
+      // 'third' is not shown as a milestone, so show it under 'final'.
+      let currentStage = currentCalcStage === 'third' ? 'final' : currentCalcStage;
+      if (!PROGRESS_STAGE_ORDER.includes(currentStage)) currentStage = 'final';
+
+      // --- Fill position based on DISPLAY milestones ---
+      const curIdx = PROGRESS_STAGE_ORDER.indexOf(currentStage);
+      const prevStage = curIdx > 0 ? PROGRESS_STAGE_ORDER[curIdx - 1] : null;
+
+      // Cumulative finished across DISPLAY stages for the fill fraction
+      const dispCumEnd = {};
+      let dcum = 0;
+      PROGRESS_STAGE_ORDER.forEach(s => {
+        dcum += relevant.filter(m => m.stage === s).length;
+        dispCumEnd[s] = dcum;
+      });
+      const dispFinished = relevant.filter(
+        m => PROGRESS_STAGE_ORDER.includes(m.stage) && m.status === 'FINISHED'
+      ).length;
+
+      // Matches finished BEFORE the current stage (all earlier display stages)
+      const cumStart = prevStage ? dispCumEnd[prevStage] : 0;
+      const stageTotal = relevant.filter(m => m.stage === currentStage).length || 1;
+      // How far through the CURRENT stage we are (0 = just entered, 1 = stage done)
+      const frac = stageTotal ? (dispFinished - cumStart) / stageTotal : 0;
+
+      // Fill goes FROM the current stage's dot TOWARD the next stage's dot,
+      // advancing as matches in the current stage get played.
+      const nextIdx = curIdx + 1;
+      const nextStage = nextIdx < PROGRESS_STAGE_ORDER.length ? PROGRESS_STAGE_ORDER[nextIdx] : null;
+      const posStart = PROGRESS_STAGE_POS[currentStage];
+      const posEnd = nextStage ? PROGRESS_STAGE_POS[nextStage] : PROGRESS_STAGE_POS[currentStage];
+      const fillPct = posStart + Math.max(0, Math.min(1, frac)) * (posEnd - posStart);
+
+      const badgeEl = document.getElementById('progressBadge');
+      const playedEl = document.getElementById('progressPlayed');
+      const pctEl = document.getElementById('progressPct');
+      const leftEl = document.getElementById('progressLeft');
+
+      // Badge shows the true current stage label (includes 'Third Place' if live)
+      if (badgeEl) badgeEl.textContent = (STAGE_LABEL[currentCalcStage] || currentCalcStage).toUpperCase();
+      if (playedEl) playedEl.textContent = finishedCount + ' played';
+      if (pctEl) pctEl.textContent = Math.round((finishedCount / total) * 100) + '%';
+      if (leftEl) leftEl.textContent = (total - finishedCount) + ' left';
+
+      const track = document.getElementById('progressTrack');
+      if (track) {
+        let trackHtml = '<div class="progress-fill" style="width:' + fillPct + '%"></div>';
+        PROGRESS_STAGE_ORDER.forEach(s => {
+          const pos = PROGRESS_STAGE_POS[s];
+          let cls = 'upcoming';
+          if (dispCumEnd[s] <= dispFinished) cls = 'done';
+          if (s === currentStage) cls = 'current';
+          trackHtml += '<div class="progress-dot ' + cls + '" style="left:' + pos + '%"></div>';
+        });
+        track.innerHTML = trackHtml;
+      }
+
+      const labelsEl = document.getElementById('progressLabels');
+      if (labelsEl) {
+        let labelsHtml = '';
+        PROGRESS_STAGE_ORDER.forEach((s, i) => {
+          const pos = PROGRESS_STAGE_POS[s];
+          let align = 'center', transform = 'translateX(-50%)';
+          if (i === 0) { align = 'flex-start'; transform = 'translateX(0%)'; }
+          if (i === PROGRESS_STAGE_ORDER.length - 1) { align = 'flex-end'; transform = 'translateX(-100%)'; }
+          const activeCls = s === currentStage ? ' active' : '';
+          const name = s === 'group' ? 'GROUP' : (s === 'final' ? 'FINAL' : s.toUpperCase());
+          labelsHtml += '<div class="progress-label" style="left:' + pos + '%;transform:' + transform + ';align-items:' + align + ';">' +
+            '<span class="progress-label-stage' + activeCls + '">' + name + '</span>' +
+            '<span class="progress-label-date">' + fmtProgressDate(stageFirstDate[s]) + '</span>' +
+            '</div>';
+        });
+        labelsEl.innerHTML = labelsHtml;
+      }
+      widget.style.display = '';
     }
     function getMatchMeta(m) {
       const finished = m.status === 'FINISHED';
@@ -4547,6 +4844,7 @@
         lastStatsHtml = '';
         lastLeaderboardHtml = '';
         patchMatchDOM(oldMatches, mm, mu);
+        renderTournamentProgress();
         if (document.getElementById('leaderboard').classList.contains('active')) {
           lbInitialized = false;
           renderLeaderboard();
@@ -4661,6 +4959,7 @@
         lastLeaderboardHtml = '';
         if (userListChanged) buildMatchDOM();
         else patchMatchDOM(oldMatches, mm, mu);
+        renderTournamentProgress();
         if (document.getElementById('leaderboard').classList.contains('active')) {
           fetch(API + '/leaderboard').then(r => r.json()).then(data => {
             if (!Array.isArray(data)) return;
