@@ -3797,7 +3797,10 @@
       widget.style.display = '';
     }
     function getFinishedBadgeText(m) {
-      // Map from duration code first so we control the wording, then fall back to API label.
+      // When showing the 90-min score, the label must always be "Full Time",
+      // since the displayed score is the score at 90 minutes.
+      if (show90Score) return 'Full Time';
+      // Otherwise the label reflects how the final (full-time) score was reached.
       const d = (m.duration || '').toUpperCase();
       if (d === 'EXTRA_TIME') return 'Extra Time';
       if (d === 'PENALTY_SHOOTOUT') return 'Penalties';
