@@ -2074,6 +2074,17 @@
       display: block;
     }
 
+    .team-cell.loser {
+      opacity: 0.45;
+    }
+
+    /* keep font-weight unchanged for losers */
+    /* strikethrough only for knockout losers */
+    .team-cell.loser.knockout .team-name {
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+    }
+
     @keyframes slideDown {
       from {
         opacity: 0;
@@ -2766,10 +2777,16 @@
       </div>
       <!-- New: Hide-past toggle bar -->
       <div class="past-toggle-bar" id="pastToggleBar">
-        <label class="past-toggle">
-          <input type="checkbox" id="hidePastToggle" checked onchange="onHidePastToggle()">
-          <span class="past-toggle-label">Hide past matches</span>
-        </label>
+        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+          <label class="past-toggle">
+            <input type="checkbox" id="hidePastToggle" checked onchange="onHidePastToggle()">
+            <span class="past-toggle-label">Hide past matches</span>
+          </label>
+          <label class="past-toggle">
+            <input type="checkbox" id="show90Toggle" onchange="onShow90Toggle()">
+            <span class="past-toggle-label">Show 90 mins score</span>
+          </label>
+        </div>
         <span class="past-toggle-count" id="pastToggleCount"></span>
       </div>
     </header>
@@ -2993,6 +3010,11 @@
     let firstRender = true;
     // ---- New: hide-past state (default ON) ----
     let hidePastMatches = true;
+    // ---- New: show 90-min score preference (default OFF => show full time) ----
+    let show90Score = false;
+    try {
+      show90Score = localStorage.getItem('wc2026_show90') === '1';
+    } catch (e) { }
     function hashStr(str) {
       let h = 2166136261;
       for (let i = 0; i < str.length; i++) {
@@ -3023,6 +3045,39 @@
       hidePastMatches = !!(cb && cb.checked);
       buildMatchDOM();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function onShow90Toggle() {
+      const cb = document.getElementById('show90Toggle');
+      show90Score = !!(cb && cb.checked);
+      try {
+        localStorage.setItem('wc2026_show90', show90Score ? '1' : '0');
+      } catch (e) { }
+      buildMatchDOM();
+    }
+
+    // Returns the score to DISPLAY on the card (90-min or full-time), based on preference.
+    // Calculations elsewhere still use score_home/score_away (the 90-min score).
+    function getDisplayScore(m) {
+      // If user wants 90 mins, or full-time score is not present, use 90-min score.
+      const hasFT = m.ft_score_home !== undefined && m.ft_score_home !== null &&
+        m.ft_score_away !== undefined && m.ft_score_away !== null;
+      if (show90Score || !hasFT) {
+        return { home: m.score_home, away: m.score_away };
+      }
+      return { home: m.ft_score_home, away: m.ft_score_away };
+    }
+
+    // Which team lost AFTER full time. Returns 'home' | 'away' | null (draw/no winner).
+    function getFullTimeLoser(m) {
+      if (m.status !== 'FINISHED') return null;
+      const w = (m.winner || '').toUpperCase();
+      if (w === 'HOME') return 'away';
+      if (w === 'AWAY') return 'home';
+      return null;
+    }
+    // Knockout = any stage that isn't the group stage.
+    function isKnockout(m) {
+      return (m.stage || '').toLowerCase() !== 'group';
     }
     function setPastToggleBarVisibility(tabId) {
       const bar = document.getElementById('pastToggleBar');
@@ -3552,6 +3607,8 @@
         sortUsers();
         lastUsersJson = JSON.stringify(users);
         lastMatchesJson = JSON.stringify(matches);
+        const show90Cb = document.getElementById('show90Toggle');
+        if (show90Cb) show90Cb.checked = show90Score;
         buildMatchDOM();
         renderTournamentProgress();
         initSearch();
@@ -3739,6 +3796,15 @@
       }
       widget.style.display = '';
     }
+    function getFinishedBadgeText(m) {
+      // Prefer the label from the API, else map from duration code, else default.
+      if (m.duration_label) return m.duration_label.toUpperCase();
+      const d = (m.duration || '').toUpperCase();
+      if (d === 'EXTRA_TIME') return 'After Extra Time';
+      if (d === 'PENALTY_SHOOTOUT') return 'Penalties';
+      if (d === 'REGULAR') return 'Full Time';
+      return 'Full Time';
+    }
     function getMatchMeta(m) {
       const finished = m.status === 'FINISHED';
       const kickoffDt = parseUTC(m.kickoff);
@@ -3752,7 +3818,7 @@
         kickoffDt,
         locked,
         badgeCls: finished ? 'finished' : 'upcoming',
-        badgeTxt: finished ? 'Full Time' : (kickoffDt ? fmtDate(kickoffDt) : ''),
+        badgeTxt: finished ? getFinishedBadgeText(m) : (kickoffDt ? fmtDate(kickoffDt) : ''),
         timeStr: hasScore ? '' : (kickoffDt ? fmtTime(kickoffDt) : '')
       };
     }
@@ -3874,12 +3940,14 @@
       const meta = getMatchMeta(m);
       const homeTeam = m.team_home || 'TBD';
       const awayTeam = m.team_away || 'TBD';
+      const disp = getDisplayScore(m);
       const sh = meta.finished
-        ? '<span class="score-num final" data-role="sh">' + (m.score_home !== undefined && m.score_home !== null ? m.score_home : '') + '</span>'
+        ? '<span class="score-num final" data-role="sh">' + (disp.home !== undefined && disp.home !== null ? disp.home : '') + '</span>'
         : '<span class="score-num pending" data-role="sh">–</span>';
       const sa = meta.finished
-        ? '<span class="score-num final" data-role="sa">' + (m.score_away !== undefined && m.score_away !== null ? m.score_away : '') + '</span>'
+        ? '<span class="score-num final" data-role="sa">' + (disp.away !== undefined && disp.away !== null ? disp.away : '') + '</span>'
         : '<span class="score-num pending" data-role="sa">–</span>';
+      const ftLoser = getFullTimeLoser(m);
       let predsHtml = '';
       if (users.length) {
         predsHtml = '<div class="pred-grid">';
@@ -3895,14 +3963,14 @@
       const countdownHTML = computeCountdownHTML(m.kickoff, m.status);
       return '<div class="' + cardCls + '" data-matchid="' + escHtml(m.match_id) + '" onclick="toggleCard(this)">' +
         '<div class="match-row">' +
-        '<div class="team-cell home"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(homeTeam) + '<span class="team-name">' + escHtml(homeTeam) + '</span></div></div>' +
+        '<div class="team-cell home' + (ftLoser === 'home' ? ' loser' : '') + (ftLoser === 'home' && isKnockout(m) ? ' knockout' : '') + '" data-role="cell-home"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(homeTeam) + '<span class="team-name">' + escHtml(homeTeam) + '</span></div></div>' +
         '<div class="centre-block">' +
         '<div class="score-display">' + sh + '<span class="score-dash">·</span>' + sa + '</div>' +
         '<div class="match-status">' +
         '<div class="badge ' + meta.badgeCls + '" data-role="badge">' + meta.badgeTxt + '</div>' +
         (meta.timeStr ? '<div class="match-time" data-role="time">' + meta.timeStr + '</div>' : '') +
         '</div></div>' +
-        '<div class="team-cell away"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(awayTeam) + '<span class="team-name">' + escHtml(awayTeam) + '</span></div></div>' +
+        '<div class="team-cell away' + (ftLoser === 'away' ? ' loser' : '') + (ftLoser === 'away' && isKnockout(m) ? ' knockout' : '') + '" data-role="cell-away"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(awayTeam) + '<span class="team-name">' + escHtml(awayTeam) + '</span></div></div>' +
         '</div>' +
         '<div class="predictions-panel"><div class="predictions-panel-inner">' + predsHtml + '</div></div>' +
         '<div class="pred-sentence" data-matchid="' + escHtml(m.match_id) + '" style="padding:7px 16px 8px;border-top:1px solid var(--rule);background:var(--paper);font-family:\'Barlow Condensed\',sans-serif;font-size:0.82rem;letter-spacing:0.01em;color:var(--ink4);display:flex;align-items:center;gap:8px;overflow:hidden;">' +
@@ -4043,15 +4111,28 @@
           }
           if (an) an.textContent = nm.team_away || 'TBD';
         }
+        const dispP = getDisplayScore(nm);
         const sh = card.querySelector('[data-role="sh"]');
         const sa = card.querySelector('[data-role="sa"]');
         if (sh && meta.finished) {
           sh.className = 'score-num final';
-          sh.textContent = (nm.score_home !== undefined && nm.score_home !== null ? nm.score_home : '');
+          sh.textContent = (dispP.home !== undefined && dispP.home !== null ? dispP.home : '');
         }
         if (sa && meta.finished) {
           sa.className = 'score-num final';
-          sa.textContent = (nm.score_away !== undefined && nm.score_away !== null ? nm.score_away : '');
+          sa.textContent = (dispP.away !== undefined && dispP.away !== null ? dispP.away : '');
+        }
+        const ftLoserP = getFullTimeLoser(nm);
+        const knockoutP = isKnockout(nm);
+        const cellHome = card.querySelector('[data-role="cell-home"]');
+        const cellAway = card.querySelector('[data-role="cell-away"]');
+        if (cellHome) {
+          cellHome.classList.toggle('loser', ftLoserP === 'home');
+          cellHome.classList.toggle('knockout', ftLoserP === 'home' && knockoutP);
+        }
+        if (cellAway) {
+          cellAway.classList.toggle('loser', ftLoserP === 'away');
+          cellAway.classList.toggle('knockout', ftLoserP === 'away' && knockoutP);
         }
         const badge = card.querySelector('[data-role="badge"]');
         if (badge) {
