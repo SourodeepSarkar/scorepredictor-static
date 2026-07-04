@@ -3797,12 +3797,12 @@
       widget.style.display = '';
     }
     function getFinishedBadgeText(m) {
-      // Prefer the label from the API, else map from duration code, else default.
-      if (m.duration_label) return m.duration_label.toUpperCase();
+      // Map from duration code first so we control the wording, then fall back to API label.
       const d = (m.duration || '').toUpperCase();
       if (d === 'EXTRA_TIME') return 'Extra Time';
       if (d === 'PENALTY_SHOOTOUT') return 'Penalties';
       if (d === 'REGULAR') return 'Full Time';
+      if (m.duration_label) return m.duration_label.toUpperCase();
       return 'Full Time';
     }
     function getMatchMeta(m) {
