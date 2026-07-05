@@ -1640,7 +1640,7 @@
       font-size: 1rem;
       color: var(--ink);
       min-width: 32px;
-      text-align: right;
+      text-align: left;
     }
 
     .donut-legend-pct {
@@ -1649,7 +1649,7 @@
       color: var(--ink4);
       font-weight: 500;
       min-width: 34px;
-      text-align: right;
+      text-align: left;
     }
 
     .line-legend-item {
@@ -1667,7 +1667,7 @@
 
     .stacked-row {
       display: grid;
-      grid-template-columns: 90px 1fr 60px;
+      grid-template-columns: 90px 1fr 74px;
       align-items: center;
       gap: 10px;
       padding: 4px 0;
@@ -1684,6 +1684,16 @@
     .stacked-seg {
       height: 100%;
       transition: width 0.6s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 0.7rem;
+      color: #fff;
+      overflow: hidden;
+      white-space: nowrap;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
     }
 
     .stacked-legend {
@@ -4608,15 +4618,16 @@
         const e = (p.exact / total) * 100;
         const c = (p.correct / total) * 100;
         const m = (p.miss / total) * 100;
+        const ePct = Math.round(e), cPct = Math.round(c), mPct = Math.round(m);
         const hitPct = Math.round(((p.exact + p.correct) / total) * 100);
         return `<div class="stacked-row">
         <div class="hbar-name">${escHtml(p.name)}</div>
         <div class="stacked-track">
-          <div class="stacked-seg" style="width:${e}%;background:${colors.exact}" title="${p.exact} exact"></div>
-          <div class="stacked-seg" style="width:${c}%;background:${colors.correct}" title="${p.correct} correct"></div>
-          <div class="stacked-seg" style="width:${m}%;background:${colors.miss}" title="${p.miss} miss"></div>
+          <div class="stacked-seg" style="width:${e}%;background:${colors.exact}" title="${p.exact} exact">${ePct >= 8 ? ePct + '%' : ''}</div>
+          <div class="stacked-seg" style="width:${c}%;background:${colors.correct}" title="${p.correct} correct">${cPct >= 8 ? cPct + '%' : ''}</div>
+          <div class="stacked-seg" style="width:${m}%;background:${colors.miss}" title="${p.miss} miss">${mPct >= 8 ? mPct + '%' : ''}</div>
         </div>
-        <div class="hbar-val">${total} <span style="color:var(--ink4);font-weight:500;font-size:0.75rem">${hitPct}%</span></div>
+        <div class="hbar-val">${total} <span style="color:var(--ink4);font-weight:500;font-size:0.72rem">${hitPct}%</span></div>
       </div>`;
       }).join('');
       return `<div class="stats-card${statsFirstRender ? ' animate-in' : ''}">
