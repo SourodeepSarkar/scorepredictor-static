@@ -4428,7 +4428,9 @@
           correct: 0,
           miss: 0,
           points: 0,
-          predGoalsTotal: 0
+          predGoalsTotal: 0,
+          closenessSum: 0,
+          closenessCount: 0
         };
       });
       matches.forEach(m => {
@@ -4454,6 +4456,11 @@
               else if (pred.points === 1) { resultCount++; playerStats[u.user_id].correct++; }
               else { missCount++; playerStats[u.user_id].miss++; }
               playerStats[u.user_id].points += (pred.points || 0);
+              if (m.score_home !== undefined && m.score_away !== undefined && m.score_home !== null && m.score_away !== null) {
+                const dist = Math.abs(+pred.pred_home - +m.score_home) + Math.abs(+pred.pred_away - +m.score_away);
+                playerStats[u.user_id].closenessSum += dist;
+                playerStats[u.user_id].closenessCount++;
+              }
             }
           } else if (isFinished) {
             noPickCount++;
@@ -4596,6 +4603,29 @@
           <div class="donut-legend">${legend}</div>
         </div>
       </div>
+    </div>`;
+    }
+    function renderClosenessBars(s) {
+      const players = Object.values(s.playerStats)
+        .filter(p => p.closenessCount > 0)
+        .map(p => ({ ...p, avgDist: p.closenessSum / p.closenessCount }))
+        .sort((a, b) => a.avgDist - b.avgDist);
+      if (!players.length) return '';
+      const maxDist = Math.max(...players.map(p => p.avgDist), 1);
+      const rows = players.map(p => {
+        const pct = Math.max(6, 100 - (p.avgDist / maxDist) * 100);
+        return `<div class="hbar-row">
+        <div class="hbar-name">${escHtml(p.name)}</div>
+        <div class="hbar-track"><div class="hbar-fill gold" style="width:${pct}%"></div></div>
+        <div class="hbar-val">${p.avgDist.toFixed(2)}</div>
+      </div>`;
+      }).join('');
+      return `<div class="stats-card${statsFirstRender ? ' animate-in' : ''}">
+      <div class="stats-card-header">
+        <div class="stats-card-title">Closeness Rating</div>
+        <div class="stats-card-sub">Avg goal distance from actual score — lower is better</div>
+      </div>
+      <div class="stats-card-body">${rows}</div>
     </div>`;
     }
     function renderStackedBars(s) {
@@ -4782,6 +4812,7 @@
       html += renderHorizontalBars(s);
       html += renderHitRateDonut(s);
       html += renderStackedBars(s);
+      html += renderClosenessBars(s);
       html += renderPredictionsBars(s);
       html += renderGoalsComparison(s);
       html += renderScorelineHeatmap(s);
