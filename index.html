@@ -1529,6 +1529,14 @@
       margin-top: 3px;
     }
 
+    .closeness-explainer {
+      font-family: Barlow, sans-serif;
+      font-size: 0.78rem;
+      color: var(--ink4);
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
     .stats-card-body {
       padding: 16px 20px 20px;
     }
@@ -1701,6 +1709,48 @@
       gap: 14px;
       flex-wrap: wrap;
       padding: 12px 0 4px;
+    }
+
+    .closeness-row {
+      display: grid;
+      grid-template-columns: 28px 1fr 60px;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .closeness-row:last-child {
+      border-bottom: none;
+    }
+
+    .closeness-rank {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--ink4);
+      text-align: center;
+    }
+
+    .closeness-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--ink2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .closeness-val {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      color: var(--gold);
+      text-align: right;
+      line-height: 1;
     }
 
     .scoreline-heatmap-wrap {
@@ -4611,19 +4661,18 @@
         .map(p => ({ ...p, avgDist: p.closenessSum / p.closenessCount }))
         .sort((a, b) => a.avgDist - b.avgDist);
       if (!players.length) return '';
-      const maxDist = Math.max(...players.map(p => p.avgDist), 1);
-      const rows = players.map(p => {
-        const pct = Math.max(6, 100 - (p.avgDist / maxDist) * 100);
-        return `<div class="hbar-row">
-        <div class="hbar-name">${escHtml(p.name)}</div>
-        <div class="hbar-track"><div class="hbar-fill gold" style="width:${pct}%"></div></div>
-        <div class="hbar-val">${p.avgDist.toFixed(2)}</div>
+      const rows = players.map((p, i) => {
+        return `<div class="closeness-row">
+        <div class="closeness-rank">${i + 1}</div>
+        <div class="closeness-name">${escHtml(p.name)}</div>
+        <div class="closeness-val">${p.avgDist.toFixed(2)}</div>
       </div>`;
       }).join('');
       return `<div class="stats-card${statsFirstRender ? ' animate-in' : ''}">
       <div class="stats-card-header">
         <div class="stats-card-title">Closeness Rating</div>
         <div class="stats-card-sub">Avg goal distance from actual score — lower is better</div>
+        <div class="closeness-explainer">For each match we add up how many goals off you were on both teams (e.g. predicted 2-1, actual 3-1 → off by 1), then average this across all your picks.</div>
       </div>
       <div class="stats-card-body">${rows}</div>
     </div>`;
