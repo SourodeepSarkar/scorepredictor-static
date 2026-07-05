@@ -3128,6 +3128,8 @@
     }
     setInterval(tickCountdowns, 1000);
     let activeTeamFilter = null;
+    let openMatchId = null;      // tracks which match card is currently expanded
+    let savingInProgress = false; // guards rebuilds while a save is in flight
     let activeMatchFilter = null;
     let searchRowOpen = false;
     function getUniqueTeams() {
@@ -3475,7 +3477,7 @@
       } else {
         const searchRow = document.getElementById('searchRowWrap');
         if (searchRow && searchRow.classList.contains('open')) closeSearchRow();
-        currentCalendarMonth = new Date(2026, 5, 1);
+        currentCalendarMonth = new Date();
         renderCalendar();
         modal.classList.add('open');
         overlay.classList.add('open');
@@ -3962,7 +3964,8 @@
       } else {
         predsHtml = '<div style="color:var(--ink4);font-family:Instrument Serif,serif;font-style:italic;font-size:0.9rem">No players added yet.</div>';
       }
-      const cardCls = firstRender ? 'match-card new-card' : 'match-card';
+      const isOpenNow = openMatchId && String(m.match_id) === String(openMatchId);
+      const cardCls = (firstRender ? 'match-card new-card' : 'match-card') + (isOpenNow ? ' open' : '');
       const countdownHTML = computeCountdownHTML(m.kickoff, m.status);
       return '<div class="' + cardCls + '" data-matchid="' + escHtml(m.match_id) + '" onclick="toggleCard(this)">' +
         '<div class="match-row">' +
@@ -4034,7 +4037,7 @@
       }
       const countEl = document.getElementById('pastToggleCount');
       if (!explicitFilterActive && hidePastMatches) {
-        let cutoff = Date.now() - 24 * 60 * 60 * 1000; // 24h window
+        let cutoff = Date.now() - 48 * 60 * 60 * 1000; // 48h window
         let filtered = visibleMatches.filter(m => !isPastMatch(m, cutoff));
 
         if (!filtered.length && visibleMatches.length) {
@@ -4221,7 +4224,14 @@
         delete card.dataset.suppressToggle;
         return;
       }
-      card.classList.toggle('open');
+      const isOpen = card.classList.contains('open');
+      if (isOpen) {
+        card.classList.remove('open');
+        openMatchId = null;
+      } else {
+        card.classList.add('open');
+        openMatchId = card.dataset.matchid;
+      }
     }
     function switchTab(id, el) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
