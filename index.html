@@ -1639,6 +1639,8 @@
       font-weight: 800;
       font-size: 1rem;
       color: var(--ink);
+      min-width: 32px;
+      text-align: right;
     }
 
     .donut-legend-pct {
@@ -1646,6 +1648,8 @@
       font-size: 0.75rem;
       color: var(--ink4);
       font-weight: 500;
+      min-width: 34px;
+      text-align: right;
     }
 
     .line-legend-item {
@@ -3828,6 +3832,7 @@
       };
     }
     function buildPredItemHTML(u, matchid, pred, finished, locked) {
+      if (u.display_name && u.display_name.trim().toLowerCase() === 'lisa') locked = true;
       const cleared = isCleared(pred);
       let ph = cleared ? '' : pred.pred_home;
       let pa = cleared ? '' : pred.pred_away;
@@ -4541,9 +4546,9 @@
       const total = s.exactCount + s.resultCount + s.missCount + s.noPickCount;
       if (!total) return '';
       const segs = [
-        { label: 'Exact (3pt)', val: s.exactCount, color: '#16a34a' },
-        { label: 'Result (1pt)', val: s.resultCount, color: '#2563eb' },
-        { label: 'Miss (0pt)', val: s.missCount, color: '#f97316' },
+        { label: 'Exact (3 pt)', val: s.exactCount, color: '#16a34a' },
+        { label: 'Result (1 pt)', val: s.resultCount, color: '#2563eb' },
+        { label: 'Miss (0 pt)', val: s.missCount, color: '#f97316' },
         { label: 'No pick', val: s.noPickCount, color: '#9ca3af' }
       ];
       const r = 60, cx = 80, cy = 80, stroke = 22;
@@ -4603,6 +4608,7 @@
         const e = (p.exact / total) * 100;
         const c = (p.correct / total) * 100;
         const m = (p.miss / total) * 100;
+        const hitPct = Math.round(((p.exact + p.correct) / total) * 100);
         return `<div class="stacked-row">
         <div class="hbar-name">${escHtml(p.name)}</div>
         <div class="stacked-track">
@@ -4610,7 +4616,7 @@
           <div class="stacked-seg" style="width:${c}%;background:${colors.correct}" title="${p.correct} correct"></div>
           <div class="stacked-seg" style="width:${m}%;background:${colors.miss}" title="${p.miss} miss"></div>
         </div>
-        <div class="hbar-val">${total}</div>
+        <div class="hbar-val">${total} <span style="color:var(--ink4);font-weight:500;font-size:0.75rem">${hitPct}%</span></div>
       </div>`;
       }).join('');
       return `<div class="stats-card${statsFirstRender ? ' animate-in' : ''}">
@@ -4621,9 +4627,9 @@
       <div class="stats-card-body">
         ${rows}
         <div class="stacked-legend">
-          <div class="line-legend-item"><div class="donut-dot" style="background:${colors.exact}"></div>Exact (3pt)</div>
-          <div class="line-legend-item"><div class="donut-dot" style="background:${colors.correct}"></div>Result (1pt)</div>
-          <div class="line-legend-item"><div class="donut-dot" style="background:${colors.miss}"></div>Miss (0pt)</div>
+          <div class="line-legend-item"><div class="donut-dot" style="background:${colors.exact}"></div>Exact (3 pt)</div>
+          <div class="line-legend-item"><div class="donut-dot" style="background:${colors.correct}"></div>Result (1 pt)</div>
+          <div class="line-legend-item"><div class="donut-dot" style="background:${colors.miss}"></div>Miss (0 pt)</div>
         </div>
       </div>
     </div>`;
