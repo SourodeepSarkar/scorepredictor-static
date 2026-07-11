@@ -4846,7 +4846,7 @@
         return `<div class="stacked-row">
         <div class="hbar-name">${escHtml(p.name)}</div>
         <div class="stacked-track">
-          <div class="stacked-seg" style="width:${e}%;background:${colors.exact}" title="${p.exact} exact">${ePct >= 8 ? ePct + '%' : ''}</div>
+          <div class="stacked-seg" style="width:${e}%;background:${colors.exact}" title="${p.exact} exact">${ePct >= 3 ? ePct + '%' : ''}</div>
           <div class="stacked-seg" style="width:${c}%;background:${colors.correct}" title="${p.correct} correct">${cPct >= 8 ? cPct + '%' : ''}</div>
           <div class="stacked-seg" style="width:${m}%;background:${colors.miss}" title="${p.miss} miss">${mPct >= 8 ? mPct + '%' : ''}</div>
         </div>
