@@ -1097,6 +1097,64 @@
       background: #fdf2d0;
     }
 
+    /* ---- Tournament-over podium highlights ---- */
+    .tournament-over .lb-row.top1 {
+      background: linear-gradient(90deg, #fef9c3 0%, #fdf6e3 100%);
+      border-left: 3px solid #b8860b;
+    }
+
+    .tournament-over .lb-row.top2 {
+      background: linear-gradient(90deg, #f0f2f5 0%, #f7f8fa 100%);
+      border-left: 3px solid #8a9bb0;
+    }
+
+    .tournament-over .lb-row.top3 {
+      background: linear-gradient(90deg, #fdf1ec 0%, #fdf6f3 100%);
+      border-left: 3px solid #a0522d;
+    }
+
+    .podium-banner {
+      background: var(--ink);
+      color: #fff;
+      padding: 18px 24px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      border-radius: var(--radius) var(--radius) 0 0;
+      border-bottom: 2px solid var(--gold);
+      margin-bottom: 0;
+    }
+
+    .podium-banner-title {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 1.25rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .podium-banner-sub {
+      font-family: "Instrument Serif", serif;
+      font-style: italic;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.55);
+      flex: 1;
+    }
+
+    /* ---- Confetti canvas ---- */
+    #confettiCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
     .rank-cell {
       display: flex;
       align-items: center;
@@ -1695,6 +1753,30 @@
       font-size: 0.95rem;
       text-align: right;
       color: var(--ink);
+    }
+
+    /* Fix: Predictions Submitted value column overflow on mobile */
+    .hbar-val {
+      white-space: nowrap;
+    }
+
+    .hbar-row.hbar-row-part {
+      grid-template-columns: 90px 1fr 62px;
+    }
+
+    @media(max-width: 560px) {
+      .hbar-row.hbar-row-part {
+        grid-template-columns: 70px 1fr 58px;
+        gap: 6px;
+      }
+
+      .hbar-row.hbar-row-part .hbar-val {
+        font-size: 0.82rem;
+      }
+
+      .hbar-row.hbar-row-part .hbar-val span {
+        font-size: 0.68rem !important;
+      }
     }
 
     .donut-wrap {
@@ -2413,6 +2495,46 @@
       margin-bottom: 16px;
     }
 
+    /* ---- Tournament-over: winner display inside the progress widget ---- */
+    .progress-winner-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 8px 0 4px;
+    }
+
+    .progress-winner-label {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink4);
+    }
+
+    .progress-winner-flag {
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.1);
+      display: block;
+    }
+
+    .progress-winner-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 2rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .progress-winner-trophy {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
     .progress-widget-header {
       display: flex;
       align-items: center;
@@ -2889,6 +3011,30 @@
       background: #5ddb7c;
       color: var(--ink);
     }
+
+    /* Fix: Predictions Submitted value column overflow on mobile */
+    .hbar-val {
+      white-space: nowrap;
+    }
+
+    .hbar-row.hbar-row-part {
+      grid-template-columns: 90px 1fr 62px;
+    }
+
+    @media(max-width: 560px) {
+      .hbar-row.hbar-row-part {
+        grid-template-columns: 70px 1fr 58px;
+        gap: 6px;
+      }
+
+      .hbar-row.hbar-row-part .hbar-val {
+        font-size: 0.82rem;
+      }
+
+      .hbar-row.hbar-row-part .hbar-val span {
+        font-size: 0.68rem !important;
+      }
+    }
   </style>
 </head>
 
@@ -3006,6 +3152,7 @@
       </div>
     </div>
   </main>
+  <canvas id="confettiCanvas" style="display:none;"></canvas>
   <div class="toast" id="toast"></div>
   <!-- Confirmation dialog -->
   <div class="confirm-overlay" id="confirmOverlay">
@@ -3065,6 +3212,23 @@
   </div>
   <script>
     const NULL_SENTINEL = -1;
+
+    // =====================================================================
+    // TOURNAMENT CONFIG — dry-test flags
+    //   DEV_MODE        : set true to enable the overrides below
+    //   DEV_FORCE_ENDED : bypass the final-match check and force all
+    //                     tournament-over UI immediately
+    //   DEV_WINNER      : team name to show as champion (overrides live data)
+    // =====================================================================
+    const TOURNAMENT_CONFIG = {
+      DEV_MODE: false,
+      DEV_FORCE_ENDED: false,  // set true to force tournament-over UI regardless of match data
+      // DEV_WINNER: team name shown as champion in the progress widget.
+      // In production this is auto-read from the final match's winner field.
+      // Set to any team name to dry-test the winner display.
+      DEV_WINNER: 'Belgium'
+    };
+
     // ---- Confirmation dialog helper ----
     let _confirmResolve = null;
     function showConfirm(title, messageHtml, danger) {
@@ -3178,6 +3342,130 @@
     try {
       show90Score = localStorage.getItem('wc2026_show90') === '1';
     } catch (e) { }
+    // ---- Tournament-over state ----
+    let confettiShownThisSession = false;
+
+    /**
+     * Returns true when the tournament has ended, defined as:
+     *   now >= (kickoff of the last match in the schedule) + 3 hours
+     *
+     * In DEV_MODE you can override this with TOURNAMENT_CONFIG flags.
+     */
+    function isTournamentOver() {
+      if (TOURNAMENT_CONFIG.DEV_MODE && TOURNAMENT_CONFIG.DEV_FORCE_ENDED) return true;
+      if (!matches || !matches.length) return false;
+      // Tournament is over as soon as the 'final' stage match has a FINISHED status
+      // with a score present — i.e. full-time scores are available.
+      const finalMatch = matches.find(m => (m.stage || '').toLowerCase() === 'final');
+      if (!finalMatch) return false;
+      return finalMatch.status === 'FINISHED' &&
+        finalMatch.score_home != null && finalMatch.score_home !== undefined &&
+        finalMatch.score_away != null && finalMatch.score_away !== undefined;
+    }
+
+    /**
+     * Applies (or reverses) all UI changes that belong to the tournament-over state:
+     *   1. Forces "hide past matches" toggle OFF and rebuilds the match list.
+     *   2. Marks the leaderboard container so CSS podium-highlight rules activate.
+     *   3. Fires confetti (once per session) if the leaderboard tab is currently active.
+     */
+    function applyTournamentEndState() {
+      const over = isTournamentOver();
+      // --- 1. Force "hide past matches" OFF and disable the checkbox when tournament is over ---
+      const cb = document.getElementById('hidePastToggle');
+      if (over) {
+        if (hidePastMatches) {
+          hidePastMatches = false;
+          if (cb) cb.checked = false;
+          buildMatchDOM();
+        }
+        // Disable so users cannot re-enable it after the tournament ends
+        if (cb) {
+          cb.disabled = true;
+          cb.title = 'Tournament has ended — all matches are shown';
+        }
+      } else {
+        if (cb) {
+          cb.disabled = false;
+          cb.title = '';
+        }
+      }
+      // --- 2. Leaderboard podium class ---
+      const lbList = document.getElementById('lbList');
+      if (lbList) lbList.classList.toggle('tournament-over', over);
+      // --- 3. Confetti on leaderboard tab (once per session) ---
+      if (over && !confettiShownThisSession) {
+        const lbTab = document.getElementById('leaderboard');
+        if (lbTab && lbTab.classList.contains('active')) {
+          confettiShownThisSession = true;
+          launchConfetti();
+        }
+      }
+    }
+
+    // =====================================================================
+    // Confetti engine — pure canvas, no external library
+    // =====================================================================
+    function launchConfetti() {
+      const canvas = document.getElementById('confettiCanvas');
+      if (!canvas) return;
+      canvas.style.display = 'block';
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const ctx = canvas.getContext('2d');
+      const COLORS = ['#b8860b', '#5ddb7c', '#3b82f6', '#ef4444', '#f59e0b', '#8b5cf6', '#ec4899'];
+      const TOTAL = 260;
+      const particles = Array.from({ length: TOTAL }, () => ({
+        x: Math.random() * canvas.width,
+        y: -10 - Math.random() * 120,
+        vx: (Math.random() - 0.5) * 4,
+        vy: 1.5 + Math.random() * 3.5,
+        size: 6 + Math.random() * 7,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        rot: Math.random() * Math.PI * 2,
+        rotV: (Math.random() - 0.5) * 0.18,
+        shape: Math.random() < 0.5 ? 'rect' : 'circle'
+      }));
+      let frame;
+      let elapsed = 0;
+      const DURATION = 9000;  // ms — total animation length
+      const FADE_START = 7500; // ms — when the fade-out begins
+      const start = performance.now();
+      function draw(ts) {
+        elapsed = ts - start;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const alpha = elapsed > FADE_START
+          ? Math.max(0, 1 - (elapsed - FADE_START) / (DURATION - FADE_START))
+          : 1;
+        ctx.globalAlpha = alpha;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.06; // gravity
+          p.rot += p.rotV;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          if (p.shape === 'rect') {
+            ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+          } else {
+            ctx.beginPath();
+            ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        });
+        if (elapsed < DURATION) {
+          frame = requestAnimationFrame(draw);
+        } else {
+          canvas.style.display = 'none';
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      frame = requestAnimationFrame(draw);
+    }
+
     function hashStr(str) {
       let h = 2166136261;
       for (let i = 0; i < str.length; i++) {
@@ -3776,6 +4064,7 @@
         if (show90Cb) show90Cb.checked = show90Score;
         buildMatchDOM();
         renderTournamentProgress();
+        applyTournamentEndState();
         initSearch();
         setTopControlsVisibility('predict');
         setPastToggleBarVisibility('predict');
@@ -3922,15 +4211,55 @@
       const playedEl = document.getElementById('progressPlayed');
       const pctEl = document.getElementById('progressPct');
       const leftEl = document.getElementById('progressLeft');
+      const track = document.getElementById('progressTrack');
+      const labelsEl = document.getElementById('progressLabels');
 
-      // Badge shows the true current stage label (includes 'Third Place' if live)
-      if (badgeEl) badgeEl.textContent = (STAGE_LABEL[currentCalcStage] || currentCalcStage).toUpperCase();
+      // ---- Tournament-over: replace bar with winner display ----
+      if (isTournamentOver()) {
+        // Determine winner: DEV override first, then winner field of the final match
+        let winnerName = null;
+        if (TOURNAMENT_CONFIG.DEV_MODE && TOURNAMENT_CONFIG.DEV_WINNER) {
+          winnerName = TOURNAMENT_CONFIG.DEV_WINNER;
+        } else {
+          const finalMatch = matches.find(m => m.stage === 'final' && m.status === 'FINISHED');
+          if (finalMatch) {
+            const w = (finalMatch.winner || '').toUpperCase();
+            if (w === 'HOME') winnerName = finalMatch.team_home;
+            else if (w === 'AWAY') winnerName = finalMatch.team_away;
+          }
+        }
+        const code = winnerName ? TEAM_FLAG[(winnerName || '').trim().toLowerCase()] : null;
+        const flagMarkup = code
+          ? '<img src="flags/' + code + '.png" width="56" height="38" class="progress-winner-flag" alt="' + escHtml(winnerName) + '">'
+          : '';
+        const nameMarkup = winnerName
+          ? '<span class="progress-winner-name">' + escHtml(winnerName) + '</span>'
+          : '<span class="progress-winner-name" style="color:var(--ink4)">TBD</span>';
+        const winnerBlock = '<div class="progress-winner-block">' +
+          '<span class="progress-winner-label">&#x1F3C6;&nbsp;&nbsp;World Cup 2026 Champion&nbsp;&nbsp;&#x1F3C6;</span>' +
+          flagMarkup +
+          nameMarkup +
+          '</div>';
+        // Hide badge and progress bar; use the labels slot for the winner block
+        if (badgeEl) { badgeEl.textContent = ''; badgeEl.style.display = 'none'; }
+        if (track) { track.innerHTML = ''; track.style.display = 'none'; }
+        if (labelsEl) { labelsEl.innerHTML = winnerBlock; labelsEl.style.height = 'auto'; }
+        // Footer: just total match count, nothing else
+        if (playedEl) playedEl.textContent = finishedCount + ' matches played';
+        if (pctEl) pctEl.textContent = '';
+        if (leftEl) leftEl.textContent = '';
+        widget.style.display = '';
+        return;
+      }
+
+      // ---- Normal in-progress display ----
+      if (badgeEl) { badgeEl.textContent = (STAGE_LABEL[currentCalcStage] || currentCalcStage).toUpperCase(); badgeEl.style.display = ''; }
       if (playedEl) playedEl.textContent = finishedCount + ' played';
       if (pctEl) pctEl.textContent = Math.round((finishedCount / total) * 100) + '%';
       if (leftEl) leftEl.textContent = (total - finishedCount) + ' left';
 
-      const track = document.getElementById('progressTrack');
       if (track) {
+        track.style.display = '';
         let trackHtml = '<div class="progress-fill" style="width:' + fillPct + '%"></div>';
         PROGRESS_STAGE_ORDER.forEach(s => {
           const pos = PROGRESS_STAGE_POS[s];
@@ -3942,8 +4271,8 @@
         track.innerHTML = trackHtml;
       }
 
-      const labelsEl = document.getElementById('progressLabels');
       if (labelsEl) {
+        labelsEl.style.height = '';
         let labelsHtml = '';
         PROGRESS_STAGE_ORDER.forEach((s, i) => {
           const pos = PROGRESS_STAGE_POS[s];
@@ -4406,6 +4735,7 @@
       setPastToggleBarVisibility(id);
       if (id === 'leaderboard') renderLeaderboard();
       if (id === 'stats') renderStats();
+      if (id === 'leaderboard') applyTournamentEndState();
     }
     function hideSearchUIOnly() {
       const wrap = document.getElementById('searchRowWrap');
@@ -4491,12 +4821,21 @@
         return (a.display_name || '').localeCompare(b.display_name || '');
       });
       const medals = ['&#x1F947;', '&#x1F948;', '&#x1F949;'];
-      let html = '<div class="lb-wrap' + (leaderboardFirstRender ? ' animate-in' : '') + '">' +
+      const tournOver = isTournamentOver();
+      // Podium banner is injected BEFORE the lb-wrap when tournament is over
+      const podiumBanner = tournOver
+        ? '<div class="podium-banner">' +
+          '<span class="podium-banner-title">&#x1F3C6; Tournament Final Standings</span>' +
+          '<span class="podium-banner-sub">The predictor is closed — thanks for playing! See you in 2030 &#x1F30D;</span>' +
+          '</div>'
+        : '';
+      let html = podiumBanner +
+        '<div class="lb-wrap' + (leaderboardFirstRender ? ' animate-in' : '') + '">' +
         '<div class="lb-title-row"><div class="lb-title">Standings</div>' +
         '<div class="lb-sub">' + data.length + ' player' + (data.length !== 1 ? 's' : '') + ' competing since 2018</div></div>' +
         '<div class="lb-header-row"><div></div><div></div><div>Player</div><div>Pts</div><div>Exact</div><div>Result</div></div>';
       data.forEach((u, i) => {
-        const rowcls = i === 0 ? 'top1' : '';
+        const rowcls = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
         const rcls = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'rn';
         const rankDisplay = i < 3 ? medals[i] : (i + 1);
         html += '<div class="lb-row ' + rowcls + '">' +
@@ -4527,6 +4866,9 @@
       if (html === lastLeaderboardHtml) return;
       const scrollY = window.scrollY;
       container.innerHTML = html;
+      // Apply tournament-over class so CSS podium highlights work
+      if (tournOver) container.classList.add('tournament-over');
+      else container.classList.remove('tournament-over');
       lastLeaderboardHtml = html;
       leaderboardFirstRender = false;
       window.scrollTo(0, scrollY);
@@ -5295,6 +5637,7 @@
         if (userListChanged) buildMatchDOM();
         else patchMatchDOM(oldMatches, mm, mu);
         renderTournamentProgress();
+        applyTournamentEndState();
         if (document.getElementById('leaderboard').classList.contains('active')) {
           fetch(API + '/leaderboard').then(r => r.json()).then(data => {
             if (!Array.isArray(data)) return;
