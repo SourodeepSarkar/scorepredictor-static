@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <link rel="preconnect" href="https://wc-predictor-backend-production-3bce.up.railway.app" crossorigin>
+  <!-- <link rel="preconnect" href="https://d369cipp2c.execute-api.us-east-1.amazonaws.com" crossorigin> -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -554,142 +554,6 @@
 
     .tab-content.active {
       display: block;
-    }
-
-    /* ----------------------------------------------------
-      Tournament Progress
-    ---------------------------------------------------- */
-
-    .tournament-progress{
-      background:#fff;
-      border-bottom:1px solid var(--rule);
-      padding:14px 28px 13px;
-    }
-
-    .tp-row{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:20px;
-    }
-
-    .tp-heading{
-      display:flex;
-      align-items:center;
-      gap:10px;
-
-      font-family:"Barlow Condensed",sans-serif;
-      font-weight:800;
-      font-size:.82rem;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      color:var(--ink3);
-    }
-
-    .tp-dot{
-      width:7px;
-      height:7px;
-      border-radius:50%;
-      background:#5ddb7c;
-      flex-shrink:0;
-    }
-
-    .tp-stage{
-      font-family:"Barlow Condensed",sans-serif;
-      font-weight:700;
-      font-size:.8rem;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      color:var(--ink4);
-      white-space:nowrap;
-    }
-
-    .tp-progress-wrap{
-      margin:12px 0 10px;
-    }
-
-    .tp-progress-track{
-      height:5px;
-      width:100%;
-      background:var(--paper3);
-      overflow:hidden;
-    }
-
-    .tp-progress-fill{
-      width:0%;
-      height:100%;
-      background:#5ddb7c;
-      transition:width .7s cubic-bezier(.22,.61,.36,1);
-    }
-
-    .tp-footer{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:16px;
-
-      font-family:"Barlow Condensed",sans-serif;
-      font-size:.76rem;
-      font-weight:600;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      color:var(--ink4);
-    }
-
-    .tp-live-active{
-      color:var(--green);
-    }
-
-    @media (max-width:700px){
-
-      .tournament-progress{
-        padding:10px 16px;
-      }
-
-      .tp-row{
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        gap:12px;
-      }
-
-      .tp-heading{
-        font-size:.72rem;
-        letter-spacing:.14em;
-      }
-
-      .tp-stage{
-        font-size:.68rem;
-        letter-spacing:.10em;
-        text-align:right;
-      }
-
-      .tp-progress-wrap{
-        margin:9px 0;
-      }
-
-      .tp-progress-track{
-        height:4px;
-      }
-
-      .tp-footer{
-        display:block;
-        font-size:.68rem;
-        letter-spacing:.08em;
-        white-space:nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
-      }
-
-      .tp-footer span + span::before{
-        content:" • ";
-        color:var(--rule-strong);
-      }
-
-      .tp-footer span{
-        display:inline;
-      }
-
     }
 
     /* ---- New: Hide-past toggle bar ---- */
@@ -2652,7 +2516,7 @@
 
     .progress-winner-flag {
       border-radius: 4px;
-      border: 1px solid rgba(0,0,0,0.1);
+      border: 1px solid rgba(0, 0, 0, 0.1);
       display: block;
     }
 
@@ -3182,10 +3046,10 @@
           <div class="logo-main">WC<span>2026</span></div>
           <div class="logo-sub">Predictor</div>
         </div>
-        <button class="sync-btn" id="syncBtn" onclick="syncAll()">
-          <span class="sync-icon">&#x21BB;</span>
-          <span class="btn-label">Refresh Results</span>
-        </button>
+        <span class="sync-btn" id="archivedBadge" style="cursor:default;">
+          <span style="width:6px;height:6px;border-radius:50%;background:#5ddb7c;display:inline-block;"></span>
+          <span class="btn-label">Final Results</span>
+        </span>
       </div>
       <div class="tabs-wrapper">
         <div class="tabs-list">
@@ -3220,43 +3084,13 @@
           </button>
         </div>
       </div>
-
-      <div class="tournament-progress" id="tournamentProgress">
-        <div class="tp-row">
-          <div class="tp-heading">
-            <span class="tp-dot"></span>
-            FIFA WORLD CUP 2026
-          </div>
-
-          <div class="tp-stage" id="tpStage">
-            LOADING...
-          </div>
-        </div>
-
-        <div class="tp-progress-wrap">
-          <div class="tp-progress-track">
-            <div class="tp-progress-fill" id="tpFill"></div>
-          </div>
-        </div>
-
-        <div class="tp-footer">
-          <span id="tpSummary">
-            0 / 0 MATCHES COMPLETE
-          </span>
-
-          <span id="tpLiveSummary">
-            0 LIVE • 0 TO PLAY
-          </span>
-        </div>
-      </div>
-
       <!-- New: Hide-past toggle bar -->
       <div class="past-toggle-bar" id="pastToggleBar">
         <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
-          <label class="past-toggle">
+          <!-- <label class="past-toggle">
             <input type="checkbox" id="hidePastToggle" checked onchange="onHidePastToggle()">
             <span class="past-toggle-label">Hide past matches</span>
-          </label>
+          </label> -->
           <label class="past-toggle">
             <input type="checkbox" id="show90Toggle" onchange="onShow90Toggle()">
             <span class="past-toggle-label">Show 90 mins score</span>
@@ -3480,70 +3314,7 @@
       if (!code) return '';
       return `<img src="flags/${code}.png" width="14" height="10" style="border-radius:2px;flex-shrink:0;display:inline-block;vertical-align:middle;border:1px solid rgba(0,0,0,0.1);" alt="${teamName}">`;
     }
-
-    function kickoffTime(match) {
-        const s = match.kickoff;
-
-        return s.endsWith("Z")
-            ? new Date(s).getTime()
-            : new Date(s + "Z").getTime();
-    }
-
-    function isMatchLive(match) {
-
-      if (match.status === "FINISHED") return false;
-
-      // backend already has final score
-      if (match.score_home != null && match.score_away != null)
-        return false;
-
-      return Date.now() >= kickoffTime(match);
-    }
-
-    function updateTournamentProgress() {
-
-      if (!matches?.length) return;
-
-      const total = matches.length;
-
-      const finished = matches.filter(m =>
-        m.score_home != null &&
-        m.score_away != null
-      ).length;
-
-      const live = matches.filter(isMatchLive).length;
-
-      const remaining = total - finished - live;
-
-      const percent = total ? finished / total * 100 : 0;
-
-      document.getElementById("tpFill").style.width = percent + "%";
-
-      document.getElementById("tpSummary").textContent =
-        `${finished} / ${total} MATCHES COMPLETE`;
-
-      const liveSummary = document.getElementById("tpLiveSummary");
-
-      liveSummary.textContent =
-        `${live} LIVE • ${remaining} TO PLAY`;
-
-      liveSummary.classList.toggle("tp-live-active", live > 0);
-
-      const stage = document.getElementById("tpStage");
-
-      if (finished === total) {
-        stage.textContent = "TOURNAMENT COMPLETE";
-      } else if (live > 0) {
-        stage.textContent =
-          live === 1
-            ? "MATCH IN PROGRESS"
-            : `${live} MATCHES IN PROGRESS`;
-      } else {
-        stage.textContent = `${Math.round(percent)}% COMPLETE`;
-      }
-    }
-
-    const API = 'https://wc-predictor-backend-production-3bce.up.railway.app';
+    // const API = 'https://nowhere-admission-draft-adapters.trycloudflare.com';
     const STAGE_LABEL = { group: 'Group Stage', r32: 'Round of 32', r16: 'Round of 16', qf: 'Quarter Finals', sf: 'Semi Finals', third: 'Third Place', final: 'Final' };
     const STAGE_SHORT = { group: 'Group', r32: 'R32', r16: 'R16', qf: 'QF', sf: 'SF', third: '3rd', final: 'Final' };
     const PLAYER_COLORS = [
@@ -3580,7 +3351,7 @@
      *
      * In DEV_MODE you can override this with TOURNAMENT_CONFIG flags.
      */
-    function isTournamentOver() {
+    /** function isTournamentOver() {
       if (TOURNAMENT_CONFIG.DEV_MODE && TOURNAMENT_CONFIG.DEV_FORCE_ENDED) return true;
       if (!matches || !matches.length) return false;
       // Tournament is over as soon as the 'final' stage match has a FINISHED status
@@ -3590,7 +3361,7 @@
       return finalMatch.status === 'FINISHED' &&
         finalMatch.score_home != null && finalMatch.score_home !== undefined &&
         finalMatch.score_away != null && finalMatch.score_away !== undefined;
-    }
+    } */
 
     /**
      * Applies (or reverses) all UI changes that belong to the tournament-over state:
@@ -3599,7 +3370,7 @@
      *   3. Fires confetti (once per session) if the leaderboard tab is currently active.
      */
     function applyTournamentEndState() {
-      const over = isTournamentOver();
+      const over = true;
       // --- 1. Force "hide past matches" OFF and disable the checkbox when tournament is over ---
       const cb = document.getElementById('hidePastToggle');
       if (over) {
@@ -4279,21 +4050,13 @@
     }
     async function boot() {
       renderSkeleton();
-      // Fire-and-forget: nudge the backend to refresh from football-data.org
-      // as soon as the page loads, instead of only ever syncing when someone
-      // clicks "Refresh Results". The backend has its own cooldown + a
-      // recurring background sync, so this is cheap even with many tabs
-      // open at once -- it just makes sure THIS load isn't stuck showing
-      // data from before the last auto-sync tick.
-      fetch(API + '/sync', { method: 'POST' }).catch(() => {});
       try {
         const [ru, rm] = await Promise.all([
-          fetch(API + '/users').then(r => { if (!r.ok) throw new Error(); return r.json(); }),
-          fetch(API + '/matches').then(r => { if (!r.ok) throw new Error(); return r.json(); })
+          fetch("users.json").then(r => { if (!r.ok) throw new Error(); return r.json(); }),
+          fetch("matches.json").then(r => { if (!r.ok) throw new Error(); return r.json(); })
         ]);
         users = ru;
         matches = rm;
-        updateTournamentProgress()
         sortUsers();
         lastUsersJson = JSON.stringify(users);
         lastMatchesJson = JSON.stringify(matches);
@@ -4452,7 +4215,7 @@
       const labelsEl = document.getElementById('progressLabels');
 
       // ---- Tournament-over: replace bar with winner display ----
-      if (isTournamentOver()) {
+      if (true) {
         // Determine winner: DEV override first, then winner field of the final match
         let winnerName = null;
         if (TOURNAMENT_CONFIG.DEV_MODE && TOURNAMENT_CONFIG.DEV_WINNER) {
@@ -5058,13 +4821,13 @@
         return (a.display_name || '').localeCompare(b.display_name || '');
       });
       const medals = ['&#x1F947;', '&#x1F948;', '&#x1F949;'];
-      const tournOver = isTournamentOver();
+      const tournOver = true;
       // Podium banner is injected BEFORE the lb-wrap when tournament is over
       const podiumBanner = tournOver
         ? '<div class="podium-banner">' +
-          '<span class="podium-banner-title">&#x1F3C6; Tournament Final Standings</span>' +
-          '<span class="podium-banner-sub">The predictor is closed — thanks for playing! See you in 2030 &#x1F30D;</span>' +
-          '</div>'
+        '<span class="podium-banner-title">&#x1F3C6; Tournament Final Standings</span>' +
+        '<span class="podium-banner-sub">The predictor is closed — thanks for playing! See you in 2030 &#x1F30D;</span>' +
+        '</div>'
         : '';
       let html = podiumBanner +
         '<div class="lb-wrap' + (leaderboardFirstRender ? ' animate-in' : '') + '">' +
@@ -5114,7 +4877,7 @@
       if (lbInitialized) return;
       lbInitialized = true;
       renderLBSkeleton();
-      fetch(API + '/leaderboard')
+      fetch("leaderboard.json")
         .then(res => res.json())
         .then(data => {
           if (!Array.isArray(data)) return;
@@ -5568,7 +5331,7 @@
         return;
       }
       if (!lastLBData) {
-        fetch(API + '/leaderboard')
+        fetch("leaderboard.json")
           .then(res => res.json())
           .then(data => {
             if (!Array.isArray(data)) return;
@@ -5637,7 +5400,7 @@
         doClearPred(matchId, userId);
       });
     }
-    function doClearPred(matchId, userId) {
+    /** unction doClearPred(matchId, userId) {
       const card = document.querySelector(`.match-card[data-matchid="${matchId}"]`);
       if (!card) return;
       const predItem = card.querySelector(`.pred-item[data-userid="${userId}"]`);
@@ -5671,8 +5434,8 @@
           showToast(d.error || 'Error clearing', true);
         }
       }).catch(() => showToast('Network error', true));
-    }
-    function savePred(input) {
+    }*/
+    /** function savePred(input) {
       const parentCard = input.closest('.match-card');
       if (parentCard) parentCard.dataset.suppressToggle = '1';
       const _savedScroll = window.scrollY;
@@ -5735,7 +5498,7 @@
           }
         }).catch(() => showToast('Network error', true));
       }, 500);
-    }
+    } */
     async function syncAll() {
       const btn = document.getElementById('syncBtn');
       const lbl = btn.querySelector('.btn-label');
@@ -5743,16 +5506,15 @@
       btn.classList.add('spinning');
       if (lbl) lbl.textContent = 'Refreshing…';
       try {
-        const data = await fetch(API + '/sync', { method: 'POST' }).then(r => r.json());
+        // const data = await fetch('https://d369cipp2c.execute-api.us-east-1.amazonaws.com/sync', { method: 'POST' }).then(r => r.json());
         showToast('Synced ' + data.count + ' match' + (data.count !== 1 ? 'es' : ''));
         const [mu, mm] = await Promise.all([
-          fetch(API + '/users').then(r => r.json()),
-          fetch(API + '/matches').then(r => r.json())
+          fetch("users.json").then(r => r.json()),
+          fetch("matches.json").then(r => r.json())
         ]);
         const oldMatches = matches;
         users = mu;
         matches = mm;
-        updateTournamentProgress();
         sortUsers();
         lastUsersJson = JSON.stringify(users);
         lastMatchesJson = JSON.stringify(matches);
@@ -5804,7 +5566,7 @@
         t.classList.remove('with-undo');
       }, 6000);
     }
-    function undoPrediction(matchId, userId, prevSnapshot) {
+    /**function undoPrediction(matchId, userId, prevSnapshot) {
       const card = document.querySelector(`.match-card[data-matchid="${matchId}"]`);
       const predItem = card ? card.querySelector(`.pred-item[data-userid="${userId}"]`) : null;
       const inputs = predItem ? predItem.querySelectorAll('.pred-input') : null;
@@ -5849,13 +5611,13 @@
         if (d.status === 'saved') { showToast(`Reverted to ${prevSnapshot.home}–${prevSnapshot.away} ✓`); setTimeout(doPoll, 200); }
         else showToast(d.error || 'Error reverting', true);
       }).catch(() => showToast('Network error', true));
-    }
+    } */
     async function doPoll() {
       if (document.hidden) return;
       try {
         const [mu, mm] = await Promise.all([
-          fetch(API + '/users').then(r => r.ok ? r.json() : null).catch(() => null),
-          fetch(API + '/matches').then(r => r.ok ? r.json() : null).catch(() => null)
+          fetch("users.json").then(r => r.ok ? r.json() : null).catch(() => null),
+          fetch("matches.json").then(r => r.ok ? r.json() : null).catch(() => null)
         ]);
         if (!mu || !mm || !Array.isArray(mu) || !Array.isArray(mm)) return;
         const newUsersJson = JSON.stringify(mu);
@@ -5867,7 +5629,6 @@
         const oldMatches = matches;
         users = mu;
         matches = mm;
-        updateTournamentProgress();
         sortUsers();
         lastUsersJson = newUsersJson;
         lastMatchesJson = newMatchesJson;
@@ -5878,7 +5639,7 @@
         renderTournamentProgress();
         applyTournamentEndState();
         if (document.getElementById('leaderboard').classList.contains('active')) {
-          fetch(API + '/leaderboard').then(r => r.json()).then(data => {
+          fetch("leaderboard.json").then(r => r.json()).then(data => {
             if (!Array.isArray(data)) return;
             const json = JSON.stringify(data);
             if (json === lastLBJson) return;
@@ -5913,7 +5674,6 @@
       idleTimeout = setTimeout(switchToSlowPoll, 5 * 60 * 1000);
     }
     boot();
-    setInterval(updateTournamentProgress, 60 * 1000);
     setTimeout(() => {
       startFastPoll();
       resetIdleTimer();
