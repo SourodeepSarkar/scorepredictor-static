@@ -1233,6 +1233,64 @@
       background: #fdf2d0;
     }
 
+    /* ---- Tournament-over podium highlights ---- */
+    .tournament-over .lb-row.top1 {
+      background: linear-gradient(90deg, #fef9c3 0%, #fdf6e3 100%);
+      border-left: 3px solid #b8860b;
+    }
+
+    .tournament-over .lb-row.top2 {
+      background: linear-gradient(90deg, #f0f2f5 0%, #f7f8fa 100%);
+      border-left: 3px solid #8a9bb0;
+    }
+
+    .tournament-over .lb-row.top3 {
+      background: linear-gradient(90deg, #fdf1ec 0%, #fdf6f3 100%);
+      border-left: 3px solid #a0522d;
+    }
+
+    .podium-banner {
+      background: var(--ink);
+      color: #fff;
+      padding: 18px 24px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      border-radius: var(--radius) var(--radius) 0 0;
+      border-bottom: 2px solid var(--gold);
+      margin-bottom: 0;
+    }
+
+    .podium-banner-title {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 1.25rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .podium-banner-sub {
+      font-family: "Instrument Serif", serif;
+      font-style: italic;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.55);
+      flex: 1;
+    }
+
+    /* ---- Confetti canvas ---- */
+    #confettiCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
     .rank-cell {
       display: flex;
       align-items: center;
@@ -1665,6 +1723,113 @@
       margin-top: 3px;
     }
 
+    .closeness-explainer {
+      font-family: Barlow, sans-serif;
+      font-size: 0.78rem;
+      color: var(--ink4);
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    /* ---- Closeness Rating ---- */
+    .close-row {
+      display: grid;
+      grid-template-columns: 30px 90px 1fr 50px;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 6px;
+      /* same horizontal padding on EVERY row */
+      border-radius: var(--radius);
+    }
+
+    .close-row-leader {
+      background: linear-gradient(90deg, var(--gold-light), transparent 75%);
+      /* no extra padding / margin changes — keeps columns aligned */
+    }
+
+    .close-rank {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-medal {
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+
+    .close-rank-num {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: var(--ink4);
+    }
+
+    .close-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--ink2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .close-track {
+      height: 16px;
+      background: var(--paper2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .close-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #7cc98f, #a8dcb5);
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .close-fill-lead {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--green), #5ddb7c);
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .close-val {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      text-align: right;
+      color: var(--ink);
+    }
+
+    .close-row-leader .close-val {
+      color: var(--gold);
+    }
+
+    .closeness-key-lo {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    @media (max-width: 560px) {
+      .close-row {
+        grid-template-columns: 26px 70px 1fr 42px;
+        gap: 8px;
+      }
+
+      .close-medal {
+        font-size: 1rem;
+      }
+
+      .close-name {
+        font-size: 0.82rem;
+      }
+    }
+
     .stats-card-body {
       padding: 16px 20px 20px;
     }
@@ -1726,6 +1891,30 @@
       color: var(--ink);
     }
 
+    /* Fix: Predictions Submitted value column overflow on mobile */
+    .hbar-val {
+      white-space: nowrap;
+    }
+
+    .hbar-row.hbar-row-part {
+      grid-template-columns: 90px 1fr 62px;
+    }
+
+    @media(max-width: 560px) {
+      .hbar-row.hbar-row-part {
+        grid-template-columns: 70px 1fr 58px;
+        gap: 6px;
+      }
+
+      .hbar-row.hbar-row-part .hbar-val {
+        font-size: 0.82rem;
+      }
+
+      .hbar-row.hbar-row-part .hbar-val span {
+        font-size: 0.68rem !important;
+      }
+    }
+
     .donut-wrap {
       display: flex;
       align-items: center;
@@ -1775,6 +1964,8 @@
       font-weight: 800;
       font-size: 1rem;
       color: var(--ink);
+      min-width: 32px;
+      text-align: left;
     }
 
     .donut-legend-pct {
@@ -1782,6 +1973,8 @@
       font-size: 0.75rem;
       color: var(--ink4);
       font-weight: 500;
+      min-width: 34px;
+      text-align: left;
     }
 
     .line-legend-item {
@@ -1799,7 +1992,7 @@
 
     .stacked-row {
       display: grid;
-      grid-template-columns: 90px 1fr 60px;
+      grid-template-columns: 90px 1fr 74px;
       align-items: center;
       gap: 10px;
       padding: 4px 0;
@@ -1816,6 +2009,16 @@
     .stacked-seg {
       height: 100%;
       transition: width 0.6s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 0.7rem;
+      color: #fff;
+      overflow: hidden;
+      white-space: nowrap;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
     }
 
     .stacked-legend {
@@ -1823,6 +2026,48 @@
       gap: 14px;
       flex-wrap: wrap;
       padding: 12px 0 4px;
+    }
+
+    .closeness-row {
+      display: grid;
+      grid-template-columns: 28px 1fr 60px;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .closeness-row:last-child {
+      border-bottom: none;
+    }
+
+    .closeness-rank {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--ink4);
+      text-align: center;
+    }
+
+    .closeness-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--ink2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .closeness-val {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      color: var(--gold);
+      text-align: right;
+      line-height: 1;
     }
 
     .scoreline-heatmap-wrap {
@@ -2210,6 +2455,17 @@
       display: block;
     }
 
+    .team-cell.loser {
+      opacity: 0.45;
+    }
+
+    /* keep font-weight unchanged for losers */
+    /* strikethrough only for knockout losers */
+    .team-cell.loser.knockout .team-name {
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+    }
+
     @keyframes slideDown {
       from {
         opacity: 0;
@@ -2364,6 +2620,186 @@
 
     .hidden-control {
       display: none !important;
+    }
+
+    /* ---- New: Tournament progress widget ---- */
+    .progress-widget {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 16px 18px 18px;
+      margin-bottom: 16px;
+    }
+
+    /* ---- Tournament-over: winner display inside the progress widget ---- */
+    .progress-winner-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 8px 0 4px;
+    }
+
+    .progress-winner-label {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink4);
+    }
+
+    .progress-winner-flag {
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.1);
+      display: block;
+    }
+
+    .progress-winner-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 900;
+      font-size: 2rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .progress-winner-trophy {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .progress-widget-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 26px;
+    }
+
+    .progress-widget-icon {
+      font-size: 1rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .progress-widget-title {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      flex: 1;
+    }
+
+    .progress-widget-badge {
+      background: var(--green-light);
+      color: var(--green);
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--radius);
+      white-space: nowrap;
+    }
+
+    .progress-track-wrap {
+      position: relative;
+      height: 4px;
+      border-radius: 2px;
+      margin: 0 8px;
+      background-image: repeating-linear-gradient(90deg, var(--rule-strong) 0 3px, transparent 3px 6px);
+    }
+
+    .progress-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: var(--green);
+      border-radius: 2px;
+    }
+
+    .progress-dot {
+      position: absolute;
+      top: 50%;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .progress-dot.done {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+    }
+
+    .progress-dot.current {
+      width: 11px;
+      height: 11px;
+      background: #fff;
+      border: 2px solid var(--green);
+    }
+
+    .progress-dot.upcoming {
+      width: 8px;
+      height: 8px;
+      background: var(--paper2);
+      border: 1px solid var(--rule-strong);
+    }
+
+    .progress-labels {
+      position: relative;
+      height: 30px;
+      margin: 8px 0 0;
+    }
+
+    .progress-label {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .progress-label-stage {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--ink4);
+      white-space: nowrap;
+    }
+
+    .progress-label-stage.active {
+      color: var(--ink2);
+      font-weight: 700;
+    }
+
+    .progress-label-date {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.62rem;
+      color: var(--ink4);
+      white-space: nowrap;
+    }
+
+    .progress-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .progress-footer span {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 0.72rem;
+      color: var(--ink4);
+    }
+
+    .progress-footer .progress-pct {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--ink);
     }
 
     @media(max-width: 560px) {
@@ -2711,6 +3147,30 @@
       background: #5ddb7c;
       color: var(--ink);
     }
+
+    /* Fix: Predictions Submitted value column overflow on mobile */
+    .hbar-val {
+      white-space: nowrap;
+    }
+
+    .hbar-row.hbar-row-part {
+      grid-template-columns: 90px 1fr 62px;
+    }
+
+    @media(max-width: 560px) {
+      .hbar-row.hbar-row-part {
+        grid-template-columns: 70px 1fr 58px;
+        gap: 6px;
+      }
+
+      .hbar-row.hbar-row-part .hbar-val {
+        font-size: 0.82rem;
+      }
+
+      .hbar-row.hbar-row-part .hbar-val span {
+        font-size: 0.68rem !important;
+      }
+    }
   </style>
 </head>
 
@@ -2792,10 +3252,16 @@
 
       <!-- New: Hide-past toggle bar -->
       <div class="past-toggle-bar" id="pastToggleBar">
-        <label class="past-toggle">
-          <input type="checkbox" id="hidePastToggle" checked onchange="onHidePastToggle()">
-          <span class="past-toggle-label">Hide past matches</span>
-        </label>
+        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+          <label class="past-toggle">
+            <input type="checkbox" id="hidePastToggle" checked onchange="onHidePastToggle()">
+            <span class="past-toggle-label">Hide past matches</span>
+          </label>
+          <label class="past-toggle">
+            <input type="checkbox" id="show90Toggle" onchange="onShow90Toggle()">
+            <span class="past-toggle-label">Show 90 mins score</span>
+          </label>
+        </div>
         <span class="past-toggle-count" id="pastToggleCount"></span>
       </div>
     </header>
@@ -2822,6 +3288,21 @@
   </div>
   <main>
     <div id="predict" class="tab-content active">
+      <!-- New: Tournament progress widget -->
+      <div class="progress-widget" id="progressWidget" style="display:none;">
+        <div class="progress-widget-header">
+          <span class="progress-widget-icon">&#9917;</span>
+          <span class="progress-widget-title">World Cup 2026</span>
+          <span class="progress-widget-badge" id="progressBadge"></span>
+        </div>
+        <div class="progress-track-wrap" id="progressTrack"></div>
+        <div class="progress-labels" id="progressLabels"></div>
+        <div class="progress-footer">
+          <span id="progressPlayed"></span>
+          <span class="progress-pct" id="progressPct"></span>
+          <span id="progressLeft"></span>
+        </div>
+      </div>
       <div id="matchList">
         <div class="state-msg">Loading matches…</div>
       </div>
@@ -2837,6 +3318,7 @@
       </div>
     </div>
   </main>
+  <canvas id="confettiCanvas" style="display:none;"></canvas>
   <div class="toast" id="toast"></div>
   <!-- Confirmation dialog -->
   <div class="confirm-overlay" id="confirmOverlay">
@@ -2896,6 +3378,23 @@
   </div>
   <script>
     const NULL_SENTINEL = -1;
+
+    // =====================================================================
+    // TOURNAMENT CONFIG — dry-test flags
+    //   DEV_MODE        : set true to enable the overrides below
+    //   DEV_FORCE_ENDED : bypass the final-match check and force all
+    //                     tournament-over UI immediately
+    //   DEV_WINNER      : team name to show as champion (overrides live data)
+    // =====================================================================
+    const TOURNAMENT_CONFIG = {
+      DEV_MODE: false,
+      DEV_FORCE_ENDED: false,  // set true to force tournament-over UI regardless of match data
+      // DEV_WINNER: team name shown as champion in the progress widget.
+      // In production this is auto-read from the final match's winner field.
+      // Set to any team name to dry-test the winner display.
+      DEV_WINNER: 'Belgium'
+    };
+
     // ---- Confirmation dialog helper ----
     let _confirmResolve = null;
     function showConfirm(title, messageHtml, danger) {
@@ -3067,6 +3566,135 @@
     let firstRender = true;
     // ---- New: hide-past state (default ON) ----
     let hidePastMatches = true;
+    // ---- New: show 90-min score preference (default OFF => show full time) ----
+    let show90Score = false;
+    try {
+      show90Score = localStorage.getItem('wc2026_show90') === '1';
+    } catch (e) { }
+    // ---- Tournament-over state ----
+    let confettiShownThisSession = false;
+
+    /**
+     * Returns true when the tournament has ended, defined as:
+     *   now >= (kickoff of the last match in the schedule) + 3 hours
+     *
+     * In DEV_MODE you can override this with TOURNAMENT_CONFIG flags.
+     */
+    function isTournamentOver() {
+      if (TOURNAMENT_CONFIG.DEV_MODE && TOURNAMENT_CONFIG.DEV_FORCE_ENDED) return true;
+      if (!matches || !matches.length) return false;
+      // Tournament is over as soon as the 'final' stage match has a FINISHED status
+      // with a score present — i.e. full-time scores are available.
+      const finalMatch = matches.find(m => (m.stage || '').toLowerCase() === 'final');
+      if (!finalMatch) return false;
+      return finalMatch.status === 'FINISHED' &&
+        finalMatch.score_home != null && finalMatch.score_home !== undefined &&
+        finalMatch.score_away != null && finalMatch.score_away !== undefined;
+    }
+
+    /**
+     * Applies (or reverses) all UI changes that belong to the tournament-over state:
+     *   1. Forces "hide past matches" toggle OFF and rebuilds the match list.
+     *   2. Marks the leaderboard container so CSS podium-highlight rules activate.
+     *   3. Fires confetti (once per session) if the leaderboard tab is currently active.
+     */
+    function applyTournamentEndState() {
+      const over = isTournamentOver();
+      // --- 1. Force "hide past matches" OFF and disable the checkbox when tournament is over ---
+      const cb = document.getElementById('hidePastToggle');
+      if (over) {
+        if (hidePastMatches) {
+          hidePastMatches = false;
+          if (cb) cb.checked = false;
+          buildMatchDOM();
+        }
+        // Disable so users cannot re-enable it after the tournament ends
+        if (cb) {
+          cb.disabled = true;
+          cb.title = 'Tournament has ended — all matches are shown';
+        }
+      } else {
+        if (cb) {
+          cb.disabled = false;
+          cb.title = '';
+        }
+      }
+      // --- 2. Leaderboard podium class ---
+      const lbList = document.getElementById('lbList');
+      if (lbList) lbList.classList.toggle('tournament-over', over);
+      // --- 3. Confetti on leaderboard tab (once per session) ---
+      if (over && !confettiShownThisSession) {
+        const lbTab = document.getElementById('leaderboard');
+        if (lbTab && lbTab.classList.contains('active')) {
+          confettiShownThisSession = true;
+          launchConfetti();
+        }
+      }
+    }
+
+    // =====================================================================
+    // Confetti engine — pure canvas, no external library
+    // =====================================================================
+    function launchConfetti() {
+      const canvas = document.getElementById('confettiCanvas');
+      if (!canvas) return;
+      canvas.style.display = 'block';
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const ctx = canvas.getContext('2d');
+      const COLORS = ['#b8860b', '#5ddb7c', '#3b82f6', '#ef4444', '#f59e0b', '#8b5cf6', '#ec4899'];
+      const TOTAL = 260;
+      const particles = Array.from({ length: TOTAL }, () => ({
+        x: Math.random() * canvas.width,
+        y: -10 - Math.random() * 120,
+        vx: (Math.random() - 0.5) * 4,
+        vy: 1.5 + Math.random() * 3.5,
+        size: 6 + Math.random() * 7,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        rot: Math.random() * Math.PI * 2,
+        rotV: (Math.random() - 0.5) * 0.18,
+        shape: Math.random() < 0.5 ? 'rect' : 'circle'
+      }));
+      let frame;
+      let elapsed = 0;
+      const DURATION = 9000;  // ms — total animation length
+      const FADE_START = 7500; // ms — when the fade-out begins
+      const start = performance.now();
+      function draw(ts) {
+        elapsed = ts - start;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const alpha = elapsed > FADE_START
+          ? Math.max(0, 1 - (elapsed - FADE_START) / (DURATION - FADE_START))
+          : 1;
+        ctx.globalAlpha = alpha;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.06; // gravity
+          p.rot += p.rotV;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          if (p.shape === 'rect') {
+            ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+          } else {
+            ctx.beginPath();
+            ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        });
+        if (elapsed < DURATION) {
+          frame = requestAnimationFrame(draw);
+        } else {
+          canvas.style.display = 'none';
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      frame = requestAnimationFrame(draw);
+    }
+
     function hashStr(str) {
       let h = 2166136261;
       for (let i = 0; i < str.length; i++) {
@@ -3097,6 +3725,39 @@
       hidePastMatches = !!(cb && cb.checked);
       buildMatchDOM();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function onShow90Toggle() {
+      const cb = document.getElementById('show90Toggle');
+      show90Score = !!(cb && cb.checked);
+      try {
+        localStorage.setItem('wc2026_show90', show90Score ? '1' : '0');
+      } catch (e) { }
+      buildMatchDOM();
+    }
+
+    // Returns the score to DISPLAY on the card (90-min or full-time), based on preference.
+    // Calculations elsewhere still use score_home/score_away (the 90-min score).
+    function getDisplayScore(m) {
+      // If user wants 90 mins, or full-time score is not present, use 90-min score.
+      const hasFT = m.ft_score_home !== undefined && m.ft_score_home !== null &&
+        m.ft_score_away !== undefined && m.ft_score_away !== null;
+      if (show90Score || !hasFT) {
+        return { home: m.score_home, away: m.score_away };
+      }
+      return { home: m.ft_score_home, away: m.ft_score_away };
+    }
+
+    // Which team lost AFTER full time. Returns 'home' | 'away' | null (draw/no winner).
+    function getFullTimeLoser(m) {
+      if (m.status !== 'FINISHED') return null;
+      const w = (m.winner || '').toUpperCase();
+      if (w === 'HOME') return 'away';
+      if (w === 'AWAY') return 'home';
+      return null;
+    }
+    // Knockout = any stage that isn't the group stage.
+    function isKnockout(m) {
+      return (m.stage || '').toLowerCase() !== 'group';
     }
     function setPastToggleBarVisibility(tabId) {
       const bar = document.getElementById('pastToggleBar');
@@ -3147,6 +3808,8 @@
     }
     setInterval(tickCountdowns, 1000);
     let activeTeamFilter = null;
+    let openMatchId = null;      // tracks which match card is currently expanded
+    let savingInProgress = false; // guards rebuilds while a save is in flight
     let activeMatchFilter = null;
     let searchRowOpen = false;
     function getUniqueTeams() {
@@ -3494,7 +4157,7 @@
       } else {
         const searchRow = document.getElementById('searchRowWrap');
         if (searchRow && searchRow.classList.contains('open')) closeSearchRow();
-        currentCalendarMonth = new Date(2026, 5, 1);
+        currentCalendarMonth = new Date();
         renderCalendar();
         modal.classList.add('open');
         overlay.classList.add('open');
@@ -3634,7 +4297,11 @@
         sortUsers();
         lastUsersJson = JSON.stringify(users);
         lastMatchesJson = JSON.stringify(matches);
+        const show90Cb = document.getElementById('show90Toggle');
+        if (show90Cb) show90Cb.checked = show90Score;
         buildMatchDOM();
+        renderTournamentProgress();
+        applyTournamentEndState();
         initSearch();
         setTopControlsVisibility('predict');
         setPastToggleBarVisibility('predict');
@@ -3679,6 +4346,199 @@
       if (s === undefined || s === null) return '';
       return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
+    // ---- New: Tournament progress widget logic ----
+    // Stages used for CALCULATION (third place counts toward totals/percentages)
+    const PROGRESS_CALC_ORDER = ['group', 'r32', 'r16', 'qf', 'sf', 'third', 'final'];
+    // Stages shown as MILESTONES on the bar (third place hidden from labels/dots)
+    const PROGRESS_STAGE_ORDER = ['group', 'r32', 'r16', 'qf', 'sf', 'final'];
+    const PROGRESS_STAGE_POS = { group: 0, r32: 46, r16: 60, qf: 74, sf: 87, final: 100 };
+    const PROGRESS_MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    function fmtProgressDate(d) {
+      if (!d) return '';
+      return d.getDate() + ' ' + PROGRESS_MONTHS[d.getMonth()];
+    }
+    function renderTournamentProgress() {
+      const widget = document.getElementById('progressWidget');
+      if (!widget) return;
+
+      // --- CALCULATION uses PROGRESS_CALC_ORDER (includes 'third') ---
+      const relevant = matches.filter(m => PROGRESS_CALC_ORDER.includes(m.stage));
+      if (!relevant.length) {
+        widget.style.display = 'none';
+        return;
+      }
+      const total = relevant.length;
+      const finishedCount = relevant.filter(m => m.status === 'FINISHED').length;
+
+      // --- Determine current stage from LIVE data, not just finished count ---
+      // Pick the latest calc-stage that has any match already started (live or past kickoff).
+      const now = Date.now();
+      const LIVE_STATES = ['LIVE', 'HT', 'ET', 'PEN', 'AET', 'IN_PLAY', 'PAUSED'];
+      let liveStage = null;
+      PROGRESS_CALC_ORDER.forEach(s => {
+        const started = matches.some(m => {
+          if (m.stage !== s) return false;
+          if (m.status && LIVE_STATES.includes(String(m.status).toUpperCase())) return true;
+          const k = parseUTC(m.kickoff);
+          return k && k.getTime() <= now && m.status !== 'FINISHED';
+        });
+        if (started) liveStage = s;
+      });
+
+      // Fallback: first stage that isn't fully finished (old behaviour).
+      const stageCounts = {}, stageFirstDate = {}, cumEnd = {};
+      let cum = 0;
+      PROGRESS_CALC_ORDER.forEach(s => {
+        const ms = relevant.filter(m => m.stage === s);
+        stageCounts[s] = ms.length;
+        let minDate = null;
+        ms.forEach(m => {
+          const d = parseUTC(m.kickoff);
+          if (d && (!minDate || d < minDate)) minDate = d;
+        });
+        stageFirstDate[s] = minDate;
+        cum += ms.length;
+        cumEnd[s] = cum;
+      });
+
+      let currentCalcStage = PROGRESS_CALC_ORDER[PROGRESS_CALC_ORDER.length - 1];
+      if (liveStage) {
+        currentCalcStage = liveStage;
+      } else {
+        for (const s of PROGRESS_CALC_ORDER) {
+          if (finishedCount < cumEnd[s]) { currentCalcStage = s; break; }
+        }
+      }
+
+      // Map the (possibly 'third') calc stage onto a DISPLAYED milestone stage.
+      // 'third' is not shown as a milestone, so show it under 'final'.
+      let currentStage = currentCalcStage === 'third' ? 'final' : currentCalcStage;
+      if (!PROGRESS_STAGE_ORDER.includes(currentStage)) currentStage = 'final';
+
+      // --- Fill position based on DISPLAY milestones ---
+      const curIdx = PROGRESS_STAGE_ORDER.indexOf(currentStage);
+      const prevStage = curIdx > 0 ? PROGRESS_STAGE_ORDER[curIdx - 1] : null;
+
+      // Cumulative finished across DISPLAY stages for the fill fraction
+      const dispCumEnd = {};
+      let dcum = 0;
+      PROGRESS_STAGE_ORDER.forEach(s => {
+        dcum += relevant.filter(m => m.stage === s).length;
+        dispCumEnd[s] = dcum;
+      });
+      const dispFinished = relevant.filter(
+        m => PROGRESS_STAGE_ORDER.includes(m.stage) && m.status === 'FINISHED'
+      ).length;
+
+      // Matches finished BEFORE the current stage (all earlier display stages)
+      const cumStart = prevStage ? dispCumEnd[prevStage] : 0;
+      const stageTotal = relevant.filter(m => m.stage === currentStage).length || 1;
+      // How far through the CURRENT stage we are (0 = just entered, 1 = stage done)
+      const frac = stageTotal ? (dispFinished - cumStart) / stageTotal : 0;
+
+      // Fill goes FROM the current stage's dot TOWARD the next stage's dot,
+      // advancing as matches in the current stage get played.
+      const nextIdx = curIdx + 1;
+      const nextStage = nextIdx < PROGRESS_STAGE_ORDER.length ? PROGRESS_STAGE_ORDER[nextIdx] : null;
+      const posStart = PROGRESS_STAGE_POS[currentStage];
+      const posEnd = nextStage ? PROGRESS_STAGE_POS[nextStage] : PROGRESS_STAGE_POS[currentStage];
+      const fillPct = posStart + Math.max(0, Math.min(1, frac)) * (posEnd - posStart);
+
+      const badgeEl = document.getElementById('progressBadge');
+      const playedEl = document.getElementById('progressPlayed');
+      const pctEl = document.getElementById('progressPct');
+      const leftEl = document.getElementById('progressLeft');
+      const track = document.getElementById('progressTrack');
+      const labelsEl = document.getElementById('progressLabels');
+
+      // ---- Tournament-over: replace bar with winner display ----
+      if (isTournamentOver()) {
+        // Determine winner: DEV override first, then winner field of the final match
+        let winnerName = null;
+        if (TOURNAMENT_CONFIG.DEV_MODE && TOURNAMENT_CONFIG.DEV_WINNER) {
+          winnerName = TOURNAMENT_CONFIG.DEV_WINNER;
+        } else {
+          const finalMatch = matches.find(m => m.stage === 'final' && m.status === 'FINISHED');
+          if (finalMatch) {
+            const w = (finalMatch.winner || '').toUpperCase();
+            if (w === 'HOME') winnerName = finalMatch.team_home;
+            else if (w === 'AWAY') winnerName = finalMatch.team_away;
+          }
+        }
+        const code = winnerName ? TEAM_FLAG[(winnerName || '').trim().toLowerCase()] : null;
+        const flagMarkup = code
+          ? '<img src="flags/' + code + '.png" width="56" height="38" class="progress-winner-flag" alt="' + escHtml(winnerName) + '">'
+          : '';
+        const nameMarkup = winnerName
+          ? '<span class="progress-winner-name">' + escHtml(winnerName) + '</span>'
+          : '<span class="progress-winner-name" style="color:var(--ink4)">TBD</span>';
+        const winnerBlock = '<div class="progress-winner-block">' +
+          '<span class="progress-winner-label">&#x1F3C6;&nbsp;&nbsp;World Cup 2026 Champion&nbsp;&nbsp;&#x1F3C6;</span>' +
+          flagMarkup +
+          nameMarkup +
+          '</div>';
+        // Hide badge and progress bar; use the labels slot for the winner block
+        if (badgeEl) { badgeEl.textContent = ''; badgeEl.style.display = 'none'; }
+        if (track) { track.innerHTML = ''; track.style.display = 'none'; }
+        if (labelsEl) { labelsEl.innerHTML = winnerBlock; labelsEl.style.height = 'auto'; }
+        // Footer: just total match count, nothing else
+        if (playedEl) playedEl.textContent = finishedCount + ' matches played';
+        if (pctEl) pctEl.textContent = '';
+        if (leftEl) leftEl.textContent = '';
+        widget.style.display = '';
+        return;
+      }
+
+      // ---- Normal in-progress display ----
+      if (badgeEl) { badgeEl.textContent = (STAGE_LABEL[currentCalcStage] || currentCalcStage).toUpperCase(); badgeEl.style.display = ''; }
+      if (playedEl) playedEl.textContent = finishedCount + ' played';
+      if (pctEl) pctEl.textContent = Math.round((finishedCount / total) * 100) + '%';
+      if (leftEl) leftEl.textContent = (total - finishedCount) + ' left';
+
+      if (track) {
+        track.style.display = '';
+        let trackHtml = '<div class="progress-fill" style="width:' + fillPct + '%"></div>';
+        PROGRESS_STAGE_ORDER.forEach(s => {
+          const pos = PROGRESS_STAGE_POS[s];
+          let cls = 'upcoming';
+          if (dispCumEnd[s] <= dispFinished) cls = 'done';
+          if (s === currentStage) cls = 'current';
+          trackHtml += '<div class="progress-dot ' + cls + '" style="left:' + pos + '%"></div>';
+        });
+        track.innerHTML = trackHtml;
+      }
+
+      if (labelsEl) {
+        labelsEl.style.height = '';
+        let labelsHtml = '';
+        PROGRESS_STAGE_ORDER.forEach((s, i) => {
+          const pos = PROGRESS_STAGE_POS[s];
+          let align = 'center', transform = 'translateX(-50%)';
+          if (i === 0) { align = 'flex-start'; transform = 'translateX(0%)'; }
+          if (i === PROGRESS_STAGE_ORDER.length - 1) { align = 'flex-end'; transform = 'translateX(-100%)'; }
+          const activeCls = s === currentStage ? ' active' : '';
+          const name = s === 'group' ? 'GROUP' : (s === 'final' ? 'FINAL' : s.toUpperCase());
+          labelsHtml += '<div class="progress-label" style="left:' + pos + '%;transform:' + transform + ';align-items:' + align + ';">' +
+            '<span class="progress-label-stage' + activeCls + '">' + name + '</span>' +
+            '<span class="progress-label-date">' + fmtProgressDate(stageFirstDate[s]) + '</span>' +
+            '</div>';
+        });
+        labelsEl.innerHTML = labelsHtml;
+      }
+      widget.style.display = '';
+    }
+    function getFinishedBadgeText(m) {
+      // When showing the 90-min score, the label must always be "Full Time",
+      // since the displayed score is the score at 90 minutes.
+      if (show90Score) return 'Full Time';
+      // Otherwise the label reflects how the final (full-time) score was reached.
+      const d = (m.duration || '').toUpperCase();
+      if (d === 'EXTRA_TIME') return 'Extra Time';
+      if (d === 'PENALTY_SHOOTOUT') return 'Penalties';
+      if (d === 'REGULAR') return 'Full Time';
+      if (m.duration_label) return m.duration_label.toUpperCase();
+      return 'Full Time';
+    }
     function getMatchMeta(m) {
       const finished = m.status === 'FINISHED';
       const kickoffDt = parseUTC(m.kickoff);
@@ -3692,11 +4552,12 @@
         kickoffDt,
         locked,
         badgeCls: finished ? 'finished' : 'upcoming',
-        badgeTxt: finished ? 'Full Time' : (kickoffDt ? fmtDate(kickoffDt) : ''),
+        badgeTxt: finished ? getFinishedBadgeText(m) : (kickoffDt ? fmtDate(kickoffDt) : ''),
         timeStr: hasScore ? '' : (kickoffDt ? fmtTime(kickoffDt) : '')
       };
     }
     function buildPredItemHTML(u, matchid, pred, finished, locked) {
+      if (u.display_name && u.display_name.trim().toLowerCase() === 'lisa') locked = true;
       const cleared = isCleared(pred);
       let ph = cleared ? '' : pred.pred_home;
       let pa = cleared ? '' : pred.pred_away;
@@ -3814,12 +4675,14 @@
       const meta = getMatchMeta(m);
       const homeTeam = m.team_home || 'TBD';
       const awayTeam = m.team_away || 'TBD';
+      const disp = getDisplayScore(m);
       const sh = meta.finished
-        ? '<span class="score-num final" data-role="sh">' + (m.score_home !== undefined && m.score_home !== null ? m.score_home : '') + '</span>'
+        ? '<span class="score-num final" data-role="sh">' + (disp.home !== undefined && disp.home !== null ? disp.home : '') + '</span>'
         : '<span class="score-num pending" data-role="sh">–</span>';
       const sa = meta.finished
-        ? '<span class="score-num final" data-role="sa">' + (m.score_away !== undefined && m.score_away !== null ? m.score_away : '') + '</span>'
+        ? '<span class="score-num final" data-role="sa">' + (disp.away !== undefined && disp.away !== null ? disp.away : '') + '</span>'
         : '<span class="score-num pending" data-role="sa">–</span>';
+      const ftLoser = getFullTimeLoser(m);
       let predsHtml = '';
       if (users.length) {
         predsHtml = '<div class="pred-grid">';
@@ -3831,18 +4694,19 @@
       } else {
         predsHtml = '<div style="color:var(--ink4);font-family:Instrument Serif,serif;font-style:italic;font-size:0.9rem">No players added yet.</div>';
       }
-      const cardCls = firstRender ? 'match-card new-card' : 'match-card';
+      const isOpenNow = openMatchId && String(m.match_id) === String(openMatchId);
+      const cardCls = (firstRender ? 'match-card new-card' : 'match-card') + (isOpenNow ? ' open' : '');
       const countdownHTML = computeCountdownHTML(m.kickoff, m.status);
       return '<div class="' + cardCls + '" data-matchid="' + escHtml(m.match_id) + '" onclick="toggleCard(this)">' +
         '<div class="match-row">' +
-        '<div class="team-cell home"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(homeTeam) + '<span class="team-name">' + escHtml(homeTeam) + '</span></div></div>' +
+        '<div class="team-cell home' + (ftLoser === 'home' ? ' loser' : '') + (ftLoser === 'home' && isKnockout(m) ? ' knockout' : '') + '" data-role="cell-home"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(homeTeam) + '<span class="team-name">' + escHtml(homeTeam) + '</span></div></div>' +
         '<div class="centre-block">' +
         '<div class="score-display">' + sh + '<span class="score-dash">·</span>' + sa + '</div>' +
         '<div class="match-status">' +
         '<div class="badge ' + meta.badgeCls + '" data-role="badge">' + meta.badgeTxt + '</div>' +
         (meta.timeStr ? '<div class="match-time" data-role="time">' + meta.timeStr + '</div>' : '') +
         '</div></div>' +
-        '<div class="team-cell away"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(awayTeam) + '<span class="team-name">' + escHtml(awayTeam) + '</span></div></div>' +
+        '<div class="team-cell away' + (ftLoser === 'away' ? ' loser' : '') + (ftLoser === 'away' && isKnockout(m) ? ' knockout' : '') + '" data-role="cell-away"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' + flagHtml(awayTeam) + '<span class="team-name">' + escHtml(awayTeam) + '</span></div></div>' +
         '</div>' +
         '<div class="predictions-panel"><div class="predictions-panel-inner">' + predsHtml + '</div></div>' +
         '<div class="pred-sentence" data-matchid="' + escHtml(m.match_id) + '" style="padding:7px 16px 8px;border-top:1px solid var(--rule);background:var(--paper);font-family:\'Barlow Condensed\',sans-serif;font-size:0.82rem;letter-spacing:0.01em;color:var(--ink4);display:flex;align-items:center;gap:8px;overflow:hidden;">' +
@@ -3903,7 +4767,7 @@
       }
       const countEl = document.getElementById('pastToggleCount');
       if (!explicitFilterActive && hidePastMatches) {
-        let cutoff = Date.now() - 24 * 60 * 60 * 1000; // 24h window
+        let cutoff = Date.now() - 48 * 60 * 60 * 1000; // 48h window
         let filtered = visibleMatches.filter(m => !isPastMatch(m, cutoff));
 
         if (!filtered.length && visibleMatches.length) {
@@ -3983,15 +4847,28 @@
           }
           if (an) an.textContent = nm.team_away || 'TBD';
         }
+        const dispP = getDisplayScore(nm);
         const sh = card.querySelector('[data-role="sh"]');
         const sa = card.querySelector('[data-role="sa"]');
         if (sh && meta.finished) {
           sh.className = 'score-num final';
-          sh.textContent = (nm.score_home !== undefined && nm.score_home !== null ? nm.score_home : '');
+          sh.textContent = (dispP.home !== undefined && dispP.home !== null ? dispP.home : '');
         }
         if (sa && meta.finished) {
           sa.className = 'score-num final';
-          sa.textContent = (nm.score_away !== undefined && nm.score_away !== null ? nm.score_away : '');
+          sa.textContent = (dispP.away !== undefined && dispP.away !== null ? dispP.away : '');
+        }
+        const ftLoserP = getFullTimeLoser(nm);
+        const knockoutP = isKnockout(nm);
+        const cellHome = card.querySelector('[data-role="cell-home"]');
+        const cellAway = card.querySelector('[data-role="cell-away"]');
+        if (cellHome) {
+          cellHome.classList.toggle('loser', ftLoserP === 'home');
+          cellHome.classList.toggle('knockout', ftLoserP === 'home' && knockoutP);
+        }
+        if (cellAway) {
+          cellAway.classList.toggle('loser', ftLoserP === 'away');
+          cellAway.classList.toggle('knockout', ftLoserP === 'away' && knockoutP);
         }
         const badge = card.querySelector('[data-role="badge"]');
         if (badge) {
@@ -4077,7 +4954,14 @@
         delete card.dataset.suppressToggle;
         return;
       }
-      card.classList.toggle('open');
+      const isOpen = card.classList.contains('open');
+      if (isOpen) {
+        card.classList.remove('open');
+        openMatchId = null;
+      } else {
+        card.classList.add('open');
+        openMatchId = card.dataset.matchid;
+      }
     }
     function switchTab(id, el) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -4088,6 +4972,7 @@
       setPastToggleBarVisibility(id);
       if (id === 'leaderboard') renderLeaderboard();
       if (id === 'stats') renderStats();
+      if (id === 'leaderboard') applyTournamentEndState();
     }
     function hideSearchUIOnly() {
       const wrap = document.getElementById('searchRowWrap');
@@ -4173,12 +5058,21 @@
         return (a.display_name || '').localeCompare(b.display_name || '');
       });
       const medals = ['&#x1F947;', '&#x1F948;', '&#x1F949;'];
-      let html = '<div class="lb-wrap' + (leaderboardFirstRender ? ' animate-in' : '') + '">' +
+      const tournOver = isTournamentOver();
+      // Podium banner is injected BEFORE the lb-wrap when tournament is over
+      const podiumBanner = tournOver
+        ? '<div class="podium-banner">' +
+          '<span class="podium-banner-title">&#x1F3C6; Tournament Final Standings</span>' +
+          '<span class="podium-banner-sub">The predictor is closed — thanks for playing! See you in 2030 &#x1F30D;</span>' +
+          '</div>'
+        : '';
+      let html = podiumBanner +
+        '<div class="lb-wrap' + (leaderboardFirstRender ? ' animate-in' : '') + '">' +
         '<div class="lb-title-row"><div class="lb-title">Standings</div>' +
         '<div class="lb-sub">' + data.length + ' player' + (data.length !== 1 ? 's' : '') + ' competing since 2018</div></div>' +
         '<div class="lb-header-row"><div></div><div></div><div>Player</div><div>Pts</div><div>Exact</div><div>Result</div></div>';
       data.forEach((u, i) => {
-        const rowcls = i === 0 ? 'top1' : '';
+        const rowcls = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
         const rcls = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'rn';
         const rankDisplay = i < 3 ? medals[i] : (i + 1);
         html += '<div class="lb-row ' + rowcls + '">' +
@@ -4209,6 +5103,9 @@
       if (html === lastLeaderboardHtml) return;
       const scrollY = window.scrollY;
       container.innerHTML = html;
+      // Apply tournament-over class so CSS podium highlights work
+      if (tournOver) container.classList.add('tournament-over');
+      else container.classList.remove('tournament-over');
       lastLeaderboardHtml = html;
       leaderboardFirstRender = false;
       window.scrollTo(0, scrollY);
@@ -4259,7 +5156,9 @@
           correct: 0,
           miss: 0,
           points: 0,
-          predGoalsTotal: 0
+          predGoalsTotal: 0,
+          closenessSum: 0,
+          closenessCount: 0
         };
       });
       matches.forEach(m => {
@@ -4285,6 +5184,11 @@
               else if (pred.points === 1) { resultCount++; playerStats[u.user_id].correct++; }
               else { missCount++; playerStats[u.user_id].miss++; }
               playerStats[u.user_id].points += (pred.points || 0);
+              if (m.score_home !== undefined && m.score_away !== undefined && m.score_home !== null && m.score_away !== null) {
+                const dist = Math.abs(+pred.pred_home - +m.score_home) + Math.abs(+pred.pred_away - +m.score_away);
+                playerStats[u.user_id].closenessSum += dist;
+                playerStats[u.user_id].closenessCount++;
+              }
             }
           } else if (isFinished) {
             noPickCount++;
@@ -4387,9 +5291,9 @@
       const total = s.exactCount + s.resultCount + s.missCount + s.noPickCount;
       if (!total) return '';
       const segs = [
-        { label: 'Exact (3pt)', val: s.exactCount, color: '#16a34a' },
-        { label: 'Result (1pt)', val: s.resultCount, color: '#2563eb' },
-        { label: 'Miss (0pt)', val: s.missCount, color: '#f97316' },
+        { label: 'Exact (3 pt)', val: s.exactCount, color: '#16a34a' },
+        { label: 'Result (1 pt)', val: s.resultCount, color: '#2563eb' },
+        { label: 'Miss (0 pt)', val: s.missCount, color: '#f97316' },
         { label: 'No pick', val: s.noPickCount, color: '#9ca3af' }
       ];
       const r = 60, cx = 80, cy = 80, stroke = 22;
@@ -4429,6 +5333,73 @@
       </div>
     </div>`;
     }
+    function renderClosenessBars(s) {
+      const players = Object.values(s.playerStats)
+        .filter(p => p.closenessCount > 0)
+        .map(p => ({
+          ...p,
+          avgDist: p.closenessSum / p.closenessCount
+        }))
+        .sort((a, b) => a.avgDist - b.avgDist);
+
+      if (!players.length) {
+        return `<div class="stats-card${statsFirstRender ? ' animate-in' : ''}">
+      <div class="stats-card-header">
+        <div class="stats-card-title">Closeness Rating</div>
+        <div class="stats-card-sub">How close your scorelines were to reality</div>
+      </div>
+      <div class="stats-card-body">
+        <div class="scoreline-empty">No finished matches with predictions yet.</div>
+      </div>
+    </div>`;
+      }
+
+      const best = players[0].avgDist;
+      const worst = players[players.length - 1].avgDist;
+      const range = Math.max(worst - best, 0.001);
+
+      const medals = ['🥇', '🥈', '🥉'];
+
+      const rows = players.map((p, i) => {
+        // 100% = sharpest, small sliver = furthest. Everyone stays green-ish.
+        const goodness = worst === best ? 100 : (1 - (p.avgDist - best) / range) * 100;
+        const fillPct = Math.max(8, goodness);
+
+        // Fade the green from vivid (best) to soft mint (furthest) — no red, no shame.
+        const barClass = i === 0 ? 'close-fill-lead' : 'close-fill';
+
+        const rankBadge = i < 3
+          ? `<span class="close-medal">${medals[i]}</span>`
+          : `<span class="close-rank-num">${i + 1}</span>`;
+
+        const leaderClass = i === 0 ? ' close-row-leader' : '';
+
+        return `<div class="close-row${leaderClass}">
+      <div class="close-rank">${rankBadge}</div>
+      <div class="close-name">${escHtml(p.name)}</div>
+      <div class="close-track">
+        <div class="${barClass}" style="width:${fillPct}%"></div>
+      </div>
+      <div class="close-val">${p.avgDist.toFixed(2)}</div>
+    </div>`;
+      }).join('');
+
+      const leader = players[0];
+
+      return `<div class="stats-card${statsFirstRender ? ' animate-in' : ''}">
+    <div class="stats-card-header">
+      <div class="stats-card-title">Closeness Rating</div>
+      <div class="stats-card-sub">Who reads the game best — even without nailing the exact score</div>
+      <div class="closeness-explainer">
+        After each match we measure how far your scoreline was from the real one, adding up the miss on
+        <em>both</em> teams — predict <strong>2–1</strong>, actual <strong>3–1</strong> is just
+        <strong>1 goal off</strong>. Averaged across all picks: <span class="closeness-key-lo">lower = sharper</span>,
+        a perfect read is <strong>0.00</strong>. <strong>${escHtml(leader.name)}</strong> leads the pack 👑
+      </div>
+    </div>
+    <div class="stats-card-body">${rows}</div>
+  </div>`;
+    }
     function renderStackedBars(s) {
       const players = Object.values(s.playerStats).sort((a, b) => {
         if (b.points !== a.points) return b.points - a.points;
@@ -4449,14 +5420,16 @@
         const e = (p.exact / total) * 100;
         const c = (p.correct / total) * 100;
         const m = (p.miss / total) * 100;
+        const ePct = Math.round(e), cPct = Math.round(c), mPct = Math.round(m);
+        const hitPct = Math.round(((p.exact + p.correct) / total) * 100);
         return `<div class="stacked-row">
         <div class="hbar-name">${escHtml(p.name)}</div>
         <div class="stacked-track">
-          <div class="stacked-seg" style="width:${e}%;background:${colors.exact}" title="${p.exact} exact"></div>
-          <div class="stacked-seg" style="width:${c}%;background:${colors.correct}" title="${p.correct} correct"></div>
-          <div class="stacked-seg" style="width:${m}%;background:${colors.miss}" title="${p.miss} miss"></div>
+          <div class="stacked-seg" style="width:${e}%;background:${colors.exact}" title="${p.exact} exact">${ePct >= 3 ? ePct + '%' : ''}</div>
+          <div class="stacked-seg" style="width:${c}%;background:${colors.correct}" title="${p.correct} correct">${cPct >= 8 ? cPct + '%' : ''}</div>
+          <div class="stacked-seg" style="width:${m}%;background:${colors.miss}" title="${p.miss} miss">${mPct >= 8 ? mPct + '%' : ''}</div>
         </div>
-        <div class="hbar-val">${total}</div>
+        <div class="hbar-val">${total} <span style="color:var(--ink4);font-weight:500;font-size:0.72rem">${hitPct}%</span></div>
       </div>`;
       }).join('');
       return `<div class="stats-card${statsFirstRender ? ' animate-in' : ''}">
@@ -4467,9 +5440,9 @@
       <div class="stats-card-body">
         ${rows}
         <div class="stacked-legend">
-          <div class="line-legend-item"><div class="donut-dot" style="background:${colors.exact}"></div>Exact (3pt)</div>
-          <div class="line-legend-item"><div class="donut-dot" style="background:${colors.correct}"></div>Result (1pt)</div>
-          <div class="line-legend-item"><div class="donut-dot" style="background:${colors.miss}"></div>Miss (0pt)</div>
+          <div class="line-legend-item"><div class="donut-dot" style="background:${colors.exact}"></div>Exact (3 pt)</div>
+          <div class="line-legend-item"><div class="donut-dot" style="background:${colors.correct}"></div>Result (1 pt)</div>
+          <div class="line-legend-item"><div class="donut-dot" style="background:${colors.miss}"></div>Miss (0 pt)</div>
         </div>
       </div>
     </div>`;
@@ -4611,6 +5584,7 @@
       html += renderHorizontalBars(s);
       html += renderHitRateDonut(s);
       html += renderStackedBars(s);
+      html += renderClosenessBars(s);
       html += renderPredictionsBars(s);
       html += renderGoalsComparison(s);
       html += renderScorelineHeatmap(s);
@@ -4785,6 +5759,7 @@
         lastStatsHtml = '';
         lastLeaderboardHtml = '';
         patchMatchDOM(oldMatches, mm, mu);
+        renderTournamentProgress();
         if (document.getElementById('leaderboard').classList.contains('active')) {
           lbInitialized = false;
           renderLeaderboard();
@@ -4900,6 +5875,8 @@
         lastLeaderboardHtml = '';
         if (userListChanged) buildMatchDOM();
         else patchMatchDOM(oldMatches, mm, mu);
+        renderTournamentProgress();
+        applyTournamentEndState();
         if (document.getElementById('leaderboard').classList.contains('active')) {
           fetch(API + '/leaderboard').then(r => r.json()).then(data => {
             if (!Array.isArray(data)) return;
